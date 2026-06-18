@@ -368,33 +368,23 @@ textarea.fi{resize:none;line-height:1.6;}
   </div>
 
   <!-- Prompts -->
-  <div style="font-size:15px;font-weight:700;color:var(--g9);margin-bottom:6px;">Choose a prompt</div>
-  <div style="font-size:13px;color:var(--g5);margin-bottom:12px;">Pick one — or write your own. This is the section recruiters share with hiring managers.</div>
+  <div style="font-size:15px;font-weight:700;color:var(--g9);margin-bottom:6px;">Choose your prompts</div>
+  <div style="font-size:13px;color:var(--g5);margin-bottom:12px;">Pick up to 3 — or write your own. This is the section recruiters share with hiring managers.</div>
 
   <div class="prompt-suggestions" id="prompt-chips">
-    <div class="prompt-chip" onclick="selectPrompt(this,'🔧 The thing I\'ve shipped I\'m most proud of')">🔧 Built something</div>
-    <div class="prompt-chip" onclick="selectPrompt(this,'🧠 The kind of problem I get unreasonably excited about')">🧠 Problem solving</div>
-    <div class="prompt-chip" onclick="selectPrompt(this,'📈 What I\'m actively working on getting better at')">📈 Growth mindset</div>
-    <div class="prompt-chip" onclick="selectPrompt(this,'🚀 The moment I knew I was in the right field')">🚀 Origin story</div>
-    <div class="prompt-chip" onclick="selectPrompt(this,'💡 A decision I made that I\'d make differently today')">💡 Lessons learnt</div>
-    <div class="prompt-chip" onclick="selectPrompt(this,'🎯 The kind of team I do my best work in')">🎯 Team fit</div>
-    <div class="prompt-chip" onclick="selectPrompt(this,'⚡ How I approach system design decisions')">⚡ System design</div>
-    <div class="prompt-chip" onclick="selectPrompt(this,'👨‍💻 My approach to code quality and engineering standards')">👨‍💻 Code quality</div>
-    <div class="prompt-chip" onclick="selectPrompt(this,'🧭 How I lead when there\'s no playbook')">🧭 Leadership</div>
-    <div class="prompt-chip" onclick="selectPrompt(this,'✍️ Write my own prompt')">✍️ Write my own</div>
+    <div class="prompt-chip" onclick="togglePrompt(this,'🔧 The thing I\'ve built / shipped I\'m most proud of')">🔧 Built something</div>
+    <div class="prompt-chip" onclick="togglePrompt(this,'🧠 The kind of problem I get unreasonably excited about')">🧠 Problem solving</div>
+    <div class="prompt-chip" onclick="togglePrompt(this,'📈 What I\'m actively working on getting better at')">📈 Growth mindset</div>
+    <div class="prompt-chip" onclick="togglePrompt(this,'🚀 The moment I knew I was in the right field')">🚀 Origin story</div>
+    <div class="prompt-chip" onclick="togglePrompt(this,'💡 A decision I made that I\'d make differently today')">💡 Lessons learnt</div>
+    <div class="prompt-chip" onclick="togglePrompt(this,'🎯 The kind of team I do my best work in')">🎯 Team fit</div>
+    <div class="prompt-chip" onclick="togglePrompt(this,'⚡ How I approach complex decisions with no clear answer')">⚡ Decision making</div>
+    <div class="prompt-chip" onclick="togglePrompt(this,'👥 What people who\'ve worked with me would say')">👥 How others see me</div>
+    <div class="prompt-chip" onclick="togglePrompt(this,'🧭 How I lead when there\'s no playbook')">🧭 Leadership</div>
+    <div class="prompt-chip" onclick="togglePrompt(this,'✍️ Write my own prompt')">✍️ Write my own</div>
   </div>
 
-  <div id="prompt-answer-section" style="display:none;">
-    <div class="prompt-answer-wrap">
-      <div class="prompt-q" id="prompt-q-display"></div>
-      <textarea class="fi" id="prompt-answer" rows="4" placeholder="Be specific. What was the impact? What broke along the way?" style="background:white;" oninput="countWords(this,'pa-count',150)"></textarea>
-      <div style="text-align:right;font-size:11px;color:var(--g4);margin-top:5px;" id="pa-count">0 / 150</div>
-    </div>
-  </div>
-
-  <div id="own-prompt-section" style="display:none;margin-top:10px;">
-    <div class="fg"><label class="fl">Your prompt question</label><input class="fi" id="own-prompt-q" placeholder="e.g. My approach to debugging complex distributed systems..."/></div>
-  </div>
+  <div id="prompt-answers-container"></div>
 
   <div style="display:flex;gap:10px;margin-top:16px;">
     <button class="btn btn-outline" style="flex:0 0 80px;" onclick="goto('s-reg-exp')">← Back</button>
@@ -604,14 +594,14 @@ let selectedSkills = new Set();
 // SKILLS DATA
 // ══════════════════════════════════════════
 const SKILLS = [
-  { cat:'💻 Languages', items:['☕ Java','🐍 Python','⚡ JavaScript','🦀 Rust','🐹 Go','💎 Ruby','🔷 TypeScript','⚙️ C++','🍎 Swift','🤖 Kotlin','🐘 PHP','🎯 Dart'] },
-  { cat:'⚛️ Frontend', items:['⚛️ React','🟢 Vue.js','🅰️ Angular','▲ Next.js','🍃 Tailwind CSS','📱 React Native','🎨 Flutter','🌐 HTML / CSS'] },
-  { cat:'🔧 Backend & Infra', items:['🟢 Node.js','🌿 Spring Boot','🐍 Django','💎 Rails','🔥 FastAPI','☸️ Kubernetes','🐳 Docker','🌩️ AWS','☁️ GCP','🔷 Azure','🏗️ Terraform','📡 GraphQL'] },
-  { cat:'🗄️ Databases', items:['🐘 PostgreSQL','🍃 MongoDB','🔴 Redis','🔵 MySQL','❄️ Snowflake','🔍 Elasticsearch','🌊 Cassandra','📊 BigQuery'] },
-  { cat:'🤖 AI / ML', items:['🧠 Machine Learning','🔥 PyTorch','🌊 TensorFlow','🤗 Hugging Face','✨ Prompt Engineering','🔗 LLM Integration','📚 RAG','🔮 LangChain','🧩 OpenAI API','🤖 Fine-tuning','📊 Data Science','🔬 MLOps'] },
-  { cat:'🏗️ System Design', items:['📐 Distributed Systems','⚡ Microservices','📨 Event-Driven','🔄 Message Queues','🌐 API Design','📈 Scalability','🔒 Security','💰 Payments Systems','🔍 Search Systems','📊 Analytics Pipelines'] },
-  { cat:'📱 Mobile', items:['🍎 iOS','🤖 Android','📱 React Native','🎯 Flutter','📲 SwiftUI','🏗️ Jetpack Compose'] },
-  { cat:'🧭 Leadership', items:['👥 Engineering Management','🗺️ Technical Strategy','🌱 Mentoring','📋 Agile / Scrum','🤝 Stakeholder Management','🚀 Team Building','📐 Architecture Reviews','🔍 Technical Hiring'] },
+  { cat:'💻 Engineering & Tech', items:['☕ Java','🐍 Python','⚡ JavaScript','🦀 Rust','🐹 Go','🔷 TypeScript','⚛️ React','🟢 Node.js','🌿 Spring Boot','☸️ Kubernetes','🐳 Docker','🌩️ AWS','🤖 AI / ML','📐 System Design','🔗 Microservices','🗄️ PostgreSQL','🍃 MongoDB','✨ Prompt Engineering'] },
+  { cat:'🎯 Talent Acquisition', items:['🔍 Technical Sourcing','🤝 Executive Hiring','🌱 Campus Recruiting','🌏 Global TA','📊 TA Analytics','🧲 Employer Branding','🤖 AI in Recruiting','📋 Structured Interviewing','🗺️ TA Strategy','👥 Team Building','💼 RPO Management','🔗 LinkedIn Recruiting','🏗️ ATS Implementation','🎯 Diversity Hiring','⚡ High Volume Hiring','🌟 Candidate Experience','🤝 Stakeholder Management','📈 Workforce Planning'] },
+  { cat:'📣 Marketing', items:['📣 Brand Strategy','📱 Social Media','🎯 Performance Marketing','✍️ Content Marketing','📧 Email Marketing','🔍 SEO / SEM','📊 Marketing Analytics','🎨 Creative Direction','🤝 Partnerships','🌐 Digital Marketing','📺 Campaign Management','💡 Product Marketing','🎪 Event Marketing','📰 PR & Communications','🤖 Marketing Automation'] },
+  { cat:'💰 Finance & Accounting', items:['📊 Financial Modelling','💰 FP&A','📈 Equity Research','🏦 Investment Banking','💳 Corporate Finance','📋 Budgeting','🔍 Due Diligence','⚖️ Risk Management','📑 Financial Reporting','🌏 Treasury','💹 Private Equity','🏗️ M&A','📊 Business Analysis','💼 Venture Capital','🔢 Accounting'] },
+  { cat:'🧭 Leadership & Strategy', items:['👥 People Management','🗺️ Strategic Planning','🌱 Mentoring & Coaching','🚀 Startup Leadership','🔄 Change Management','🤝 Board Management','💡 Innovation','📋 OKRs & Goal Setting','🌏 Global Operations','🏗️ Org Design','🎯 Business Development','🤝 Executive Stakeholders','📊 P&L Ownership','🌟 Culture Building'] },
+  { cat:'⚙️ Operations & Product', items:['⚙️ Operations Management','📦 Supply Chain','🔄 Process Improvement','📊 Data Analysis','🎯 Product Management','🗺️ Product Strategy','📋 Agile / Scrum','🔍 UX Research','🎨 Product Design','📈 Growth','🤝 Customer Success','📦 Project Management','🔧 Business Operations','💡 Strategy Consulting'] },
+  { cat:'🤝 Sales & Business Dev', items:['🤝 B2B Sales','🌐 Enterprise Sales','💼 Account Management','🎯 Business Development','🤝 Partnerships','💰 Revenue Operations','📊 Sales Analytics','🌏 International Sales','📋 CRM Management','🎪 Sales Enablement','🔍 Market Research','📣 Pre-Sales'] },
+  { cat:'🏥 Other Domains', items:['🏥 Healthcare Management','🎓 EdTech','🏗️ Real Estate','⚖️ Legal & Compliance','🌿 Sustainability','🎨 Design Thinking','🎭 Creative Direction','📰 Journalism / Media','🏛️ Public Policy','🌏 International Relations','🔬 Research & Development','📡 Telecommunications'] },
 ];
 
 // ══════════════════════════════════════════
@@ -814,39 +804,69 @@ function expNext() {
 }
 
 // ══════════════════════════════════════════
-// PROMPTS
+// PROMPTS — multiple selection
 // ══════════════════════════════════════════
-let selectedPrompt = '';
+const selectedPrompts = []; // [{q, a}]
 
-function selectPrompt(el, promptText) {
-  document.querySelectorAll('.prompt-chip').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedPrompt = promptText;
+function togglePrompt(el, promptText) {
+  const isOwn = promptText === '✍️ Write my own prompt';
+  const alreadySelected = el.classList.contains('selected');
 
-  if(promptText === '✍️ Write my own prompt') {
-    document.getElementById('own-prompt-section').style.display='block';
-    document.getElementById('prompt-answer-section').style.display='none';
-  } else {
-    document.getElementById('own-prompt-section').style.display='none';
-    document.getElementById('prompt-answer-section').style.display='block';
-    document.getElementById('prompt-q-display').textContent = promptText;
-    document.getElementById('prompt-answer').focus();
+  if(alreadySelected) {
+    // Deselect — remove chip and answer box
+    el.classList.remove('selected');
+    const answerId = 'pa-' + btoa(promptText).slice(0,10);
+    document.getElementById(answerId)?.remove();
+    const idx = selectedPrompts.findIndex(p=>p.q===promptText);
+    if(idx>-1) selectedPrompts.splice(idx,1);
+    return;
   }
+
+  if(selectedPrompts.length >= 3) {
+    toast('You can pick up to 3 prompts'); return;
+  }
+
+  el.classList.add('selected');
+  const answerId = 'pa-' + btoa(promptText).slice(0,10);
+  selectedPrompts.push({q:promptText, a:''});
+
+  const div = document.createElement('div');
+  div.id = answerId;
+  div.className = 'prompt-answer-wrap';
+  div.style.marginBottom = '12px';
+
+  if(isOwn) {
+    div.innerHTML = `
+      <div class="prompt-q">✍️ Write your own prompt</div>
+      <input class="fi" placeholder="Type your prompt question..." style="margin-bottom:8px;" oninput="updatePromptQ('${answerId}',this.value)"/>
+      <textarea class="fi" rows="3" placeholder="Your answer..." style="background:white;" oninput="updatePromptA('${answerId}',this.value)"></textarea>`;
+  } else {
+    div.innerHTML = `
+      <div class="prompt-q">${promptText}</div>
+      <textarea class="fi" rows="4" placeholder="Be specific. What was the impact? What happened?" style="background:white;" oninput="updatePromptA('${answerId}',this.value)"></textarea>`;
+  }
+
+  document.getElementById('prompt-answers-container').appendChild(div);
+  div.querySelector('textarea')?.focus();
+}
+
+function updatePromptQ(id, val) {
+  const p = selectedPrompts.find(p=>p.q==='✍️ Write my own prompt');
+  if(p) p.q = val;
+}
+function updatePromptA(id, val) {
+  // Find by DOM position
+  const idx = [...document.getElementById('prompt-answers-container').children].findIndex(c=>c.id===id);
+  if(idx>-1 && selectedPrompts[idx]) selectedPrompts[idx].a = val;
 }
 
 function promptsNext() {
   const lf = v('looking-for');
   if(!lf){ toast('Tell us what you\'re looking for'); return; }
   C.lookingFor = lf;
-
-  if(selectedPrompt === '✍️ Write my own prompt') {
-    C.promptQ = v('own-prompt-q') || 'My own prompt';
-    C.promptA = v('prompt-answer');
-  } else if(selectedPrompt) {
-    C.promptQ = selectedPrompt;
-    C.promptA = v('prompt-answer');
-  }
-
+  C.prompts = selectedPrompts.filter(p=>p.a.trim().length>0);
+  // Keep backward compat
+  if(C.prompts.length>0){ C.promptQ=C.prompts[0].q; C.promptA=C.prompts[0].a; }
   buildSkillsUI();
   goto('s-reg-skills');
 }
@@ -952,14 +972,11 @@ function buildReview() {
       <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:7px;">What I'm Looking For</div>
       <div style="font-size:13px;color:var(--g9);line-height:1.6;">${C.lookingFor}</div>
     </div>`:''}
-    <!-- Prompt -->
-    ${C.promptQ&&C.promptA?`<div style="padding:12px 14px 10px;border-bottom:0.5px solid var(--g2);">
+    <!-- Prompts -->
+    ${(C.prompts&&C.prompts.length>0)||(C.promptQ&&C.promptA)?`<div style="padding:12px 14px 10px;border-bottom:0.5px solid var(--g2);">
       <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:7px;">In Their Own Words</div>
-      <div style="background:var(--indigoLt);border:0.5px solid var(--indigoBd);border-radius:10px;padding:10px 12px;">
-        <div style="font-size:11px;font-weight:600;color:var(--indigoDk);margin-bottom:5px;">${C.promptQ}</div>
-        <div style="font-size:13px;color:var(--g9);line-height:1.6;">${C.promptA}</div>
-      </div>
-    </div>`:''}
+      ${(C.prompts&&C.prompts.length>0?C.prompts:[{q:C.promptQ,a:C.promptA}]).filter(p=>p&&p.a).map(p=>`<div style="background:var(--indigoLt);border:0.5px solid var(--indigoBd);border-radius:10px;padding:10px 12px;margin-bottom:7px;"><div style="font-size:11px;font-weight:600;color:var(--indigoDk);margin-bottom:4px;">${p.q}</div><div style="font-size:13px;color:var(--g9);line-height:1.6;">${p.a}</div></div>`).join('')}
+    </div>`:''}`
     <!-- Skills -->
     ${C.skills.length?`<div style="padding:12px 14px 10px;">
       <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;">Skills · ${C.skills.length} selected</div>
@@ -1254,12 +1271,9 @@ function renderMyProfile() {
     <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;">What I'm Looking For</div>
     <div style="font-size:13px;color:var(--g9);line-height:1.6;">${C.lookingFor}</div>
   </div>`:''}
-  ${C.promptQ&&C.promptA?`<div style="padding:14px;border-bottom:0.5px solid var(--g2);">
+  ${(C.prompts&&C.prompts.length>0)||(C.promptQ&&C.promptA)?`<div style="padding:14px;border-bottom:0.5px solid var(--g2);">
     <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;">In Their Own Words</div>
-    <div style="background:var(--indigoLt);border:0.5px solid var(--indigoBd);border-radius:10px;padding:12px 14px;">
-      <div style="font-size:12px;font-weight:600;color:var(--indigoDk);margin-bottom:6px;">${C.promptQ}</div>
-      <div style="font-size:13px;color:var(--g9);line-height:1.6;">${C.promptA}</div>
-    </div>
+    ${(C.prompts&&C.prompts.length>0?C.prompts:[{q:C.promptQ,a:C.promptA}]).filter(p=>p&&p.a).map(p=>`<div style="background:var(--indigoLt);border:0.5px solid var(--indigoBd);border-radius:10px;padding:12px 14px;margin-bottom:8px;"><div style="font-size:12px;font-weight:600;color:var(--indigoDk);margin-bottom:6px;">${p.q}</div><div style="font-size:13px;color:var(--g9);line-height:1.6;">${p.a}</div></div>`).join('')}
   </div>`:''}
   ${C.skills.length?`<div style="padding:14px;">
     <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:10px;">Skills · ${C.skills.length}</div>
