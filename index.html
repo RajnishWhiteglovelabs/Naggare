@@ -178,7 +178,7 @@ textarea.fi{resize:none;line-height:1.6;}
   </div>
   <div style="font-family:Georgia,serif;font-size:17px;color:#E0E7FF;line-height:1.65;max-width:340px;margin-bottom:48px;font-style:italic;">"Persona. Craft. Learnability. Attitude.<br>Visible before the first call."</div>
   <div style="width:100%;max-width:360px;display:flex;flex-direction:column;gap:12px;">
-    <button class="btn btn-primary" style="font-size:16px;padding:16px;" onclick="goto('s-reg-email')">👤 I'm a Candidate</button>
+    <button class="btn btn-primary" style="font-size:16px;padding:16px;" onclick="startCandidate()">👤 I'm a Candidate</button>
     <button class="btn btn-outline" style="background:rgba(255,255,255,0.08);color:white;border-color:rgba(255,255,255,0.25);font-size:15px;padding:14px;" onclick="goto('s-signin')">I'm a Recruiter / TA →</button>
     <div style="font-size:12px;color:#6366F1;margin-top:4px;cursor:pointer;" onclick="goto('s-signin')">Already on Naggare? Sign in</div>
   </div>
@@ -1100,7 +1100,15 @@ async function doSignIn() {
   err.style.display='block';
 }
 
-function doSignOut(){
+function startCandidate() {
+  // Reset candidate state for fresh signup
+  Object.assign(C,{email:'',photoData:null,name:'',personalEmail:'',mobile:'',title:'',company:'',city:'',years:'',career:[],lookingFor:'',promptQ:'',promptA:'',prompts:[],skills:[]});
+  selectedSkills.clear();
+  selectedPrompts.length = 0;
+  document.querySelectorAll('.prompt-chip').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('prompt-answers-container').innerHTML='';
+  goto('s-reg-email');
+}
   if(!confirm('Sign out of Naggare?')) return;
   try{localStorage.removeItem('naggare_v2');}catch(e){}
   Object.assign(C,{email:'',photoData:null,name:'',personalEmail:'',mobile:'',title:'',company:'',city:'',years:'',career:[],lookingFor:'',promptQ:'',promptA:'',skills:[]});
