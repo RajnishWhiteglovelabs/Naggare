@@ -977,7 +977,8 @@ async function submitProfile() {
   showSaving('Creating your Naggare profile...');
 
   await atSave('Candidates',{
-    'Name':C.name,'Email':C.email,'Title':C.title,'Company':C.company,
+    'Name':C.name,'Email':C.email,'Personal Email':C.personalEmail,
+    'Title':C.title,'Company':C.company,
     'City':C.city,'Years Experience':parseInt(C.years)||0,
     'Mobile':C.mobile,
     'Skills':C.skills.map(s=>s.replace(/^[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\s]*/u,'')).join(', '),
@@ -1026,11 +1027,13 @@ function loadSession() {
   return false;
 }
 
-function doSignIn() {
+async function doSignIn() {
   const email = v('si-email').toLowerCase();
   const err = document.getElementById('si-error');
   err.style.display='none';
   if(!email){err.textContent='Please enter your email.';err.style.display='block';return;}
+
+  // Step 1 — check localStorage first (all keys)
   try {
     const keys=['naggare_v2','naggare_user','naggare_v1'];
     for(const key of keys){
@@ -1038,7 +1041,7 @@ function doSignIn() {
       if(!raw) continue;
       const d=JSON.parse(raw);
       if(!d) continue;
-      const saved=(d.candidate?.email||d.recruiter?.email||'').toLowerCase();
+      const saved=(d.candidate?.email||d.candidate?.personalEmail||d.recruiter?.email||'').toLowerCase();
       if(saved===email){
         if(d.candidate) Object.assign(C,d.candidate);
         if(d.skills) d.skills.forEach(s=>selectedSkills.add(s));
@@ -1047,7 +1050,36 @@ function doSignIn() {
       }
     }
   } catch(e){}
-  err.textContent="We couldn't find an account with that email.";
+
+  // Step 2 — check Airtable (works across devices and after rebuilds)
+  try {
+    showSaving('Looking up your account...');
+    const res = await fetch(`https://api.airtable.com/v0/${AT_BASE}/Candidates?filterByFormula=OR(LOWER({Email})="${email}",LOWER({Personal Email})="${email}")&maxRecords=1`,{
+      headers:{'Authorization':`Bearer ${AT_TOKEN}`}
+    });
+    const data = await res.json();
+    hideSaving();
+    if(data.records && data.records.length > 0) {
+      const r = data.records[0].fields;
+      // Restore profile from Airtable
+      Object.assign(C,{
+        name: r['Name']||'', email: r['Email']||email,
+        personalEmail: r['Personal Email']||'', mobile: r['Mobile']||'',
+        title: r['Title']||'', company: r['Company']||'',
+        city: r['City']||'', years: r['Years Experience']?.toString()||'',
+        lookingFor: r['Looking For']||'',
+        promptQ: r['Prompt Question']||'', promptA: r['Prompt Answer']||'',
+        skills: r['Skills']?r['Skills'].split(', '):[],
+        career:[], photoData: null,
+      });
+      if(C.skills.length) C.skills.forEach(s=>selectedSkills.add(s));
+      saveSession();
+      toast(`Welcome back, ${C.name.split(' ')[0]}! 👋`);
+      enterHome(); return;
+    }
+  } catch(e){ hideSaving(); console.warn('Airtable lookup failed',e); }
+
+  err.textContent="We couldn't find an account with that email. Please sign up first.";
   err.style.display='block';
 }
 
