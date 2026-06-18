@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Naggare — Hiring, Humanised.</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#4F46E5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Naggare">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<style>
+:root {
+  --indigo:#4F46E5;--indigoDk:#3730A3;--indigoLt:#EEF2FF;--indigoBd:#C7D2FE;
+  --violet:#7C3AED;--violetLt:#F5F3FF;--violetBd:#DDD6FE;
+  --green:#16A34A;--greenLt:#F0FDF4;--greenBd:#BBF7D0;--greenDk:#166534;
+  --red:#E11D48;--redLt:#FFF1F2;--redBd:#FECDD3;
+  --amber:#D97706;--amberY:#EAB308;--amberLt:#FFFBEB;--amberBd:#FDE068;
+  --sky:#0284C7;--skyLt:#F0F9FF;--skyBd:#BAE6FD;
+  --g0:#F9FAFB;--g1:#F3F4F6;--g2:#E5E7EB;--g3:#D1D5DB;
+  --g4:#9CA3AF;--g5:#6B7280;--g6:#4B5563;--g7:#374151;
+  --g8:#1F2937;--g9:#111827;--navy:#1E1B4B;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--g0);color:var(--g9);min-height:100vh;overflow-x:hidden;}
+.screen{display:none;min-height:100vh;flex-direction:column;}
+.screen.active{display:flex;}
+
+/* LOGO */
+.logo-mark{width:40px;height:40px;background:linear-gradient(135deg,var(--indigo),var(--violet));border-radius:12px;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 4px 12px rgba(79,70,229,0.3);flex-shrink:0;}
+.logo-mark::after{content:'';position:absolute;top:5px;right:5px;width:6px;height:6px;background:var(--amberY);border-radius:2px;transform:rotate(45deg);}
+.logo-n{font-size:18px;font-weight:800;color:white;font-family:Georgia,serif;}
+
+/* BUTTONS */
+.btn{width:100%;padding:14px;border:none;border-radius:999px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn:disabled{opacity:0.6;cursor:not-allowed;transform:none!important;}
+.btn-primary{background:linear-gradient(135deg,var(--indigo),var(--violet));color:white;box-shadow:0 4px 14px rgba(79,70,229,0.3);}
+.btn-primary:hover:not(:disabled){opacity:0.92;transform:translateY(-1px);}
+.btn-green{background:linear-gradient(135deg,var(--green),#15803D);color:white;box-shadow:0 4px 14px rgba(22,163,74,0.3);}
+.btn-green:hover:not(:disabled){opacity:0.92;transform:translateY(-1px);}
+.btn-outline{background:white;color:var(--g6);border:1.5px solid var(--g2);}
+.btn-outline:hover:not(:disabled){border-color:var(--indigo);color:var(--indigo);}
+.btn-ghost{background:none;border:none;color:var(--indigo);font-size:13px;font-weight:600;cursor:pointer;padding:10px 0;text-align:center;width:100%;}
+
+/* FORMS */
+.fg{margin-bottom:16px;}
+.fl{font-size:12px;font-weight:600;color:var(--g7);margin-bottom:5px;display:block;letter-spacing:0.3px;}
+.fl span{color:var(--red);}
+.fi{width:100%;padding:12px 14px;border:1.5px solid var(--g2);border-radius:12px;font-size:15px;color:var(--g9);background:white;outline:none;transition:border-color 0.15s;font-family:inherit;}
+.fi:focus{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(79,70,229,0.1);}
+.fi::placeholder{color:var(--g4);}
+textarea.fi{resize:none;line-height:1.6;}
+
+/* PROGRESS */
+.step-hdr{background:white;border-bottom:0.5px solid var(--g2);padding:14px 20px 12px;position:sticky;top:0;z-index:10;}
+.step-hdr-top{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.step-info{margin-left:auto;text-align:right;}
+.step-label{font-size:12px;color:var(--indigo);font-weight:600;}
+.step-sublabel{font-size:10px;color:var(--g4);margin-top:1px;}
+.progress-bar{height:4px;background:var(--g1);border-radius:999px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--indigo),var(--violet));border-radius:999px;transition:width 0.4s ease;}
+
+/* OTP INPUT */
+.otp-wrap{display:flex;gap:8px;justify-content:center;margin:20px 0;}
+.otp-digit{width:48px;height:56px;border:1.5px solid var(--g2);border-radius:12px;font-size:22px;font-weight:700;text-align:center;color:var(--g9);outline:none;transition:border-color 0.15s;background:white;}
+.otp-digit:focus{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(79,70,229,0.1);}
+
+/* PHOTO UPLOAD */
+.photo-upload{display:flex;flex-direction:column;align-items:center;gap:14px;padding:24px 0;}
+.photo-circle{width:110px;height:110px;border-radius:50%;background:var(--g1);border:2px dashed var(--g3);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;transition:border-color 0.15s;position:relative;}
+.photo-circle:hover{border-color:var(--indigo);}
+.photo-circle img{width:100%;height:100%;object-fit:cover;}
+.photo-circle-icon{font-size:36px;color:var(--g4);}
+.photo-nudge{background:var(--amberLt);border:0.5px solid var(--amberBd);border-radius:10px;padding:10px 14px;font-size:13px;color:#92400E;text-align:center;line-height:1.5;}
+
+/* EXPERIENCE CARD */
+.exp-card{background:var(--g0);border:0.5px solid var(--g2);border-radius:12px;padding:14px;margin-bottom:10px;position:relative;}
+.exp-remove{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--g4);cursor:pointer;font-size:18px;line-height:1;}
+.exp-remove:hover{color:var(--red);}
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+/* NUDGE */
+.nudge-bar{background:linear-gradient(135deg,var(--indigoLt),var(--violetLt));border:0.5px solid var(--indigoBd);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.nudge-emoji{font-size:20px;}
+.nudge-text{font-size:13px;color:var(--indigoDk);font-weight:500;line-height:1.4;}
+
+/* WORD COUNT */
+.word-count-wrap{position:relative;}
+.word-count{position:absolute;bottom:10px;right:12px;font-size:11px;color:var(--g4);font-weight:500;}
+.word-count.near{color:var(--amber);}
+.word-count.over{color:var(--red);}
+
+/* PROMPTS */
+.prompt-suggestions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.prompt-chip{padding:8px 14px;border:1.5px solid var(--g2);border-radius:999px;font-size:12px;font-weight:500;color:var(--g7);background:white;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:5px;}
+.prompt-chip:hover{border-color:var(--indigo);color:var(--indigo);background:var(--indigoLt);}
+.prompt-chip.selected{border-color:var(--indigo);color:var(--indigo);background:var(--indigoLt);font-weight:600;}
+.prompt-answer-wrap{background:var(--indigoLt);border:1.5px solid var(--indigoBd);border-radius:12px;padding:14px;margin-top:8px;}
+.prompt-q{font-size:13px;font-weight:600;color:var(--indigoDk);margin-bottom:10px;}
+
+/* SKILLS */
+.skills-category{margin-bottom:20px;}
+.skills-cat-label{font-size:11px;font-weight:700;color:var(--g5);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.skills-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.skill-chip{padding:8px 14px;border:1.5px solid var(--g2);border-radius:999px;font-size:13px;font-weight:500;color:var(--g7);background:white;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px;user-select:none;}
+.skill-chip:hover{border-color:var(--indigo);background:var(--indigoLt);}
+.skill-chip.selected{border-color:var(--indigo);background:var(--indigoLt);color:var(--indigoDk);font-weight:600;}
+.skill-chip .emoji{font-size:16px;}
+.skills-custom{display:flex;gap:8px;margin-top:10px;}
+.skills-custom-input{flex:1;padding:10px 14px;border:1.5px solid var(--g2);border-radius:999px;font-size:13px;outline:none;transition:border-color 0.15s;}
+.skills-custom-input:focus{border-color:var(--indigo);}
+.skills-add-btn{padding:10px 18px;background:var(--indigo);color:white;border:none;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;}
+
+/* PROFILE CARD */
+.profile-card{background:white;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.1);border:0.5px solid var(--g2);}
+.profile-avatar-wrap{width:80px;height:80px;border-radius:50%;overflow:hidden;border:3px solid white;box-shadow:0 4px 12px rgba(0,0,0,0.15);flex-shrink:0;}
+.profile-avatar-wrap img{width:100%;height:100%;object-fit:cover;}
+.profile-avatar-fallback{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:white;flex-shrink:0;border:3px solid white;box-shadow:0 4px 12px rgba(0,0,0,0.15);}
+
+/* SEARCH */
+.search-wrap{position:relative;margin-bottom:16px;}
+.search-input{width:100%;padding:12px 44px 12px 16px;border:1.5px solid var(--g2);border-radius:999px;font-size:14px;outline:none;background:white;transition:border-color 0.15s;}
+.search-input:focus{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(79,70,229,0.1);}
+.search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--g4);}
+
+/* JD CARD */
+.jd-card{background:white;border:0.5px solid var(--g2);border-radius:14px;overflow:hidden;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.jd-card-header{padding:14px;border-bottom:0.5px solid var(--g1);}
+.jd-company-logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:white;flex-shrink:0;}
+.jd-actions{display:flex;gap:8px;padding:12px 14px;}
+.btn-not-interested{flex:1;height:44px;border-radius:999px;background:white;border:1.5px solid var(--g2);font-size:13px;font-weight:600;color:var(--g5);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-not-interested:hover{border-color:var(--red);color:var(--red);}
+.btn-interested{flex:1;height:44px;border-radius:999px;background:linear-gradient(135deg,var(--indigo),var(--violet));border:none;font-size:13px;font-weight:600;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 2px 10px rgba(79,70,229,0.3);transition:all 0.15s;}
+.btn-interested:hover{opacity:0.92;}
+
+/* NAV */
+.topnav{background:white;border-bottom:0.5px solid var(--g2);padding:0 16px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+.nav-av{width:34px;height:34px;border-radius:50%;overflow:hidden;cursor:pointer;}
+.nav-av img{width:100%;height:100%;object-fit:cover;}
+.nav-av-fallback{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--indigo),var(--violet));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;cursor:pointer;}
+
+/* PILL */
+.pill{font-size:11px;padding:3px 10px;border-radius:999px;font-weight:500;border:0.5px solid;display:inline-flex;align-items:center;gap:4px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:white;padding:10px 22px;border-radius:999px;font-size:13px;font-weight:600;opacity:0;transition:all 0.3s;white-space:nowrap;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.2);pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* SAVING */
+.saving-overlay{position:fixed;inset:0;background:rgba(30,27,75,0.85);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:998;gap:16px;}
+.saving-spinner{width:44px;height:44px;border:3px solid rgba(255,255,255,0.2);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ERROR */
+.error-box{background:var(--redLt);border:0.5px solid var(--redBd);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:14px;display:none;line-height:1.5;}
+
+/* SECTION */
+.sec-label{font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:10px;}
+.content-pad{padding:20px 16px;flex:1;overflow-y:auto;}
+.detail-nav{background:white;border-bottom:0.5px solid var(--g2);padding:0 14px;height:50px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;}
+.back-btn{font-size:24px;color:var(--indigo);cursor:pointer;background:none;border:none;padding:4px;line-height:1;}
+
+@media(min-width:600px){.content-pad{max-width:520px;margin:0 auto;width:100%;}.step-content{max-width:520px;margin:0 auto;width:100%;padding:20px 16px;}}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ LANDING ══════════════════ -->
+<div id="s-landing" class="screen active">
+<div style="background:linear-gradient(135deg,var(--navy),#312e81);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:48px;">
+    <div class="logo-mark" style="width:88px;height:88px;border-radius:24px;"><span style="font-size:40px;font-weight:800;color:white;font-family:Georgia,serif;">N</span></div>
+    <div>
+      <div style="font-family:Georgia,serif;font-size:40px;font-weight:700;color:white;letter-spacing:-0.5px;">Naggare</div>
+      <div style="font-size:12px;color:#A5B4FC;letter-spacing:2.5px;font-weight:500;margin-top:5px;">HIRING, HUMANISED.</div>
+    </div>
+  </div>
+  <div style="font-family:Georgia,serif;font-size:17px;color:#E0E7FF;line-height:1.65;max-width:340px;margin-bottom:48px;font-style:italic;">"Persona. Craft. Learnability. Attitude.<br>Visible before the first call."</div>
+  <div style="width:100%;max-width:360px;display:flex;flex-direction:column;gap:12px;">
+    <button class="btn btn-primary" style="font-size:16px;padding:16px;" onclick="goto('s-reg-email')">👤 I'm a Candidate</button>
+    <button class="btn btn-outline" style="background:rgba(255,255,255,0.08);color:white;border-color:rgba(255,255,255,0.25);font-size:15px;padding:14px;" onclick="goto('s-signin')">I'm a Recruiter / TA →</button>
+    <div style="font-size:12px;color:#6366F1;margin-top:4px;cursor:pointer;" onclick="goto('s-signin')">Already on Naggare? Sign in</div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════ STEP 1: EMAIL REGISTRATION ══════════════════ -->
+<div id="s-reg-email" class="screen">
+<div class="step-hdr">
+  <div class="step-hdr-top">
+    <button class="back-btn" onclick="goto('s-landing')">‹</button>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
+    <div class="step-info"><div class="step-label">Step 1 of 7</div><div class="step-sublabel">Registration</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:14%;"></div></div>
+</div>
+<div class="content-pad step-content">
+  <div style="font-size:24px;font-weight:700;color:var(--navy);margin-bottom:6px;font-family:Georgia,serif;">Let's get you started</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:28px;">Enter your work or personal email. We'll send you a verification code.</div>
+  <div class="fg">
+    <label class="fl">Email address <span>*</span></label>
+    <input class="fi" id="reg-email" type="email" placeholder="you@company.com" style="font-size:16px;padding:14px;"/>
+  </div>
+  <div class="error-box" id="reg-email-error"></div>
+  <button class="btn btn-primary" id="reg-email-btn" onclick="sendOTP()" style="font-size:16px;padding:15px;">Send verification code →</button>
+</div>
+</div>
+
+<!-- ══════════════════ STEP 1B: OTP VERIFICATION ══════════════════ -->
+<div id="s-reg-otp" class="screen">
+<div class="step-hdr">
+  <div class="step-hdr-top">
+    <button class="back-btn" onclick="goto('s-reg-email')">‹</button>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
+    <div class="step-info"><div class="step-label">Step 1 of 7</div><div class="step-sublabel">Verify email</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:14%;"></div></div>
+</div>
+<div class="content-pad step-content">
+  <div style="font-size:24px;font-weight:700;color:var(--navy);margin-bottom:6px;font-family:Georgia,serif;">Check your inbox</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:4px;">We sent a 6-digit code to</div>
+  <div style="font-size:15px;font-weight:600;color:var(--indigo);margin-bottom:28px;" id="otp-email-display"></div>
+
+  <div class="otp-wrap">
+    <input class="otp-digit" maxlength="1" type="number" id="otp-0" oninput="otpInput(0)" onkeydown="otpKey(event,0)"/>
+    <input class="otp-digit" maxlength="1" type="number" id="otp-1" oninput="otpInput(1)" onkeydown="otpKey(event,1)"/>
+    <input class="otp-digit" maxlength="1" type="number" id="otp-2" oninput="otpInput(2)" onkeydown="otpKey(event,2)"/>
+    <input class="otp-digit" maxlength="1" type="number" id="otp-3" oninput="otpInput(3)" onkeydown="otpKey(event,3)"/>
+    <input class="otp-digit" maxlength="1" type="number" id="otp-4" oninput="otpInput(4)" onkeydown="otpKey(event,4)"/>
+    <input class="otp-digit" maxlength="1" type="number" id="otp-5" oninput="otpInput(5)" onkeydown="otpKey(event,5)"/>
+  </div>
+
+  <div class="error-box" id="otp-error"></div>
+  <button class="btn btn-primary" id="otp-verify-btn" onclick="verifyOTP()" style="font-size:16px;padding:15px;margin-bottom:14px;">Verify →</button>
+  <div style="text-align:center;font-size:13px;color:var(--g5);">Didn't get it? <span style="color:var(--indigo);font-weight:600;cursor:pointer;" id="resend-btn" onclick="resendOTP()">Resend code</span></div>
+  <div style="text-align:center;font-size:12px;color:var(--g4);margin-top:8px;" id="otp-timer"></div>
+</div>
+</div>
+
+<!-- ══════════════════ STEP 2: PROFILE PHOTO ══════════════════ -->
+<div id="s-reg-photo" class="screen">
+<div class="step-hdr">
+  <div class="step-hdr-top">
+    <button class="back-btn" onclick="goto('s-reg-otp')">‹</button>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
+    <div class="step-info"><div class="step-label">Step 2 of 7</div><div class="step-sublabel">Your photo</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:28%;"></div></div>
+</div>
+<div class="content-pad step-content">
+  <div style="font-size:24px;font-weight:700;color:var(--navy);margin-bottom:6px;font-family:Georgia,serif;">Add your photo</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:20px;">This is how recruiters first see you. Make it count.</div>
+
+  <div class="photo-nudge" style="margin-bottom:20px;">
+    😊 A real photo works best — casual, clear, just you. No AI headshots, no logos, no group photos. Candidates with genuine photos get 3x more recruiter attention.
+  </div>
+
+  <div class="photo-upload">
+    <div class="photo-circle" onclick="document.getElementById('photo-input').click()" id="photo-circle">
+      <span class="photo-circle-icon">📷</span>
+    </div>
+    <input type="file" id="photo-input" accept="image/*" style="display:none;" onchange="handlePhoto(event)"/>
+    <div style="font-size:14px;font-weight:600;color:var(--indigo);cursor:pointer;" onclick="document.getElementById('photo-input').click()">Upload photo</div>
+    <div style="font-size:12px;color:var(--g4);">JPG or PNG · Max 5MB</div>
+  </div>
+
+  <button class="btn btn-primary" onclick="goto('s-reg-basics')" style="font-size:16px;padding:15px;margin-bottom:10px;" id="photo-next-btn">Continue →</button>
+  <button class="btn-ghost" onclick="goto('s-reg-basics')">Skip for now</button>
+</div>
+</div>
+
+<!-- ══════════════════ STEP 3: BASICS ══════════════════ -->
+<div id="s-reg-basics" class="screen">
+<div class="step-hdr">
+  <div class="step-hdr-top">
+    <button class="back-btn" onclick="goto('s-reg-photo')">‹</button>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
+    <div class="step-info"><div class="step-label">Step 3 of 7</div><div class="step-sublabel">Your basics</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:42%;"></div></div>
+</div>
+<div class="content-pad step-content">
+  <div style="font-size:24px;font-weight:700;color:var(--navy);margin-bottom:6px;font-family:Georgia,serif;">Tell us who you are</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:24px;">Quick basics. Under 2 minutes.</div>
+  <div class="fg"><label class="fl">Full name <span>*</span></label><input class="fi" id="b-name" placeholder="Arjun Sharma"/></div>
+  <div class="fg"><label class="fl">Personal email <span>*</span></label><input class="fi" id="b-email" type="email" placeholder="arjun@gmail.com"/></div>
+  <div class="fg"><label class="fl">Mobile number <span>*</span></label>
+    <div style="display:flex;gap:8px;">
+      <input class="fi" value="+91" style="width:70px;flex-shrink:0;" readonly/>
+      <input class="fi" id="b-mobile" type="tel" placeholder="98765 43210" style="flex:1;"/>
+    </div>
+  </div>
+  <div class="fg"><label class="fl">Current title <span>*</span></label><input class="fi" id="b-title" placeholder="Senior Software Engineer"/></div>
+  <div class="fg"><label class="fl">Current company <span>*</span></label><input class="fi" id="b-company" placeholder="Razorpay"/></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div class="fg"><label class="fl">City</label><input class="fi" id="b-city" placeholder="Bengaluru"/></div>
+    <div class="fg"><label class="fl">Years exp</label><input class="fi" id="b-years" type="number" placeholder="7" min="0" max="50"/></div>
+  </div>
+  <button class="btn btn-primary" onclick="basicsNext()" style="font-size:16px;padding:15px;">Continue →</button>
+</div>
+</div>
+
+<!-- ══════════════════ STEP 4: EXPERIENCE ══════════════════ -->
+<div id="s-reg-exp" class="screen">
+<div class="step-hdr">
+  <div class="step-hdr-top">
+    <button class="back-btn" onclick="goto('s-reg-basics')">‹</button>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
+    <div class="step-info"><div class="step-label">Step 4 of 7</div><div class="step-sublabel">Experience</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:57%;"></div></div>
+</div>
+<div class="content-pad step-content">
+  <div style="font-size:24px;font-weight:700;color:var(--navy);margin-bottom:6px;font-family:Georgia,serif;">Your career journey</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:16px;">Most recent first. This becomes your timeline.</div>
+
+  <div class="nudge-bar" id="exp-nudge">
+    <span class="nudge-emoji">🚀</span>
+    <div class="nudge-text">The more you add, the stronger your profile. <strong>Recruiters spend 70% of their time on the career section.</strong></div>
+  </div>
+
+  <div id="exp-stops">
+    <div class="exp-card">
+      <div style="font-size:11px;font-weight:700;color:var(--indigo);margin-bottom:10px;">Current / most recent role</div>
+      <div class="fg" style="margin-bottom:10px;"><label class="fl">Organisation</label><input class="fi" style="font-size:14px;" placeholder="Razorpay" data-field="org"/></div>
+      <div class="fg" style="margin-bottom:10px;"><label class="fl">Your role / title</label><input class="fi" style="font-size:14px;" placeholder="Senior Software Engineer" data-field="role"/></div>
+      <div class="exp-grid">
+        <div class="fg" style="margin-bottom:0;"><label class="fl">Start date</label><input class="fi" style="font-size:13px;padding:10px 11px;" type="month" data-field="from"/></div>
+        <div class="fg" style="margin-bottom:0;"><label class="fl">End date (blank = now)</label><input class="fi" style="font-size:13px;padding:10px 11px;" type="month" data-field="to"/></div>
+      </div>
+    </div>
+  </div>
+
+  <button style="width:100%;padding:12px;border:1.5px dashed var(--g3);border-radius:12px;background:white;color:var(--g5);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--indigo)';this.style.color='var(--indigo)'" onmouseout="this.style.borderColor='var(--g3)';this.style.color='var(--g5)'" onclick="addExpStop()">
+    + Add another role
+  </button>
+
+  <div style="display:flex;gap:10px;">
+    <button class="btn btn-outline" style="flex:0 0 80px;" onclick="goto('s-reg-basics')">← Back</button>
+    <button class="btn btn-primary" onclick="expNext()" style="font-size:15px;">Continue →</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════ STEP 5: LOOKING FOR + PROMPTS ══════════════════ -->
+<div id="s-reg-prompts" class="screen">
+<div class="step-hdr">
+  <div class="step-hdr-top">
+    <button class="back-btn" onclick="goto('s-reg-exp')">‹</button>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
+    <div class="step-info"><div class="step-label">Step 5 of 7</div><div class="step-sublabel">In your words</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:71%;"></div></div>
+</div>
+<div class="content-pad step-content">
+  <div style="font-size:24px;font-weight:700;color:var(--navy);margin-bottom:6px;font-family:Georgia,serif;">In your own words</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:24px;">This is what recruiters actually read. Be specific, honest, human.</div>
+
+  <!-- What I'm looking for -->
+  <div class="fg">
+    <label class="fl">What are you looking for? <span>*</span></label>
+    <div style="font-size:12px;color:var(--g4);margin-bottom:6px;">In 100 words or less. Role type, culture, stage, what matters to you.</div>
+    <div class="word-count-wrap">
+      <textarea class="fi" id="looking-for" rows="4" placeholder="e.g. I'm looking for a backend-heavy role at a Series B+ startup where I can own infra, work async and ship fast. Culture matters — I want a team that values deep work and moves quickly. No PMs writing specs for me." oninput="countWords(this,'lf-count',100)"></textarea>
+      <span class="word-count" id="lf-count">0 / 100</span>
+    </div>
+  </div>
+
+  <!-- Prompts -->
+  <div style="font-size:15px;font-weight:700;color:var(--g9);margin-bottom:6px;">Choose a prompt</div>
+  <div style="font-size:13px;color:var(--g5);margin-bottom:12px;">Pick one — or write your own. This is the section recruiters share with hiring managers.</div>
+
+  <div class="prompt-suggestions" id="prompt-chips">
+    <div class="prompt-chip" onclick="selectPrompt(this,'🔧 The thing I\'ve shipped I\'m most proud of')">🔧 Built something</div>
+    <div class="prompt-chip" onclick="selectPrompt(this,'🧠 The kind of problem I get unreasonably excited about')">🧠 Problem solving</div>
+    <div class="prompt-chip" onclick="selectPrompt(this,'📈 What I\'m actively working on getting better at')">📈 Growth mindset</div>
+    <div class="prompt-chip" onclick="selectPrompt(this,'🚀 The moment I knew I was in the right field')">🚀 Origin story</div>
+    <div class="prompt-chip" onclick="selectPrompt(this,'💡 A decision I made that I\'d make differently today')">💡 Lessons learnt</div>
+    <div class="prompt-chip" onclick="selectPrompt(this,'🎯 The kind of team I do my best work in')">🎯 Team fit</div>
+    <div class="prompt-chip" onclick="selectPrompt(this,'⚡ How I approach system design decisions')">⚡ System design</div>
+    <div class="prompt-chip" onclick="selectPrompt(this,'👨‍💻 My approach to code quality and engineering standards')">👨‍💻 Code quality</div>
+    <div class="prompt-chip" onclick="selectPrompt(this,'🧭 How I lead when there\'s no playbook')">🧭 Leadership</div>
+    <div class="prompt-chip" onclick="selectPrompt(this,'✍️ Write my own prompt')">✍️ Write my own</div>
+  </div>
+
+  <div id="prompt-answer-section" style="display:none;">
+    <div class="prompt-answer-wrap">
+      <div class="prompt-q" id="prompt-q-display"></div>
+      <textarea class="fi" id="prompt-answer" rows="4" placeholder="Be specific. What was the impact? What broke along the way?" style="background:white;" oninput="countWords(this,'pa-count',150)"></textarea>
+      <div style="text-align:right;font-size:11px;color:var(--g4);margin-top:5px;" id="pa-count">0 / 150</div>
+    </div>
+  </div>
+
+  <div id="own-prompt-section" style="display:none;margin-top:10px;">
+    <div class="fg"><label class="fl">Your prompt question</label><input class="fi" id="own-prompt-q" placeholder="e.g. My approach to debugging complex distributed systems..."/></div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-top:16px;">
+    <button class="btn btn-outline" style="flex:0 0 80px;" onclick="goto('s-reg-exp')">← Back</button>
+    <button class="btn btn-primary" onclick="promptsNext()" style="font-size:15px;">Continue →</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════ STEP 6: SKILLS ══════════════════ -->
+<div id="s-reg-skills" class="screen">
+<div class="step-hdr">
+  <div class="step-hdr-top">
+    <button class="back-btn" onclick="goto('s-reg-prompts')">‹</button>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
+    <div class="step-info"><div class="step-label">Step 6 of 7</div><div class="step-sublabel">Your skills</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:85%;"></div></div>
+</div>
+<div class="content-pad step-content">
+  <div style="font-size:24px;font-weight:700;color:var(--navy);margin-bottom:6px;font-family:Georgia,serif;">What do you bring?</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:20px;">Tap to select. Add your own. These power your matches.</div>
+
+  <div style="background:var(--indigoLt);border:0.5px solid var(--indigoBd);border-radius:10px;padding:10px 14px;margin-bottom:20px;font-size:13px;color:var(--indigoDk);">
+    ✨ Select at least 3 skills. The more specific, the better your matches.
+  </div>
+
+  <div id="skills-container"></div>
+
+  <div style="margin-bottom:20px;">
+    <div style="font-size:13px;font-weight:600;color:var(--g7);margin-bottom:8px;">Add your own</div>
+    <div class="skills-custom">
+      <input class="skills-custom-input" id="custom-skill-input" placeholder="e.g. Kafka, Temporal, eBPF..." onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomSkill();}"/>
+      <button class="skills-add-btn" onclick="addCustomSkill()">Add</button>
+    </div>
+  </div>
+
+  <div style="font-size:12px;color:var(--g4);margin-bottom:16px;" id="skills-selected-count">0 skills selected</div>
+
+  <div style="display:flex;gap:10px;">
+    <button class="btn btn-outline" style="flex:0 0 80px;" onclick="goto('s-reg-prompts')">← Back</button>
+    <button class="btn btn-primary" onclick="skillsNext()" style="font-size:15px;">Continue →</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════ STEP 7: REVIEW + SUBMIT ══════════════════ -->
+<div id="s-reg-review" class="screen">
+<div class="step-hdr">
+  <div class="step-hdr-top">
+    <button class="back-btn" onclick="goto('s-reg-skills')">‹</button>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
+    <div class="step-info"><div class="step-label">Step 7 of 7</div><div class="step-sublabel">Your profile</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:100%;"></div></div>
+</div>
+<div class="content-pad step-content">
+  <div style="font-size:24px;font-weight:700;color:var(--navy);margin-bottom:4px;font-family:Georgia,serif;">Looking good 👀</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:20px;">This is what recruiters will see. Happy with it?</div>
+  <div id="review-content"></div>
+  <div style="margin-top:16px;display:flex;gap:10px;">
+    <button class="btn btn-outline" style="flex:0 0 100px;" onclick="goto('s-reg-skills')">← Edit</button>
+    <button class="btn btn-primary" id="submit-btn" onclick="submitProfile()" style="font-size:15px;">Submit & Create Profile 🚀</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════ SIGN IN ══════════════════ -->
+<div id="s-signin" class="screen">
+<div style="background:linear-gradient(135deg,var(--navy),#312e81);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;">
+  <div style="width:100%;max-width:400px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:28px;cursor:pointer;" onclick="goto('s-landing')">
+      <span style="font-size:22px;color:#A5B4FC;">‹</span>
+      <div class="logo-mark" style="width:34px;height:34px;border-radius:10px;"><span class="logo-n" style="font-size:15px;">N</span></div>
+      <span style="font-family:Georgia,serif;font-size:18px;font-weight:700;color:white;">Naggare</span>
+    </div>
+    <div style="background:white;border-radius:20px;padding:30px 26px;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+      <div style="font-size:22px;font-weight:700;color:var(--navy);margin-bottom:6px;font-family:Georgia,serif;">Welcome back</div>
+      <div style="font-size:14px;color:var(--g5);margin-bottom:24px;">Enter your email to sign back in.</div>
+      <div class="fg"><label class="fl">Email address</label><input class="fi" id="si-email" type="email" placeholder="you@company.com"/></div>
+      <div class="error-box" id="si-error"></div>
+      <button class="btn btn-primary" onclick="doSignIn()" style="margin-bottom:14px;">Sign in →</button>
+      <div style="text-align:center;font-size:13px;color:var(--g4);">No account? <span style="color:var(--indigo);font-weight:600;cursor:pointer;" onclick="goto('s-landing')">Sign up</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════ HOME ══════════════════ -->
+<div id="s-home" class="screen">
+<nav class="topnav">
+  <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="goto('s-home')">
+    <div class="logo-mark" style="width:32px;height:32px;border-radius:9px;"><span class="logo-n" style="font-size:14px;">N</span></div>
+    <span style="font-family:Georgia,serif;font-size:17px;font-weight:700;color:var(--navy);">Naggare</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span style="font-size:13px;font-weight:600;color:var(--g6);" id="nav-name"></span>
+    <div id="nav-av-wrap" onclick="goto('s-my-profile')" style="cursor:pointer;"></div>
+    <button style="background:none;border:none;font-size:13px;color:var(--g4);cursor:pointer;" onclick="doSignOut()">Sign out</button>
+  </div>
+</nav>
+
+<div style="background:linear-gradient(135deg,var(--navy),#312e81);padding:32px 20px 28px;text-align:center;color:white;">
+  <div style="font-size:12px;color:#A5B4FC;letter-spacing:1px;font-weight:500;margin-bottom:8px;text-transform:uppercase;" id="home-greeting">Welcome</div>
+  <div style="font-family:Georgia,serif;font-size:22px;font-weight:700;line-height:1.35;margin-bottom:10px;" id="home-headline">Your profile is live.<br>Let the right roles find you.</div>
+  <div style="font-size:13px;color:#C7D2FE;line-height:1.6;margin-bottom:24px;">Swipe right on roles that excite you. Left on those that don't.</div>
+  <div style="display:flex;gap:10px;justify-content:center;">
+    <div style="background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.2);border-radius:14px;padding:14px 20px;cursor:pointer;transition:all 0.2s;min-width:130px;" onclick="goMyProfile()" onmouseover="this.style.background='rgba(255,255,255,0.18)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+      <span style="font-size:22px;display:block;margin-bottom:6px;">👤</span>
+      <div style="font-size:13px;font-weight:700;color:white;margin-bottom:2px;">My Profile</div>
+      <div style="font-size:11px;color:#A5B4FC;">View & edit</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.2);border-radius:14px;padding:14px 20px;cursor:pointer;transition:all 0.2s;min-width:130px;" onclick="gotoBrowse()" onmouseover="this.style.background='rgba(255,255,255,0.18)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+      <span style="font-size:22px;display:block;margin-bottom:6px;">📋</span>
+      <div style="font-size:13px;font-weight:700;color:white;margin-bottom:2px;">Browse JDs</div>
+      <div style="font-size:11px;color:#A5B4FC;">Find your next role</div>
+    </div>
+  </div>
+</div>
+
+<div class="content-pad">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px;">
+    <div style="background:white;border:0.5px solid var(--g2);border-radius:12px;padding:12px 8px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--indigo);">10</div><div style="font-size:10px;color:var(--g5);margin-top:2px;">JDs live</div></div>
+    <div style="background:white;border:0.5px solid var(--g2);border-radius:12px;padding:12px 8px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--green);">40</div><div style="font-size:10px;color:var(--g5);margin-top:2px;">Candidates</div></div>
+    <div style="background:white;border:0.5px solid var(--g2);border-radius:12px;padding:12px 8px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--violet);">3</div><div style="font-size:10px;color:var(--g5);margin-top:2px;">Matches</div></div>
+  </div>
+  <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--g4);text-transform:uppercase;margin-bottom:10px;">Open roles for you</div>
+  <div id="home-feed"></div>
+</div>
+</div>
+
+<!-- ══════════════════ MY PROFILE ══════════════════ -->
+<div id="s-my-profile" class="screen">
+<div class="detail-nav">
+  <button class="back-btn" onclick="goto('s-home')">‹</button>
+  <span style="font-size:15px;font-weight:700;">My Profile</span>
+  <button style="margin-left:auto;background:var(--indigoLt);border:0.5px solid var(--indigoBd);color:var(--indigo);font-size:12px;font-weight:600;padding:5px 12px;border-radius:999px;cursor:pointer;" onclick="toast('Profile link copied! Share naggare.com 🔗')">Share 🔗</button>
+</div>
+<div style="flex:1;overflow-y:auto;padding-bottom:30px;" id="my-profile-content"></div>
+</div>
+
+<!-- ══════════════════ BROWSE JDs ══════════════════ -->
+<div id="s-browse" class="screen">
+<div class="detail-nav">
+  <button class="back-btn" onclick="goto('s-home')">‹</button>
+  <span style="font-size:15px;font-weight:700;">Browse JDs</span>
+</div>
+<div class="content-pad">
+  <div class="search-wrap">
+    <input class="search-input" id="jd-search" placeholder="🔍  Search roles, companies, skills..." oninput="filterJDs()"/>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;" id="filter-chips">
+    <div class="pill" style="background:var(--indigo);color:white;border-color:var(--indigo);cursor:pointer;padding:6px 12px;font-size:12px;" onclick="filterByTag('')">All</div>
+    <div class="pill" style="background:white;color:var(--g6);border-color:var(--g2);cursor:pointer;padding:6px 12px;font-size:12px;" onclick="filterByTag('Remote')">🌏 Remote</div>
+    <div class="pill" style="background:white;color:var(--g6);border-color:var(--g2);cursor:pointer;padding:6px 12px;font-size:12px;" onclick="filterByTag('Backend')">⚙️ Backend</div>
+    <div class="pill" style="background:white;color:var(--g6);border-color:var(--g2);cursor:pointer;padding:6px 12px;font-size:12px;" onclick="filterByTag('Frontend')">🎨 Frontend</div>
+    <div class="pill" style="background:white;color:var(--g6);border-color:var(--g2);cursor:pointer;padding:6px 12px;font-size:12px;" onclick="filterByTag('AI')">🤖 AI / ML</div>
+    <div class="pill" style="background:white;color:var(--g6);border-color:var(--g2);cursor:pointer;padding:6px 12px;font-size:12px;" onclick="filterByTag('Leadership')">🧭 Leadership</div>
+  </div>
+  <div id="jd-results-count" style="font-size:12px;color:var(--g4);margin-bottom:12px;"></div>
+  <div id="jd-feed"></div>
+</div>
+</div>
+
+<!-- SAVING OVERLAY -->
+<div class="saving-overlay" id="saving-overlay">
+  <div class="saving-spinner"></div>
+  <div style="color:white;font-size:15px;font-weight:600;" id="saving-text">Saving...</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// EMAILJS CONFIG — replace with your keys
+// ══════════════════════════════════════════
+const EMAILJS_PUBLIC_KEY   = 'YOUR_PUBLIC_KEY';
+const EMAILJS_SERVICE_ID   = 'YOUR_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID  = 'YOUR_TEMPLATE_ID';
+
+// ══════════════════════════════════════════
+// AIRTABLE
+// ══════════════════════════════════════════
+const AT_TOKEN = 'patREPLACE_WITH_YOUR_AIRTABLE_TOKEN';
+const AT_BASE  = 'appREPLACE_WITH_YOUR_BASE_ID';
+async function atSave(table, fields) {
+  try {
+    const r = await fetch(`https://api.airtable.com/v0/${AT_BASE}/${encodeURIComponent(table)}`,{
+      method:'POST',headers:{'Authorization':`Bearer ${AT_TOKEN}`,'Content-Type':'application/json'},
+      body:JSON.stringify({fields}),
+    });
+    return await r.json();
+  } catch(e){ console.warn('AT error',e); return null; }
+}
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+const C = {
+  email:'', photoData:null,
+  name:'', personalEmail:'', mobile:'', title:'', company:'', city:'', years:'',
+  career:[], lookingFor:'', promptQ:'', promptA:'', skills:[],
+};
+let generatedOTP = '';
+let selectedSkills = new Set();
+
+// ══════════════════════════════════════════
+// SKILLS DATA
+// ══════════════════════════════════════════
+const SKILLS = [
+  { cat:'💻 Languages', items:['☕ Java','🐍 Python','⚡ JavaScript','🦀 Rust','🐹 Go','💎 Ruby','🔷 TypeScript','⚙️ C++','🍎 Swift','🤖 Kotlin','🐘 PHP','🎯 Dart'] },
+  { cat:'⚛️ Frontend', items:['⚛️ React','🟢 Vue.js','🅰️ Angular','▲ Next.js','🍃 Tailwind CSS','📱 React Native','🎨 Flutter','🌐 HTML / CSS'] },
+  { cat:'🔧 Backend & Infra', items:['🟢 Node.js','🌿 Spring Boot','🐍 Django','💎 Rails','🔥 FastAPI','☸️ Kubernetes','🐳 Docker','🌩️ AWS','☁️ GCP','🔷 Azure','🏗️ Terraform','📡 GraphQL'] },
+  { cat:'🗄️ Databases', items:['🐘 PostgreSQL','🍃 MongoDB','🔴 Redis','🔵 MySQL','❄️ Snowflake','🔍 Elasticsearch','🌊 Cassandra','📊 BigQuery'] },
+  { cat:'🤖 AI / ML', items:['🧠 Machine Learning','🔥 PyTorch','🌊 TensorFlow','🤗 Hugging Face','✨ Prompt Engineering','🔗 LLM Integration','📚 RAG','🔮 LangChain','🧩 OpenAI API','🤖 Fine-tuning','📊 Data Science','🔬 MLOps'] },
+  { cat:'🏗️ System Design', items:['📐 Distributed Systems','⚡ Microservices','📨 Event-Driven','🔄 Message Queues','🌐 API Design','📈 Scalability','🔒 Security','💰 Payments Systems','🔍 Search Systems','📊 Analytics Pipelines'] },
+  { cat:'📱 Mobile', items:['🍎 iOS','🤖 Android','📱 React Native','🎯 Flutter','📲 SwiftUI','🏗️ Jetpack Compose'] },
+  { cat:'🧭 Leadership', items:['👥 Engineering Management','🗺️ Technical Strategy','🌱 Mentoring','📋 Agile / Scrum','🤝 Stakeholder Management','🚀 Team Building','📐 Architecture Reviews','🔍 Technical Hiring'] },
+];
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function goto(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+const v = id => document.getElementById(id)?.value?.trim()||'';
+const ini = n => (n||'').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+let toastT;
+function toast(msg,dur=2800){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),dur);}
+function showSaving(msg){document.getElementById('saving-text').textContent=msg||'Saving...';document.getElementById('saving-overlay').style.display='flex';}
+function hideSaving(){document.getElementById('saving-overlay').style.display='none';}
+function showErr(id,msg){const el=document.getElementById(id);el.textContent=msg;el.style.display='block';}
+function hideErr(id){document.getElementById(id).style.display='none';}
+
+function countWords(el, countId, max) {
+  const words = el.value.trim().split(/\s+/).filter(w=>w.length>0).length;
+  const countEl = document.getElementById(countId);
+  countEl.textContent = `${words} / ${max}`;
+  countEl.className = 'word-count' + (words>max?' over':words>max*0.85?' near':'');
+}
+
+// ══════════════════════════════════════════
+// OTP
+// ══════════════════════════════════════════
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+async function sendOTP() {
+  const email = v('reg-email');
+  if(!email||!email.includes('@')){ showErr('reg-email-error','Please enter a valid email address.'); return; }
+  hideErr('reg-email-error');
+  const btn = document.getElementById('reg-email-btn');
+  btn.disabled=true; btn.textContent='Sending...';
+
+  generatedOTP = generateOTP();
+  C.email = email;
+  document.getElementById('otp-email-display').textContent = email;
+
+  // Try EmailJS if configured
+  if(EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+    try {
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_email: email,
+        otp_code: generatedOTP,
+      });
+    } catch(e) {
+      console.warn('EmailJS error:', e);
+    }
+  }
+
+  btn.disabled=false; btn.textContent='Send verification code →';
+  toast('Code sent! Check your inbox 📬');
+  goto('s-reg-otp');
+  startOTPTimer();
+  document.getElementById('otp-0').focus();
+
+  // Dev helper — remove before production
+  if(EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+    setTimeout(()=>toast(`Dev mode — your code is: ${generatedOTP}`,5000),500);
+  }
+}
+
+async function resendOTP() {
+  generatedOTP = generateOTP();
+  if(EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_email: C.email, otp_code: generatedOTP,
+      });
+    } catch(e) { console.warn('EmailJS error:',e); }
+  }
+  toast('New code sent! 📬');
+  startOTPTimer();
+  if(EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+    setTimeout(()=>toast(`Dev mode — your code is: ${generatedOTP}`,5000),500);
+  }
+}
+
+let otpTimerInterval;
+function startOTPTimer() {
+  clearInterval(otpTimerInterval);
+  let secs = 60;
+  const timerEl = document.getElementById('otp-timer');
+  const resendEl = document.getElementById('resend-btn');
+  resendEl.style.opacity='0.4'; resendEl.style.pointerEvents='none';
+  otpTimerInterval = setInterval(()=>{
+    secs--;
+    timerEl.textContent = `Resend available in ${secs}s`;
+    if(secs<=0){ clearInterval(otpTimerInterval); timerEl.textContent=''; resendEl.style.opacity='1'; resendEl.style.pointerEvents='auto'; }
+  },1000);
+}
+
+function otpInput(idx) {
+  const el = document.getElementById(`otp-${idx}`);
+  const val = el.value.replace(/[^0-9]/g,'');
+  el.value = val.slice(-1);
+  if(val && idx<5) document.getElementById(`otp-${idx+1}`).focus();
+  if(idx===5 && getOTPValue().length===6) verifyOTP();
+}
+
+function otpKey(e, idx) {
+  if(e.key==='Backspace' && !document.getElementById(`otp-${idx}`).value && idx>0) {
+    document.getElementById(`otp-${idx-1}`).focus();
+  }
+}
+
+function getOTPValue() {
+  return [0,1,2,3,4,5].map(i=>document.getElementById(`otp-${i}`).value).join('');
+}
+
+function verifyOTP() {
+  const entered = getOTPValue();
+  hideErr('otp-error');
+  if(entered.length<6){ showErr('otp-error','Please enter all 6 digits.'); return; }
+  if(entered !== generatedOTP){ showErr('otp-error','Incorrect code. Please try again or resend.'); return; }
+  clearInterval(otpTimerInterval);
+  toast('✅ Email verified!');
+  goto('s-reg-photo');
+}
+
+// ══════════════════════════════════════════
+// PHOTO
+// ══════════════════════════════════════════
+function handlePhoto(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+  if(file.size > 5*1024*1024){ toast('Photo must be under 5MB'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    C.photoData = e.target.result;
+    const circle = document.getElementById('photo-circle');
+    circle.innerHTML = `<img src="${C.photoData}" style="width:100%;height:100%;object-fit:cover;"/>`;
+    document.getElementById('photo-next-btn').textContent = 'Continue →';
+    toast('Photo added! Looking good 👌');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ══════════════════════════════════════════
+// BASICS
+// ══════════════════════════════════════════
+function basicsNext() {
+  if(!v('b-name')||!v('b-email')||!v('b-mobile')||!v('b-title')||!v('b-company')){
+    toast('Please fill all required fields'); return;
+  }
+  Object.assign(C,{name:v('b-name'),personalEmail:v('b-email'),mobile:v('b-mobile'),title:v('b-title'),company:v('b-company'),city:v('b-city'),years:v('b-years')});
+  goto('s-reg-exp');
+}
+
+// ══════════════════════════════════════════
+// EXPERIENCE
+// ══════════════════════════════════════════
+let expCount = 1;
+function addExpStop() {
+  expCount++;
+  const div = document.createElement('div');
+  div.className = 'exp-card';
+  div.innerHTML = `
+    <button class="exp-remove" onclick="this.parentElement.remove()">✕</button>
+    <div class="fg" style="margin-bottom:10px;"><label class="fl">Organisation</label><input class="fi" style="font-size:14px;" placeholder="Previous company" data-field="org"/></div>
+    <div class="fg" style="margin-bottom:10px;"><label class="fl">Your role / title</label><input class="fi" style="font-size:14px;" placeholder="Your title" data-field="role"/></div>
+    <div class="exp-grid">
+      <div class="fg" style="margin-bottom:0;"><label class="fl">Start date</label><input class="fi" style="font-size:13px;padding:10px 11px;" type="month" data-field="from"/></div>
+      <div class="fg" style="margin-bottom:0;"><label class="fl">End date</label><input class="fi" style="font-size:13px;padding:10px 11px;" type="month" data-field="to"/></div>
+    </div>`;
+  document.getElementById('exp-stops').appendChild(div);
+  // Update nudge
+  if(expCount===2) document.getElementById('exp-nudge').innerHTML = '<span class="nudge-emoji">🔥</span><div class="nudge-text">Great start! Add more roles to complete your journey.</div>';
+  if(expCount>=3) document.getElementById('exp-nudge').innerHTML = '<span class="nudge-emoji">⭐</span><div class="nudge-text"><strong>Your profile is looking strong!</strong> Recruiters love seeing a full career story.</div>';
+}
+
+function getExpStops() {
+  const stops = [];
+  document.getElementById('exp-stops').querySelectorAll('.exp-card').forEach(card=>{
+    const org = card.querySelector('[data-field="org"]')?.value?.trim();
+    const role = card.querySelector('[data-field="role"]')?.value?.trim();
+    const from = card.querySelector('[data-field="from"]')?.value?.trim();
+    const to = card.querySelector('[data-field="to"]')?.value?.trim();
+    if(org) stops.push({org,role,from,to});
+  });
+  return stops;
+}
+
+function expNext() {
+  const stops = getExpStops();
+  if(!stops.length){ toast('Add at least one role'); return; }
+  C.career = stops;
+  goto('s-reg-prompts');
+}
+
+// ══════════════════════════════════════════
+// PROMPTS
+// ══════════════════════════════════════════
+let selectedPrompt = '';
+
+function selectPrompt(el, promptText) {
+  document.querySelectorAll('.prompt-chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPrompt = promptText;
+
+  if(promptText === '✍️ Write my own prompt') {
+    document.getElementById('own-prompt-section').style.display='block';
+    document.getElementById('prompt-answer-section').style.display='none';
+  } else {
+    document.getElementById('own-prompt-section').style.display='none';
+    document.getElementById('prompt-answer-section').style.display='block';
+    document.getElementById('prompt-q-display').textContent = promptText;
+    document.getElementById('prompt-answer').focus();
+  }
+}
+
+function promptsNext() {
+  const lf = v('looking-for');
+  if(!lf){ toast('Tell us what you\'re looking for'); return; }
+  C.lookingFor = lf;
+
+  if(selectedPrompt === '✍️ Write my own prompt') {
+    C.promptQ = v('own-prompt-q') || 'My own prompt';
+    C.promptA = v('prompt-answer');
+  } else if(selectedPrompt) {
+    C.promptQ = selectedPrompt;
+    C.promptA = v('prompt-answer');
+  }
+
+  buildSkillsUI();
+  goto('s-reg-skills');
+}
+
+// ══════════════════════════════════════════
+// SKILLS
+// ══════════════════════════════════════════
+function buildSkillsUI() {
+  const container = document.getElementById('skills-container');
+  container.innerHTML = SKILLS.map(cat=>`
+    <div class="skills-category">
+      <div class="skills-cat-label">${cat.cat}</div>
+      <div class="skills-grid">
+        ${cat.items.map(skill=>`
+          <div class="skill-chip ${selectedSkills.has(skill)?'selected':''}" onclick="toggleSkill(this,'${skill.replace(/'/g,"\\'")}')">
+            <span class="emoji">${skill.split(' ')[0]}</span>
+            ${skill.split(' ').slice(1).join(' ')}
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+  updateSkillCount();
+}
+
+function toggleSkill(el, skill) {
+  if(selectedSkills.has(skill)) {
+    selectedSkills.delete(skill);
+    el.classList.remove('selected');
+  } else {
+    selectedSkills.add(skill);
+    el.classList.add('selected');
+  }
+  updateSkillCount();
+}
+
+function addCustomSkill() {
+  const input = document.getElementById('custom-skill-input');
+  const val = input.value.trim();
+  if(!val) return;
+  selectedSkills.add(val);
+  input.value='';
+  buildSkillsUI();
+  // Add custom chip
+  const customDiv = document.createElement('div');
+  customDiv.className='skill-chip selected';
+  customDiv.innerHTML=`✨ ${val}`;
+  customDiv.onclick=()=>{ selectedSkills.delete(val); customDiv.remove(); updateSkillCount(); };
+  document.getElementById('skills-container').prepend(customDiv);
+  updateSkillCount();
+  toast(`${val} added ✓`);
+}
+
+function updateSkillCount() {
+  const count = selectedSkills.size;
+  const el = document.getElementById('skills-selected-count');
+  el.textContent = count===0?'No skills selected yet':count===1?'1 skill selected':`${count} skills selected`;
+  el.style.color = count>=3?'var(--green)':count>0?'var(--amber)':'var(--g4)';
+  el.style.fontWeight = count>=3?'600':'400';
+}
+
+function skillsNext() {
+  if(selectedSkills.size<1){ toast('Select at least one skill'); return; }
+  C.skills = [...selectedSkills];
+  buildReview();
+  goto('s-reg-review');
+}
+
+// ══════════════════════════════════════════
+// REVIEW
+// ══════════════════════════════════════════
+function buildReview() {
+  const carH = C.career.map((s,i)=>`
+    <div style="display:flex;flex-direction:column;align-items:center;min-width:82px;padding:0 5px;z-index:1;">
+      <div style="width:${i===0?'14px':'10px'};height:${i===0?'14px':'10px'};border-radius:50%;background:var(--indigo);border:2px solid white;margin-bottom:4px;${i===0?'box-shadow:0 0 0 3px rgba(79,70,229,0.2)':''}"></div>
+      <div style="font-size:9px;font-weight:${i===0?'800':'700'};text-align:center;color:${i===0?'var(--indigo)':'var(--g9)'};">${s.org}</div>
+      <div style="font-size:8px;color:${i===0?'var(--indigo)':'var(--g5)'};text-align:center;margin-top:2px;">${s.role||''}</div>
+      <div style="font-size:7.5px;color:var(--g4);text-align:center;">${s.to?'':'Now ●'}</div>
+    </div>`).join('');
+
+  document.getElementById('review-content').innerHTML = `
+  <div class="profile-card" style="margin-bottom:12px;">
+    <!-- Hero -->
+    <div style="background:var(--indigoLt);padding:16px;border-bottom:0.5px solid var(--indigoBd);display:flex;gap:13px;">
+      ${C.photoData
+        ? `<div class="profile-avatar-wrap" style="width:72px;height:72px;"><img src="${C.photoData}"/></div>`
+        : `<div class="profile-avatar-fallback" style="width:72px;height:72px;background:linear-gradient(135deg,var(--indigo),var(--violet));">${ini(C.name)}</div>`}
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:18px;font-weight:700;color:var(--indigoDk);">${C.name}</div>
+        <div style="font-size:12px;color:var(--indigo);font-weight:600;margin-top:2px;">${C.title}</div>
+        <div style="font-size:12px;color:var(--g5);margin-top:1px;">${C.company}${C.city?' · '+C.city:''}</div>
+        ${C.years?`<div style="font-size:11px;color:var(--g4);margin-top:3px;">⏱ ${C.years} yrs experience</div>`:''}
+      </div>
+    </div>
+    <!-- Career -->
+    ${carH?`<div style="padding:12px 14px 10px;border-bottom:0.5px solid var(--g2);">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;">Career Journey</div>
+      <div style="overflow-x:auto;"><div style="display:flex;min-width:max-content;position:relative;padding:4px 2px;">
+        <div style="position:absolute;top:12px;left:8px;right:8px;height:1.5px;background:var(--g2);opacity:0.5;"></div>
+        ${carH}
+      </div></div>
+    </div>`:''}
+    <!-- Looking for -->
+    ${C.lookingFor?`<div style="padding:12px 14px 10px;border-bottom:0.5px solid var(--g2);">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:7px;">What I'm Looking For</div>
+      <div style="font-size:13px;color:var(--g9);line-height:1.6;">${C.lookingFor}</div>
+    </div>`:''}
+    <!-- Prompt -->
+    ${C.promptQ&&C.promptA?`<div style="padding:12px 14px 10px;border-bottom:0.5px solid var(--g2);">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:7px;">In Their Own Words</div>
+      <div style="background:var(--indigoLt);border:0.5px solid var(--indigoBd);border-radius:10px;padding:10px 12px;">
+        <div style="font-size:11px;font-weight:600;color:var(--indigoDk);margin-bottom:5px;">${C.promptQ}</div>
+        <div style="font-size:13px;color:var(--g9);line-height:1.6;">${C.promptA}</div>
+      </div>
+    </div>`:''}
+    <!-- Skills -->
+    ${C.skills.length?`<div style="padding:12px 14px 10px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;">Skills · ${C.skills.length} selected</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">${C.skills.map(s=>`<span class="pill" style="background:var(--indigoLt);color:#3730A3;border-color:var(--indigoBd);">${s}</span>`).join('')}</div>
+    </div>`:''}
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+// SUBMIT
+// ══════════════════════════════════════════
+async function submitProfile() {
+  const btn = document.getElementById('submit-btn');
+  btn.disabled=true; btn.textContent='Creating profile...';
+  showSaving('Creating your Naggare profile...');
+
+  await atSave('Candidates',{
+    'Name':C.name,'Email':C.email,'Title':C.title,'Company':C.company,
+    'City':C.city,'Years Experience':parseInt(C.years)||0,
+    'Mobile':C.mobile,
+    'Skills':C.skills.map(s=>s.replace(/^[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\s]*/u,'')).join(', '),
+    'Looking For':C.lookingFor,
+    'Prompt Question':C.promptQ||'',
+    'Prompt Answer':C.promptA||'',
+    'Status':'New','Signed Up':new Date().toISOString().split('T')[0],
+  });
+
+  hideSaving();
+  saveSession();
+  btn.disabled=false; btn.textContent='Submit & Create Profile 🚀';
+  toast('✅ Profile created! Welcome to Naggare.');
+  enterHome();
+}
+
+// ══════════════════════════════════════════
+// SESSION
+// ══════════════════════════════════════════
+function saveSession() {
+  try {
+    localStorage.setItem('naggare_v2', JSON.stringify({
+      type:'candidate', candidate:C,
+      skills:[...selectedSkills],
+    }));
+  } catch(e){}
+}
+
+function loadSession() {
+  try {
+    const keys=['naggare_v2','naggare_user','naggare_v1'];
+    for(const key of keys) {
+      const raw=localStorage.getItem(key);
+      if(!raw) continue;
+      const d=JSON.parse(raw);
+      if(!d||!d.type) continue;
+      const name=d.type==='candidate'?d.candidate?.name:d.recruiter?.name;
+      if(!name) continue;
+      if(d.type==='candidate') Object.assign(C,d.candidate||{});
+      if(d.skills) d.skills.forEach(s=>selectedSkills.add(s));
+      localStorage.setItem('naggare_v2',JSON.stringify(d));
+      enterHome();
+      return true;
+    }
+  } catch(e){}
+  return false;
+}
+
+function doSignIn() {
+  const email = v('si-email').toLowerCase();
+  const err = document.getElementById('si-error');
+  err.style.display='none';
+  if(!email){err.textContent='Please enter your email.';err.style.display='block';return;}
+  try {
+    const keys=['naggare_v2','naggare_user','naggare_v1'];
+    for(const key of keys){
+      const raw=localStorage.getItem(key);
+      if(!raw) continue;
+      const d=JSON.parse(raw);
+      if(!d) continue;
+      const saved=(d.candidate?.email||d.recruiter?.email||'').toLowerCase();
+      if(saved===email){
+        if(d.candidate) Object.assign(C,d.candidate);
+        if(d.skills) d.skills.forEach(s=>selectedSkills.add(s));
+        toast(`Welcome back, ${(C.name||'').split(' ')[0]}! 👋`);
+        enterHome(); return;
+      }
+    }
+  } catch(e){}
+  err.textContent="We couldn't find an account with that email.";
+  err.style.display='block';
+}
+
+function doSignOut(){
+  if(!confirm('Sign out of Naggare?')) return;
+  try{localStorage.removeItem('naggare_v2');}catch(e){}
+  Object.assign(C,{email:'',photoData:null,name:'',personalEmail:'',mobile:'',title:'',company:'',city:'',years:'',career:[],lookingFor:'',promptQ:'',promptA:'',skills:[]});
+  selectedSkills.clear();
+  goto('s-landing');
+  toast('Signed out. See you soon! 👋');
+}
+
+// ══════════════════════════════════════════
+// HOME
+// ══════════════════════════════════════════
+function enterHome() {
+  const first=(C.name||'').split(' ')[0]||'there';
+  document.getElementById('nav-name').textContent=first;
+
+  // Set nav avatar
+  const avWrap=document.getElementById('nav-av-wrap');
+  if(C.photoData){
+    avWrap.innerHTML=`<div class="nav-av"><img src="${C.photoData}"/></div>`;
+  } else {
+    avWrap.innerHTML=`<div class="nav-av-fallback">${ini(C.name)}</div>`;
+  }
+
+  document.getElementById('home-greeting').textContent=`Good to see you, ${first}`;
+  renderHomeFeed();
+  goto('s-home');
+}
+
+// ══════════════════════════════════════════
+// JD DATA
+// ══════════════════════════════════════════
+const JDS = [
+  {id:1,title:'Senior Software Engineer',company:'Naggare',initials:'WL',color:'#4F46E5',team:'Geographies & Marketplace',remote:'Remote First',years:'7+',salary:'Competitive + ESOP',tags:['Remote','Backend','AI'],mustHave:['Java','Spring Boot','Microservices'],tuesday:'Build cloud-native microservices for high-throughput OMS. Ship GenAI features.',nonNeg:'7+ yrs hands-on · Java + Spring Boot · End-to-end ownership'},
+  {id:2,title:'Backend Engineer',company:'Zepto',initials:'ZP',color:'#7C3AED',team:'Core Platform',remote:'Hybrid',years:'4+',salary:'₹30–45 LPA',tags:['Backend','Leadership'],mustHave:['Python','Distributed Systems','AWS'],tuesday:'Own services that process 10M orders/day. Oncall included.',nonNeg:'4+ yrs · Python or Go · High-scale experience'},
+  {id:3,title:'Staff Engineer',company:'CRED',initials:'CR',color:'#0284C7',team:'Infrastructure',remote:'Remote First',years:'8+',salary:'₹60–80 LPA',tags:['Remote','Backend','Leadership'],mustHave:['System Design','Java','Distributed Systems'],tuesday:'Drive architecture decisions across 5 squads. Code + influence.',nonNeg:'8+ yrs · Staff+ track record · Strong systems thinking'},
+  {id:4,title:'ML Engineer',company:'Sarvam AI',initials:'SA',color:'#16A34A',team:'Foundation Models',remote:'Remote First',years:'3+',salary:'₹25–45 LPA',tags:['Remote','AI'],mustHave:['PyTorch','LLMs','Python'],tuesday:'Train and fine-tune models for Indian language understanding.',nonNeg:'3+ yrs ML · PyTorch proficiency · Published work preferred'},
+  {id:5,title:'Engineering Manager',company:'Groww',initials:'GW',color:'#D97706',team:'Investments Platform',remote:'Hybrid',years:'8+',salary:'₹50–70 LPA',tags:['Leadership','Backend'],mustHave:['Engineering Management','System Design','Java'],tuesday:'Lead 8-person squad. 50% coding, 50% people. Real balance.',nonNeg:'2+ yrs EM experience · Strong technical depth · Empathetic leader'},
+  {id:6,title:'iOS Engineer',company:'Swiggy',initials:'SW',color:'#E11D48',team:'Consumer App',remote:'Onsite',years:'4+',salary:'₹28–42 LPA',tags:['Frontend'],mustHave:['Swift','SwiftUI','iOS'],tuesday:'Own features used by 10M daily users. SwiftUI-first codebase.',nonNeg:'4+ yrs iOS · SwiftUI experience · Performance obsession'},
+  {id:7,title:'Frontend Engineer',company:'Razorpay',initials:'RZ',color:'#0284C7',team:'Checkout',remote:'Hybrid',years:'3+',salary:'₹22–35 LPA',tags:['Frontend','Backend'],mustHave:['React','TypeScript','Performance'],tuesday:'Build checkout flows that convert 100M transactions. Obsess over ms.',nonNeg:'3+ yrs React · TypeScript · Performance-first mindset'},
+  {id:8,title:'Prompt Engineer',company:'Krutrim',initials:'KR',color:'#7C3AED',team:'AI Products',remote:'Remote First',years:'2+',salary:'₹20–35 LPA',tags:['Remote','AI'],mustHave:['Prompt Engineering','LLM Integration','Python'],tuesday:'Design prompts for Indian-language AI products. Rapid experimentation.',nonNeg:'Deep understanding of LLMs · Systematic testing approach · Python'},
+];
+
+let filteredJDs = [...JDS];
+let activeFilter = '';
+
+function renderHomeFeed() {
+  document.getElementById('home-feed').innerHTML = JDS.slice(0,3).map(jdCard).join('');
+}
+
+function gotoBrowse() {
+  filteredJDs=[...JDS];
+  renderJDFeed();
+  goto('s-browse');
+}
+
+function filterJDs() {
+  const q=v('jd-search').toLowerCase();
+  filteredJDs=JDS.filter(jd=>
+    !q ||
+    jd.title.toLowerCase().includes(q)||
+    jd.company.toLowerCase().includes(q)||
+    (jd.mustHave||[]).some(s=>s.toLowerCase().includes(q))||
+    jd.team.toLowerCase().includes(q)
+  );
+  if(activeFilter) filteredJDs=filteredJDs.filter(jd=>jd.tags.includes(activeFilter));
+  renderJDFeed();
+}
+
+function filterByTag(tag) {
+  activeFilter=tag;
+  document.querySelectorAll('#filter-chips .pill').forEach(el=>{
+    el.style.background=el.textContent.trim().includes(tag)&&tag?'var(--indigo)':'white';
+    el.style.color=el.textContent.trim().includes(tag)&&tag?'white':'var(--g6)';
+    el.style.borderColor=el.textContent.trim().includes(tag)&&tag?'var(--indigo)':'var(--g2)';
+  });
+  if(!tag) {
+    document.querySelector('#filter-chips .pill').style.background='var(--indigo)';
+    document.querySelector('#filter-chips .pill').style.color='white';
+    document.querySelector('#filter-chips .pill').style.borderColor='var(--indigo)';
+  }
+  filteredJDs=tag?JDS.filter(jd=>jd.tags.includes(tag)):[...JDS];
+  const q=v('jd-search').toLowerCase();
+  if(q) filteredJDs=filteredJDs.filter(jd=>jd.title.toLowerCase().includes(q)||jd.company.toLowerCase().includes(q));
+  renderJDFeed();
+}
+
+function renderJDFeed() {
+  const count=filteredJDs.length;
+  document.getElementById('jd-results-count').textContent=count===0?'No roles found — try a different search':count===JDS.length?`${count} open roles`:`${count} role${count===1?'':'s'} found`;
+  document.getElementById('jd-feed').innerHTML=filteredJDs.length?filteredJDs.map(jdCard).join(''):`<div style="text-align:center;padding:40px 20px;color:var(--g4);">
+    <div style="font-size:40px;margin-bottom:12px;">🔍</div>
+    <div style="font-size:16px;font-weight:600;color:var(--g7);margin-bottom:6px;">No roles found</div>
+    <div style="font-size:14px;">Try searching for a different role, company or skill</div>
+  </div>`;
+}
+
+function jdCard(jd) {
+  return `<div class="jd-card">
+    <div class="jd-card-header">
+      <div style="display:flex;gap:12px;margin-bottom:10px;">
+        <div class="jd-company-logo" style="background:${jd.color};">${jd.initials}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:16px;font-weight:700;color:var(--g9);">${jd.title}</div>
+          <div style="font-size:12px;font-weight:600;color:${jd.color};margin-top:1px;">${jd.company}</div>
+          <div style="font-size:12px;color:var(--g5);margin-top:1px;">${jd.team}</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+        <span class="pill" style="background:var(--greenLt);color:var(--greenDk);border-color:var(--greenBd);">🌏 ${jd.remote}</span>
+        <span class="pill" style="background:var(--indigoLt);color:#4338CA;border-color:var(--indigoBd);">${jd.years} yrs</span>
+        <span class="pill" style="background:var(--g0);color:var(--g6);border-color:var(--g2);">${jd.salary}</span>
+      </div>
+      ${jd.mustHave?.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">${jd.mustHave.map(s=>`<span class="pill" style="background:var(--indigoLt);color:#3730A3;border-color:var(--indigoBd);">${s}</span>`).join('')}</div>`:''}
+      ${jd.tuesday?`<div style="font-size:12px;color:var(--g6);line-height:1.5;background:var(--g0);border-radius:8px;padding:8px 10px;">📅 <strong>Real Tuesday:</strong> ${jd.tuesday}</div>`:''}
+    </div>
+    <div class="jd-actions">
+      <div class="btn-not-interested" onclick="swipeLeft(${jd.id})">← Not Interested</div>
+      <div class="btn-interested" onclick="swipeRight(${jd.id})">Interested →</div>
+    </div>
+  </div>`;
+}
+
+function swipeLeft(id) {
+  const jd=JDS.find(j=>j.id===id);
+  toast(`Passed on ${jd?.title||'role'}`);
+}
+function swipeRight(id) {
+  const jd=JDS.find(j=>j.id===id);
+  toast(`✓ Interested in ${jd?.title||'role'}! Recruiter notified.`);
+}
+
+// ══════════════════════════════════════════
+// MY PROFILE
+// ══════════════════════════════════════════
+function renderMyProfile() {
+  const el=document.getElementById('my-profile-content');
+  const carH=C.career.map((s,i)=>`
+    <div style="display:flex;flex-direction:column;align-items:center;min-width:82px;padding:0 5px;z-index:1;">
+      <div style="width:${i===0?'14px':'10px'};height:${i===0?'14px':'10px'};border-radius:50%;background:var(--indigo);border:2px solid white;margin-bottom:4px;${i===0?'box-shadow:0 0 0 3px rgba(79,70,229,0.2)':''}"></div>
+      <div style="font-size:9px;font-weight:${i===0?'800':'700'};text-align:center;color:${i===0?'var(--indigo)':'var(--g9)'};">${s.org}</div>
+      <div style="font-size:8px;color:${i===0?'var(--indigo)':'var(--g5)'};text-align:center;margin-top:2px;">${s.role||''}</div>
+      <div style="font-size:7.5px;color:var(--g4);text-align:center;">${s.to?'':'Now ●'}</div>
+    </div>`).join('');
+
+  el.innerHTML=`
+  <div style="background:var(--indigo);padding:8px 14px;display:flex;align-items:center;justify-content:space-between;">
+    <span class="pill" style="background:rgba(255,255,255,0.2);color:white;border-color:transparent;">⚙️ Technology</span>
+    <span style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">${C.years||0} yrs exp</span>
+  </div>
+  <div style="background:var(--indigoLt);padding:16px;border-bottom:0.5px solid var(--indigoBd);display:flex;gap:13px;align-items:flex-start;">
+    ${C.photoData
+      ?`<div style="width:72px;height:72px;border-radius:50%;overflow:hidden;border:3px solid white;box-shadow:0 4px 12px rgba(0,0,0,0.15);flex-shrink:0;"><img src="${C.photoData}" style="width:100%;height:100%;object-fit:cover;"/></div>`
+      :`<div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--indigo),var(--violet));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:white;flex-shrink:0;border:3px solid white;box-shadow:0 4px 12px rgba(79,70,229,0.2);">${ini(C.name)}</div>`}
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:20px;font-weight:700;color:var(--indigoDk);">${C.name}</div>
+      <div style="font-size:13px;color:var(--indigo);font-weight:600;margin-top:2px;">${C.title}</div>
+      <div style="font-size:12px;color:var(--g5);margin-top:1px;">${C.company}${C.city?' · '+C.city:''}</div>
+    </div>
+  </div>
+  ${carH?`<div style="padding:14px;border-bottom:0.5px solid var(--g2);">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:10px;">Career Journey</div>
+    <div style="overflow-x:auto;"><div style="display:flex;min-width:max-content;position:relative;padding:4px 2px;">
+      <div style="position:absolute;top:12px;left:8px;right:8px;height:1.5px;background:var(--g2);opacity:0.5;"></div>
+      ${carH}
+    </div></div>
+  </div>`:''}
+  ${C.lookingFor?`<div style="padding:14px;border-bottom:0.5px solid var(--g2);">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;">What I'm Looking For</div>
+    <div style="font-size:13px;color:var(--g9);line-height:1.6;">${C.lookingFor}</div>
+  </div>`:''}
+  ${C.promptQ&&C.promptA?`<div style="padding:14px;border-bottom:0.5px solid var(--g2);">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;">In Their Own Words</div>
+    <div style="background:var(--indigoLt);border:0.5px solid var(--indigoBd);border-radius:10px;padding:12px 14px;">
+      <div style="font-size:12px;font-weight:600;color:var(--indigoDk);margin-bottom:6px;">${C.promptQ}</div>
+      <div style="font-size:13px;color:var(--g9);line-height:1.6;">${C.promptA}</div>
+    </div>
+  </div>`:''}
+  ${C.skills.length?`<div style="padding:14px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:10px;">Skills · ${C.skills.length}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:7px;">${C.skills.map(s=>`<span class="pill" style="background:var(--indigoLt);color:#3730A3;border-color:var(--indigoBd);padding:5px 12px;font-size:12px;">${s}</span>`).join('')}</div>
+  </div>`:''}
+  <div style="padding:14px;border-top:0.5px solid var(--g2);">
+    <button class="btn btn-outline" onclick="goto('s-reg-basics')" style="margin-bottom:8px;">✏️ Edit profile</button>
+  </div>`;
+
+  goto('s-my-profile');
+}
+
+// Wire up my profile — all entry points
+document.querySelector('#s-home .topnav').addEventListener('click',e=>{
+  if(e.target.closest('#nav-av-wrap')) renderMyProfile();
+});
+
+// Override the My Profile hero card to render before navigating
+function goMyProfile() { renderMyProfile(); }
+
+// ══════════════════════════════════════════
+// AUTO LOGIN
+// ══════════════════════════════════════════
+window.addEventListener('load',()=>loadSession());
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter') return;
+  const id=document.querySelector('.screen.active')?.id;
+  if(id==='s-reg-email') sendOTP();
+  if(id==='s-signin') doSignIn();
+});
+</script>
+</body>
+</html>
