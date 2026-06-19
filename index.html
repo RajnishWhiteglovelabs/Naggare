@@ -1100,6 +1100,16 @@ async function doSignIn() {
   err.style.display='block';
 }
 
+function doSignOut(){
+  if(!confirm('Sign out of Naggare?')) return;
+  try{localStorage.removeItem('naggare_v2');}catch(e){}
+  Object.assign(C,{email:'',photoData:null,name:'',personalEmail:'',mobile:'',title:'',company:'',city:'',years:'',career:[],lookingFor:'',promptQ:'',promptA:'',prompts:[],skills:[]});
+  selectedSkills.clear();
+  selectedPrompts=[];
+  goto('s-landing');
+  toast('Signed out. See you soon! 👋');
+}
+
 function startCandidate() {
   Object.assign(C,{email:'',photoData:null,name:'',personalEmail:'',mobile:'',title:'',company:'',city:'',years:'',career:[],lookingFor:'',promptQ:'',promptA:'',prompts:[],skills:[]});
   selectedSkills.clear();
