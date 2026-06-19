@@ -298,6 +298,7 @@ textarea.fi{resize:none;line-height:1.6;}
     <div class="fg"><label class="fl">Years exp</label><input class="fi" id="b-years" type="number" placeholder="7" min="0" max="50"/></div>
   </div>
   <button class="btn btn-primary" onclick="basicsNext()" style="font-size:16px;padding:15px;">Continue →</button>
+  <button class="btn-ghost" onclick="saveAndExit()">Save &amp; come back later</button>
 </div>
 </div>
 
@@ -340,6 +341,7 @@ textarea.fi{resize:none;line-height:1.6;}
     <button class="btn btn-outline" style="flex:0 0 80px;" onclick="goto('s-reg-basics')">← Back</button>
     <button class="btn btn-primary" onclick="expNext()" style="font-size:15px;">Continue →</button>
   </div>
+  <button class="btn-ghost" onclick="saveAndExit()">Save &amp; come back later</button>
 </div>
 </div>
 
@@ -389,6 +391,7 @@ textarea.fi{resize:none;line-height:1.6;}
     <button class="btn btn-outline" style="flex:0 0 80px;" onclick="goto('s-reg-exp')">← Back</button>
     <button class="btn btn-primary" onclick="promptsNext()" style="font-size:15px;">Continue →</button>
   </div>
+  <button class="btn-ghost" onclick="saveAndExit()">Save &amp; come back later</button>
 </div>
 </div>
 
@@ -426,6 +429,7 @@ textarea.fi{resize:none;line-height:1.6;}
     <button class="btn btn-outline" style="flex:0 0 80px;" onclick="goto('s-reg-prompts')">← Back</button>
     <button class="btn btn-primary" onclick="skillsNext()" style="font-size:15px;">Continue →</button>
   </div>
+  <button class="btn-ghost" onclick="saveAndExit()">Save &amp; come back later</button>
 </div>
 </div>
 
@@ -1112,6 +1116,37 @@ function doSignOut(){
   selectedPrompts=[];
   goto('s-landing');
   toast('Signed out. See you soon! 👋');
+}
+
+function saveAndExit() {
+  // Collect whatever is filled so far
+  const name = v('b-name')||C.name;
+  if(name) {
+    Object.assign(C,{
+      name: v('b-name')||C.name,
+      email: v('b-email')||C.email,
+      personalEmail: v('b-email')||C.personalEmail,
+      mobile: v('b-mobile')||C.mobile,
+      title: v('b-title')||C.title,
+      company: v('b-company')||C.company,
+      city: v('b-city')||C.city,
+      years: v('b-years')||C.years,
+    });
+  }
+  // Save career if on that step
+  const stops = getExpStops();
+  if(stops.length) C.career = stops;
+  // Save looking for if filled
+  const lf = v('looking-for');
+  if(lf) C.lookingFor = lf;
+  // Save skills
+  if(selectedSkills.size) C.skills = [...selectedSkills];
+
+  // Save to localStorage and Supabase
+  saveSession();
+  if(C.email) saveCandidate(C).catch(()=>{});
+  toast('✅ Progress saved! Sign in anytime to continue.');
+  setTimeout(()=>goto('s-landing'), 1500);
 }
 
 function startCandidate() {
