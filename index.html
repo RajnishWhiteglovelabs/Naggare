@@ -1113,13 +1113,6 @@ function startCandidate() {
   if(pac) pac.innerHTML='';
   goto('s-reg-email');
 }
-  if(!confirm('Sign out of Naggare?')) return;
-  try{localStorage.removeItem('naggare_v2');}catch(e){}
-  Object.assign(C,{email:'',photoData:null,name:'',personalEmail:'',mobile:'',title:'',company:'',city:'',years:'',career:[],lookingFor:'',promptQ:'',promptA:'',skills:[]});
-  selectedSkills.clear();
-  goto('s-landing');
-  toast('Signed out. See you soon! 👋');
-}
 
 // ══════════════════════════════════════════
 // HOME
