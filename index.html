@@ -882,6 +882,7 @@ async function sendOTP() {
 
   generatedOTP = generateOTP();
   C.email = email;
+  localStorage.setItem('naggare_email', email);
   document.getElementById('otp-email-display').textContent = email;
 
   // OTP email — wire to backend in production
@@ -1245,27 +1246,59 @@ async function submitProfile() {
 function saveSession() {
   try {
     localStorage.setItem('naggare_v2', JSON.stringify({
-      type:'candidate', candidate:C,
+      type:'candidate',
+      candidate: {...C},
       skills:[...selectedSkills],
     }));
+    if(C.email) localStorage.setItem('naggare_email', C.email);
   } catch(e){}
 }
 
-function loadSession() {
+async function loadSession() {
+  // Step 1 — check localStorage
   try {
     const keys=['naggare_v2','naggare_user','naggare_v1'];
     for(const key of keys) {
       const raw=localStorage.getItem(key);
       if(!raw) continue;
       const d=JSON.parse(raw);
-      if(!d||!d.type) continue;
-      const name=d.type==='candidate'?d.candidate?.name:d.recruiter?.name;
-      if(!name) continue;
-      if(d.type==='candidate') Object.assign(C,d.candidate||{});
+      if(!d) continue;
+      const email = d.candidate?.email || d.recruiter?.email;
+      const name = d.candidate?.name || d.recruiter?.name;
+      if(!email && !name) continue;
+      if(d.candidate) Object.assign(C, d.candidate);
       if(d.skills) d.skills.forEach(s=>selectedSkills.add(s));
-      localStorage.setItem('naggare_v2',JSON.stringify(d));
       enterHome();
       return true;
+    }
+  } catch(e){}
+
+  // Step 2 — check Supabase with stored email
+  try {
+    const storedEmail = localStorage.getItem('naggare_email');
+    if(storedEmail) {
+      const candidate = await getCandidateByEmail(storedEmail);
+      if(candidate && candidate.name) {
+        Object.assign(C,{
+          name:candidate.name||'', email:candidate.email||storedEmail,
+          personalEmail:candidate.personal_email||'', mobile:candidate.mobile||'',
+          title:candidate.title||'', company:candidate.company||'',
+          city:candidate.city||'', years:candidate.years_exp?.toString()||'',
+          lookingFor:candidate.looking_for||'',
+          promptQ:candidate.prompt_1_q||'', promptA:candidate.prompt_1_a||'',
+          prompts:[
+            {q:candidate.prompt_1_q,a:candidate.prompt_1_a},
+            {q:candidate.prompt_2_q,a:candidate.prompt_2_a},
+            {q:candidate.prompt_3_q,a:candidate.prompt_3_a},
+          ].filter(p=>p.q&&p.a),
+          skills:candidate.skills||[],
+          career:candidate.career||[],
+        });
+        if(C.skills.length) C.skills.forEach(s=>selectedSkills.add(s));
+        saveSession();
+        enterHome();
+        return true;
+      }
     }
   } catch(e){}
   return false;
