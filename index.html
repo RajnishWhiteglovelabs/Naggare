@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#4F46E5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Naggare">
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --indigo:#4F46E5;--indigoDk:#3730A3;--indigoLt:#EEF2FF;--indigoBd:#C7D2FE;
@@ -557,25 +557,61 @@ textarea.fi{resize:none;line-height:1.6;}
 
 <script>
 // ══════════════════════════════════════════
-// EMAILJS CONFIG — replace with your keys
+// SUPABASE CONFIG
 // ══════════════════════════════════════════
-const EMAILJS_PUBLIC_KEY   = 'YOUR_PUBLIC_KEY';
-const EMAILJS_SERVICE_ID   = 'YOUR_SERVICE_ID';
-const EMAILJS_TEMPLATE_ID  = 'YOUR_TEMPLATE_ID';
+const SUPABASE_URL = 'https://wupilyaudyztcxvnqpxq.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1cGlseWF1ZHl6dGN4dm5xcHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk3MDkwNjIsImV4cCI6MjA2NTI4NTA2Mn0.tb7IsFGfHDFqn0GNpvkBhq5RxYUjZBOWfzFRnVxBExI';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ══════════════════════════════════════════
-// AIRTABLE
-// ══════════════════════════════════════════
-const AT_TOKEN = 'pat0skFfn8pPpSLbG.87d858d1ea95c16fb05fbf3e4eec380f8028768987f37d42418bec7579325b1a';
-const AT_BASE  = 'apph5uz1gBntnURrl';
-async function atSave(table, fields) {
-  try {
-    const r = await fetch(`https://api.airtable.com/v0/${AT_BASE}/${encodeURIComponent(table)}`,{
-      method:'POST',headers:{'Authorization':`Bearer ${AT_TOKEN}`,'Content-Type':'application/json'},
-      body:JSON.stringify({fields}),
-    });
-    return await r.json();
-  } catch(e){ console.warn('AT error',e); return null; }
+async function saveCandidate(data) {
+  const { data: result, error } = await sb.from('candidates').upsert({
+    email: data.email,
+    personal_email: data.personalEmail||'',
+    mobile: data.mobile||'',
+    name: data.name||'',
+    title: data.title||'',
+    company: data.company||'',
+    city: data.city||'',
+    years_exp: parseInt(data.years)||0,
+    looking_for: data.lookingFor||'',
+    prompt_1_q: data.prompts?.[0]?.q||data.promptQ||'',
+    prompt_1_a: data.prompts?.[0]?.a||data.promptA||'',
+    prompt_2_q: data.prompts?.[1]?.q||'',
+    prompt_2_a: data.prompts?.[1]?.a||'',
+    prompt_3_q: data.prompts?.[2]?.q||'',
+    prompt_3_a: data.prompts?.[2]?.a||'',
+    skills: data.skills||[],
+    career: data.career||[],
+  }, { onConflict: 'email' }).select().single();
+  if(error) console.warn('Supabase error:', error);
+  return result;
+}
+
+async function getCandidateByEmail(email) {
+  const { data, error } = await sb.from('candidates').select('*').ilike('email', email).single();
+  if(error) return null;
+  return data;
+}
+
+async function saveRecruiter(data) {
+  const { data: result, error } = await sb.from('recruiters').upsert({
+    email: data.email||'',
+    name: data.name||'',
+    title: data.title||'',
+    company: data.company||'',
+    city: data.city||'',
+    years_recruiting: parseInt(data.years)||0,
+    specialisations: data.specs||[],
+    career: data.career||[],
+  }, { onConflict: 'email' }).select().single();
+  if(error) console.warn('Supabase error:', error);
+  return result;
+}
+
+async function getRecruiterByEmail(email) {
+  const { data, error } = await sb.from('recruiters').select('*').ilike('email', email).single();
+  if(error) return null;
+  return data;
 }
 
 // ══════════════════════════════════════════
@@ -649,18 +685,7 @@ async function sendOTP() {
   C.email = email;
   document.getElementById('otp-email-display').textContent = email;
 
-  // Try EmailJS if configured
-  if(EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
-    try {
-      emailjs.init(EMAILJS_PUBLIC_KEY);
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        to_email: email,
-        otp_code: generatedOTP,
-      });
-    } catch(e) {
-      console.warn('EmailJS error:', e);
-    }
-  }
+  // OTP email — wire to backend in production
 
   btn.disabled=false; btn.textContent='Send verification code →';
   toast('Code sent! Check your inbox 📬');
@@ -668,26 +693,15 @@ async function sendOTP() {
   startOTPTimer();
   document.getElementById('otp-0').focus();
 
-  // Dev helper — remove before production
-  if(EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
-    setTimeout(()=>toast(`Dev mode — your code is: ${generatedOTP}`,5000),500);
-  }
+  // Show OTP on screen (replace with email in production)
+  setTimeout(()=>toast(`Your verification code: ${generatedOTP}`,6000),500);
 }
 
 async function resendOTP() {
   generatedOTP = generateOTP();
-  if(EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
-    try {
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        to_email: C.email, otp_code: generatedOTP,
-      });
-    } catch(e) { console.warn('EmailJS error:',e); }
-  }
   toast('New code sent! 📬');
   startOTPTimer();
-  if(EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
-    setTimeout(()=>toast(`Dev mode — your code is: ${generatedOTP}`,5000),500);
-  }
+  setTimeout(()=>toast(`Your code is: ${generatedOTP}`,5000),500);
 }
 
 let otpTimerInterval;
@@ -987,17 +1001,7 @@ async function submitProfile() {
   btn.disabled=true; btn.textContent='Creating profile...';
   showSaving('Creating your Naggare profile...');
 
-  await atSave('Candidates',{
-    'Name':C.name,'Email':C.email,'Personal Email':C.personalEmail,
-    'Title':C.title,'Company':C.company,
-    'City':C.city,'Years Experience':parseInt(C.years)||0,
-    'Mobile':C.mobile,
-    'Skills':C.skills.map(s=>s.replace(/^[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\s]*/u,'')).join(', '),
-    'Looking For':C.lookingFor,
-    'Prompt Question':C.promptQ||'',
-    'Prompt Answer':C.promptA||'',
-    'Status':'New','Signed Up':new Date().toISOString().split('T')[0],
-  });
+  await saveCandidate(C);
 
   hideSaving();
   saveSession();
@@ -1062,33 +1066,42 @@ async function doSignIn() {
     }
   } catch(e){}
 
-  // Step 2 — check Airtable (works across devices and after rebuilds)
+  // Step 2 — check Supabase (works across devices and after rebuilds)
   try {
     showSaving('Looking up your account...');
-    const res = await fetch(`https://api.airtable.com/v0/${AT_BASE}/Candidates?filterByFormula=OR(LOWER({Email})="${email}",LOWER({Personal Email})="${email}")&maxRecords=1`,{
-      headers:{'Authorization':`Bearer ${AT_TOKEN}`}
-    });
-    const data = await res.json();
+    const candidate = await getCandidateByEmail(email);
     hideSaving();
-    if(data.records && data.records.length > 0) {
-      const r = data.records[0].fields;
-      // Restore profile from Airtable
+    if(candidate) {
       Object.assign(C,{
-        name: r['Name']||'', email: r['Email']||email,
-        personalEmail: r['Personal Email']||'', mobile: r['Mobile']||'',
-        title: r['Title']||'', company: r['Company']||'',
-        city: r['City']||'', years: r['Years Experience']?.toString()||'',
-        lookingFor: r['Looking For']||'',
-        promptQ: r['Prompt Question']||'', promptA: r['Prompt Answer']||'',
-        skills: r['Skills']?r['Skills'].split(', '):[],
-        career:[], photoData: null,
+        name:candidate.name||'', email:candidate.email||email,
+        personalEmail:candidate.personal_email||'', mobile:candidate.mobile||'',
+        title:candidate.title||'', company:candidate.company||'',
+        city:candidate.city||'', years:candidate.years_exp?.toString()||'',
+        lookingFor:candidate.looking_for||'',
+        promptQ:candidate.prompt_1_q||'', promptA:candidate.prompt_1_a||'',
+        prompts:[
+          {q:candidate.prompt_1_q,a:candidate.prompt_1_a},
+          {q:candidate.prompt_2_q,a:candidate.prompt_2_a},
+          {q:candidate.prompt_3_q,a:candidate.prompt_3_a},
+        ].filter(p=>p.q&&p.a),
+        skills:candidate.skills||[],
+        career:candidate.career||[],
+        photoData:null,
       });
       if(C.skills.length) C.skills.forEach(s=>selectedSkills.add(s));
       saveSession();
       toast(`Welcome back, ${C.name.split(' ')[0]}! 👋`);
       enterHome(); return;
     }
-  } catch(e){ hideSaving(); console.warn('Airtable lookup failed',e); }
+    const recruiter = await getRecruiterByEmail(email);
+    hideSaving();
+    if(recruiter) {
+      toast(`Welcome back, ${recruiter.name.split(' ')[0]}! 👋`);
+      // Recruiter signin — store and go home (recruiter side coming soon)
+      saveSession();
+      enterHome(); return;
+    }
+  } catch(e){ hideSaving(); console.warn('Supabase lookup failed',e); }
 
   err.textContent="We couldn't find an account with that email. Please sign up first.";
   err.style.display='block';
