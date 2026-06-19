@@ -17,6 +17,14 @@ const REC_HIRE_SKILLS = [
 export default function RecruiterRegister() {
   const router = useRouter()
   const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) return
+      const { data: recruiter } = await supabase.from('recruiters').select('email').ilike('email', session.user.email!).single()
+      if (recruiter) router.push('/home')
+    })
+  }, [])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   
@@ -99,6 +107,8 @@ export default function RecruiterRegister() {
         status: 'active',
       }, { onConflict:'email' })
       if(err) throw err
+      // Send welcome email
+      fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name, type:'recruiter' }) })
       router.push('/recruiter/ready')
     } catch(e: any) {
       setError(e.message || 'Something went wrong')

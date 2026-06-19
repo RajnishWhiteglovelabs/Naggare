@@ -1,22 +1,34 @@
 'use client'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 export default function Landing() {
   const router = useRouter()
+  const [checking, setChecking] = useState(true)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) router.push('/home')
-    })
+    async function checkSession() {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        router.push('/home')
+      } else {
+        setChecking(false)
+      }
+    }
+    checkSession()
   }, [])
+
+  if (checking) return (
+    <div className="min-h-screen flex items-center justify-center" style={{background:'linear-gradient(135deg,#1E1B4B,#312e81)'}}>
+      <div className="text-white text-sm" style={{fontFamily:'Georgia,serif'}}>Loading Naggare...</div>
+    </div>
+  )
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 text-center"
       style={{background: 'linear-gradient(135deg, #1E1B4B, #312e81)'}}>
       
-      {/* Logo */}
       <div className="mb-12">
         <div className="w-24 h-24 rounded-3xl mx-auto mb-4 flex items-center justify-center relative"
           style={{background: 'linear-gradient(135deg, #4F46E5, #7C3AED)', boxShadow: '0 8px 32px rgba(79,70,229,0.4)'}}>

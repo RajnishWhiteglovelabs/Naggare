@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
@@ -123,6 +123,14 @@ const DOMAIN_ICONS: Record<string,string> = {
 export default function CandidateRegister() {
   const router = useRouter()
   const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) return
+      const { data: candidate } = await supabase.from('candidates').select('email').ilike('email', session.user.email!).single()
+      if (candidate) router.push('/home')
+    })
+  }, [])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   
@@ -241,6 +249,9 @@ export default function CandidateRegister() {
       }, { onConflict: 'email' })
       
       if(error) throw error
+      
+      // Send welcome email
+      fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name, type:'candidate' }) })
       
       router.push('/home')
     } catch(e: any) {
