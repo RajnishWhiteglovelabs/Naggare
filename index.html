@@ -362,7 +362,7 @@ textarea.fi{resize:none;line-height:1.6;}
     <label class="fl">What are you looking for? <span>*</span></label>
     <div style="font-size:12px;color:var(--g4);margin-bottom:6px;">In 100 words or less. Role type, culture, stage, what matters to you.</div>
     <div class="word-count-wrap">
-      <textarea class="fi" id="looking-for" rows="4" placeholder="e.g. I'm looking for a backend-heavy role at a Series B+ startup where I can own infra, work async and ship fast. Culture matters — I want a team that values deep work and moves quickly. No PMs writing specs for me." oninput="countWords(this,'lf-count',100)"></textarea>
+      <textarea class="fi" id="looking-for" rows="4" placeholder="e.g. I'm looking for a senior TA leadership role where I can build strategy, work with C-suite and shape culture at scale. Stage matters — I want a company serious about talent as a competitive advantage." oninput="countWords(this,'lf-count',100)"></textarea>
       <span class="word-count" id="lf-count">0 / 100</span>
     </div>
   </div>
@@ -629,13 +629,13 @@ let selectedSkills = new Set();
 // SKILLS DATA
 // ══════════════════════════════════════════
 const SKILLS = [
-  { cat:'💻 Engineering & Tech', items:['☕ Java','🐍 Python','⚡ JavaScript','🦀 Rust','🐹 Go','🔷 TypeScript','⚛️ React','🟢 Node.js','🌿 Spring Boot','☸️ Kubernetes','🐳 Docker','🌩️ AWS','🤖 AI / ML','📐 System Design','🔗 Microservices','🗄️ PostgreSQL','🍃 MongoDB','✨ Prompt Engineering'] },
   { cat:'🎯 Talent Acquisition', items:['🔍 Technical Sourcing','🤝 Executive Hiring','🌱 Campus Recruiting','🌏 Global TA','📊 TA Analytics','🧲 Employer Branding','🤖 AI in Recruiting','📋 Structured Interviewing','🗺️ TA Strategy','👥 Team Building','💼 RPO Management','🔗 LinkedIn Recruiting','🏗️ ATS Implementation','🎯 Diversity Hiring','⚡ High Volume Hiring','🌟 Candidate Experience','🤝 Stakeholder Management','📈 Workforce Planning'] },
+  { cat:'🧭 Leadership & Strategy', items:['👥 People Management','🗺️ Strategic Planning','🌱 Mentoring & Coaching','🚀 Startup Leadership','🔄 Change Management','🤝 Board Management','💡 Innovation','📋 OKRs & Goal Setting','🌏 Global Operations','🏗️ Org Design','🎯 Business Development','🤝 Executive Stakeholders','📊 P&L Ownership','🌟 Culture Building'] },
   { cat:'📣 Marketing', items:['📣 Brand Strategy','📱 Social Media','🎯 Performance Marketing','✍️ Content Marketing','📧 Email Marketing','🔍 SEO / SEM','📊 Marketing Analytics','🎨 Creative Direction','🤝 Partnerships','🌐 Digital Marketing','📺 Campaign Management','💡 Product Marketing','🎪 Event Marketing','📰 PR & Communications','🤖 Marketing Automation'] },
   { cat:'💰 Finance & Accounting', items:['📊 Financial Modelling','💰 FP&A','📈 Equity Research','🏦 Investment Banking','💳 Corporate Finance','📋 Budgeting','🔍 Due Diligence','⚖️ Risk Management','📑 Financial Reporting','🌏 Treasury','💹 Private Equity','🏗️ M&A','📊 Business Analysis','💼 Venture Capital','🔢 Accounting'] },
-  { cat:'🧭 Leadership & Strategy', items:['👥 People Management','🗺️ Strategic Planning','🌱 Mentoring & Coaching','🚀 Startup Leadership','🔄 Change Management','🤝 Board Management','💡 Innovation','📋 OKRs & Goal Setting','🌏 Global Operations','🏗️ Org Design','🎯 Business Development','🤝 Executive Stakeholders','📊 P&L Ownership','🌟 Culture Building'] },
   { cat:'⚙️ Operations & Product', items:['⚙️ Operations Management','📦 Supply Chain','🔄 Process Improvement','📊 Data Analysis','🎯 Product Management','🗺️ Product Strategy','📋 Agile / Scrum','🔍 UX Research','🎨 Product Design','📈 Growth','🤝 Customer Success','📦 Project Management','🔧 Business Operations','💡 Strategy Consulting'] },
   { cat:'🤝 Sales & Business Dev', items:['🤝 B2B Sales','🌐 Enterprise Sales','💼 Account Management','🎯 Business Development','🤝 Partnerships','💰 Revenue Operations','📊 Sales Analytics','🌏 International Sales','📋 CRM Management','🎪 Sales Enablement','🔍 Market Research','📣 Pre-Sales'] },
+  { cat:'💻 Engineering & Tech', items:['☕ Java','🐍 Python','⚡ JavaScript','🦀 Rust','🐹 Go','🔷 TypeScript','⚛️ React','🟢 Node.js','🌿 Spring Boot','☸️ Kubernetes','🐳 Docker','🌩️ AWS','🤖 AI / ML','📐 System Design','🔗 Microservices','🗄️ PostgreSQL','🍃 MongoDB','✨ Prompt Engineering'] },
   { cat:'🏥 Other Domains', items:['🏥 Healthcare Management','🎓 EdTech','🏗️ Real Estate','⚖️ Legal & Compliance','🌿 Sustainability','🎨 Design Thinking','🎭 Creative Direction','📰 Journalism / Media','🏛️ Public Policy','🌏 International Relations','🔬 Research & Development','📡 Telecommunications'] },
 ];
 
@@ -824,12 +824,14 @@ let selectedPrompts = []; // [{q, a}]
 function togglePrompt(el, promptText) {
   const isOwn = promptText === '✍️ Write my own prompt';
   const alreadySelected = el.classList.contains('selected');
+  // Safe ID — use index instead of btoa which breaks on emoji
+  const answerId = 'pa-' + selectedPrompts.length + '-' + Math.random().toString(36).slice(2,7);
 
   if(alreadySelected) {
-    // Deselect — remove chip and answer box
     el.classList.remove('selected');
-    const answerId = 'pa-' + btoa(promptText).slice(0,10);
-    document.getElementById(answerId)?.remove();
+    // Find and remove the answer box for this prompt
+    const existing = document.querySelector(`[data-prompt-q="${CSS.escape(promptText)}"]`);
+    if(existing) existing.remove();
     const idx = selectedPrompts.findIndex(p=>p.q===promptText);
     if(idx>-1) selectedPrompts.splice(idx,1);
     return;
@@ -840,37 +842,32 @@ function togglePrompt(el, promptText) {
   }
 
   el.classList.add('selected');
-  const answerId = 'pa-' + btoa(promptText).slice(0,10);
-  selectedPrompts.push({q:promptText, a:''});
+  selectedPrompts.push({q:promptText, a:'', id:answerId});
 
   const div = document.createElement('div');
   div.id = answerId;
+  div.setAttribute('data-prompt-q', promptText);
   div.className = 'prompt-answer-wrap';
   div.style.marginBottom = '12px';
 
   if(isOwn) {
     div.innerHTML = `
       <div class="prompt-q">✍️ Write your own prompt</div>
-      <input class="fi" placeholder="Type your prompt question..." style="margin-bottom:8px;" oninput="updatePromptQ('${answerId}',this.value)"/>
-      <textarea class="fi" rows="3" placeholder="Your answer..." style="background:white;" oninput="updatePromptA('${answerId}',this.value)"></textarea>`;
+      <input class="fi" placeholder="Type your prompt question..." style="margin-bottom:8px;" oninput="updatePromptField('${answerId}','q',this.value)"/>
+      <textarea class="fi" rows="3" placeholder="Your answer..." style="background:white;" oninput="updatePromptField('${answerId}','a',this.value)"></textarea>`;
   } else {
     div.innerHTML = `
       <div class="prompt-q">${promptText}</div>
-      <textarea class="fi" rows="4" placeholder="Be specific. What was the impact? What happened?" style="background:white;" oninput="updatePromptA('${answerId}',this.value)"></textarea>`;
+      <textarea class="fi" rows="4" placeholder="Be specific. What was the impact? What happened?" style="background:white;" oninput="updatePromptField('${answerId}','a',this.value)"></textarea>`;
   }
 
   document.getElementById('prompt-answers-container').appendChild(div);
   div.querySelector('textarea')?.focus();
 }
 
-function updatePromptQ(id, val) {
-  const p = selectedPrompts.find(p=>p.q==='✍️ Write my own prompt');
-  if(p) p.q = val;
-}
-function updatePromptA(id, val) {
-  // Find by DOM position
-  const idx = [...document.getElementById('prompt-answers-container').children].findIndex(c=>c.id===id);
-  if(idx>-1 && selectedPrompts[idx]) selectedPrompts[idx].a = val;
+function updatePromptField(id, field, val) {
+  const p = selectedPrompts.find(p=>p.id===id);
+  if(p) p[field] = val;
 }
 
 function promptsNext() {
