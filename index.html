@@ -185,7 +185,7 @@ textarea.fi{resize:none;line-height:1.6;}
   <div style="font-family:Georgia,serif;font-size:17px;color:#E0E7FF;line-height:1.65;max-width:340px;margin-bottom:48px;font-style:italic;">"Persona. Craft. Learnability. Attitude.<br>Visible before the first call."</div>
   <div style="width:100%;max-width:360px;display:flex;flex-direction:column;gap:12px;">
     <button class="btn btn-primary" style="font-size:16px;padding:16px;" onclick="startCandidate()">👤 I'm a Candidate</button>
-    <button class="btn btn-green" style="font-size:15px;padding:14px;" onclick="goto('s-signin')">🤝 I'm a Recruiter / TA</button>
+    <button class="btn btn-green" style="font-size:15px;padding:14px;" onclick="startRecruiter()">🤝 I'm a Recruiter / TA</button>
     <div style="font-size:12px;color:#6366F1;margin-top:4px;cursor:pointer;" onclick="goto('s-signin')">Already on Naggare? Sign in</div>
   </div>
 </div>
@@ -488,6 +488,248 @@ textarea.fi{resize:none;line-height:1.6;}
 </div>
 </div>
 
+<!-- ══════════════════ RECRUITER STEP 1: EMAIL OTP ══════════════════ -->
+<div id="s-rec-email" class="screen">
+<div class="step-hdr" style="background:var(--greenLt);border-bottom-color:var(--greenBd);">
+  <div class="step-hdr-top">
+    <button class="back-btn" style="color:var(--green);" onclick="goto('s-landing')">‹</button>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
+    <div class="step-info"><div class="step-label" style="color:var(--green);">Step 1 of 4</div><div class="step-sublabel">Registration</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:25%;background:linear-gradient(90deg,var(--green),#15803D);"></div></div>
+</div>
+<div class="content-pad step-content">
+  <div style="font-size:24px;font-weight:700;color:var(--greenDk);margin-bottom:6px;font-family:Georgia,serif;">Let's get you set up</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:28px;">Enter your work email. We'll send you a verification code.</div>
+  <div class="fg"><label class="fl">Work email <span style="color:var(--red);">*</span></label><input class="fi" id="rec-email" type="email" placeholder="you@company.com" style="font-size:16px;padding:14px;"/></div>
+  <div class="error-box" id="rec-email-error"></div>
+  <button class="btn btn-green" id="rec-email-btn" onclick="sendRecOTP()" style="font-size:16px;padding:15px;">Send verification code →</button>
+</div>
+</div>
+
+<!-- ══════════════════ RECRUITER STEP 1B: OTP ══════════════════ -->
+<div id="s-rec-otp" class="screen">
+<div class="step-hdr" style="background:var(--greenLt);border-bottom-color:var(--greenBd);">
+  <div class="step-hdr-top">
+    <button class="back-btn" style="color:var(--green);" onclick="goto('s-rec-email')">‹</button>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
+    <div class="step-info"><div class="step-label" style="color:var(--green);">Step 1 of 4</div><div class="step-sublabel">Verify email</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:25%;background:linear-gradient(90deg,var(--green),#15803D);"></div></div>
+</div>
+<div class="content-pad step-content">
+  <div style="font-size:24px;font-weight:700;color:var(--greenDk);margin-bottom:6px;font-family:Georgia,serif;">Check your inbox</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:4px;">We sent a 6-digit code to</div>
+  <div style="font-size:15px;font-weight:600;color:var(--green);margin-bottom:28px;" id="rec-otp-email-display"></div>
+  <div class="otp-wrap">
+    <input class="otp-digit" maxlength="1" type="number" id="rec-otp-0" oninput="recOtpInput(0)" onkeydown="recOtpKey(event,0)"/>
+    <input class="otp-digit" maxlength="1" type="number" id="rec-otp-1" oninput="recOtpInput(1)" onkeydown="recOtpKey(event,1)"/>
+    <input class="otp-digit" maxlength="1" type="number" id="rec-otp-2" oninput="recOtpInput(2)" onkeydown="recOtpKey(event,2)"/>
+    <input class="otp-digit" maxlength="1" type="number" id="rec-otp-3" oninput="recOtpInput(3)" onkeydown="recOtpKey(event,3)"/>
+    <input class="otp-digit" maxlength="1" type="number" id="rec-otp-4" oninput="recOtpInput(4)" onkeydown="recOtpKey(event,4)"/>
+    <input class="otp-digit" maxlength="1" type="number" id="rec-otp-5" oninput="recOtpInput(5)" onkeydown="recOtpKey(event,5)"/>
+  </div>
+  <div class="error-box" id="rec-otp-error"></div>
+  <button class="btn btn-green" onclick="verifyRecOTP()" style="font-size:16px;padding:15px;margin-bottom:14px;">Verify →</button>
+  <div style="text-align:center;font-size:13px;color:var(--g5);">Didn't get it? <span style="color:var(--green);font-weight:600;cursor:pointer;" onclick="sendRecOTP()">Resend code</span></div>
+</div>
+</div>
+
+<!-- ══════════════════ RECRUITER STEP 2: PHOTO ══════════════════ -->
+<div id="s-rec-photo" class="screen">
+<div class="step-hdr" style="background:var(--greenLt);border-bottom-color:var(--greenBd);">
+  <div class="step-hdr-top">
+    <button class="back-btn" style="color:var(--green);" onclick="goto('s-rec-otp')">‹</button>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
+    <div class="step-info"><div class="step-label" style="color:var(--green);">Step 2 of 4</div><div class="step-sublabel">Your photo</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:50%;background:linear-gradient(90deg,var(--green),#15803D);"></div></div>
+</div>
+<div class="content-pad step-content">
+  <div style="font-size:24px;font-weight:700;color:var(--greenDk);margin-bottom:6px;font-family:Georgia,serif;">Add your photo</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:20px;">Candidates see your photo before deciding to engage. Make it human.</div>
+  <div style="background:var(--amberLt);border:0.5px solid var(--amberBd);border-radius:10px;padding:10px 14px;margin-bottom:20px;font-size:13px;color:#92400E;text-align:center;line-height:1.5;">
+    😊 A real, warm photo builds trust instantly. Candidates are more likely to engage with recruiters who look approachable.
+  </div>
+  <div class="photo-upload">
+    <div class="photo-circle" onclick="document.getElementById('rec-photo-input').click()" id="rec-photo-circle">
+      <span class="photo-circle-icon">📷</span>
+    </div>
+    <input type="file" id="rec-photo-input" accept="image/*" style="display:none;" onchange="handleRecPhoto(event)"/>
+    <div style="font-size:14px;font-weight:600;color:var(--green);cursor:pointer;" onclick="document.getElementById('rec-photo-input').click()">Upload photo</div>
+    <div style="font-size:12px;color:var(--g4);">JPG or PNG · Max 5MB</div>
+  </div>
+  <button class="btn btn-green" onclick="goto('s-rec-basics')" style="font-size:16px;padding:15px;margin-bottom:10px;">Continue →</button>
+  <button class="btn-ghost" style="color:var(--green);" onclick="goto('s-rec-basics')">Skip for now</button>
+</div>
+</div>
+
+<!-- ══════════════════ RECRUITER STEP 3: BASICS ══════════════════ -->
+<div id="s-rec-basics" class="screen">
+<div class="step-hdr" style="background:var(--greenLt);border-bottom-color:var(--greenBd);">
+  <div class="step-hdr-top">
+    <button class="back-btn" style="color:var(--green);" onclick="goto('s-rec-photo')">‹</button>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
+    <div class="step-info"><div class="step-label" style="color:var(--green);">Step 3 of 4</div><div class="step-sublabel">Your basics</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:75%;background:linear-gradient(90deg,var(--green),#15803D);"></div></div>
+</div>
+<div class="content-pad step-content">
+  <div style="font-size:24px;font-weight:700;color:var(--greenDk);margin-bottom:6px;font-family:Georgia,serif;">Your recruiter profile</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:24px;">Candidates see this before deciding to engage. Make it count.</div>
+  <div class="fg"><label class="fl">Full name <span style="color:var(--red);">*</span></label><input class="fi" id="rb-name" placeholder="Sneha Krishnan"/></div>
+  <div class="fg"><label class="fl">Personal email <span style="color:var(--red);">*</span></label><input class="fi" id="rb-email" type="email" placeholder="sneha@gmail.com"/></div>
+  <div class="fg"><label class="fl">Mobile <span style="color:var(--red);">*</span></label>
+    <div style="display:flex;gap:8px;">
+      <input class="fi" value="+91" style="width:70px;flex-shrink:0;" readonly/>
+      <input class="fi" id="rb-mobile" type="tel" placeholder="98765 43210" style="flex:1;"/>
+    </div>
+  </div>
+  <div class="fg"><label class="fl">Your title <span style="color:var(--red);">*</span></label><input class="fi" id="rb-title" placeholder="Senior TA Manager"/></div>
+  <div class="fg"><label class="fl">Company <span style="color:var(--red);">*</span></label><input class="fi" id="rb-company" placeholder="Razorpay"/></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div class="fg"><label class="fl">City</label><input class="fi" id="rb-city" placeholder="Bengaluru"/></div>
+    <div class="fg"><label class="fl">Years recruiting</label><input class="fi" id="rb-years" type="number" placeholder="9" min="0"/></div>
+  </div>
+  <div class="fg"><label class="fl">Specialisations (press Enter after each)</label>
+    <div class="tag-wrap" id="rec-spec-wrap" onclick="document.getElementById('rec-spec-input').focus()" style="border-color:var(--greenBd);">
+      <input class="tag-input" id="rec-spec-input" placeholder="e.g. Tech Hiring, Leadership, Diversity..." onkeydown="addRecTag(event)"/>
+    </div>
+  </div>
+  <button class="btn btn-green" onclick="recBasicsNext()" style="font-size:16px;padding:15px;">Continue →</button>
+  <button class="btn-ghost" style="color:var(--green);" onclick="recSaveAndExit()">Save & come back later</button>
+</div>
+</div>
+
+<!-- ══════════════════ RECRUITER STEP 4: JOURNEY ══════════════════ -->
+<div id="s-rec-journey" class="screen">
+<div class="step-hdr" style="background:var(--greenLt);border-bottom-color:var(--greenBd);">
+  <div class="step-hdr-top">
+    <button class="back-btn" style="color:var(--green);" onclick="goto('s-rec-basics')">‹</button>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
+    <div class="step-info"><div class="step-label" style="color:var(--green);">Step 4 of 4</div><div class="step-sublabel">Your journey</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,var(--green),#15803D);"></div></div>
+</div>
+<div class="content-pad step-content">
+  <div style="font-size:24px;font-weight:700;color:var(--greenDk);margin-bottom:6px;font-family:Georgia,serif;">Your recruiting journey</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:16px;">Where you've been builds trust with candidates.</div>
+  <div class="nudge-bar">
+    <span class="nudge-emoji">🤝</span>
+    <div class="nudge-text">Candidates want to know your story. <strong>Recruiters with full career histories get 2x more candidate engagement.</strong></div>
+  </div>
+  <div id="rec-journey-stops">
+    <div class="exp-card" style="border-color:var(--greenBd);background:var(--greenLt);">
+      <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:10px;">Current / most recent role</div>
+      <div class="fg" style="margin-bottom:10px;"><label class="fl">Company</label><input class="fi" style="font-size:14px;" placeholder="Razorpay" data-field="org"/></div>
+      <div class="fg" style="margin-bottom:10px;"><label class="fl">Your role / title</label><input class="fi" style="font-size:14px;" placeholder="Sr TA Manager" data-field="role"/></div>
+      <div class="exp-grid">
+        <div class="fg" style="margin-bottom:0;"><label class="fl">Start date</label><input class="fi" style="font-size:13px;padding:10px 11px;" type="month" data-field="from"/></div>
+        <div class="fg" style="margin-bottom:0;"><label class="fl">End date (blank = now)</label><input class="fi" style="font-size:13px;padding:10px 11px;" type="month" data-field="to"/></div>
+      </div>
+    </div>
+  </div>
+  <button style="width:100%;padding:12px;border:1.5px dashed var(--greenBd);border-radius:12px;background:white;color:var(--green);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;" onclick="addRecStop()">
+    + Add another role
+  </button>
+  <div style="display:flex;gap:10px;">
+    <button class="btn btn-outline" style="flex:0 0 80px;" onclick="goto('s-rec-basics')">← Back</button>
+    <button class="btn btn-green" id="rec-submit-btn" onclick="submitRecruiter()">Create Profile ✓</button>
+  </div>
+  <button class="btn-ghost" style="color:var(--green);" onclick="recSaveAndExit()">Save & come back later</button>
+</div>
+</div>
+
+<!-- ══════════════════ RECRUITER READY ══════════════════ -->
+<div id="s-rec-ready" class="screen">
+<div style="flex:1;overflow-y:auto;">
+  <div style="text-align:center;padding:40px 20px;">
+    <div style="font-size:56px;margin-bottom:16px;">🎉</div>
+    <div style="font-size:26px;font-weight:700;color:var(--greenDk);margin-bottom:8px;font-family:Georgia,serif;">Your profile is ready!</div>
+    <div style="font-size:14px;color:var(--g5);line-height:1.7;margin-bottom:32px;max-width:320px;margin-left:auto;margin-right:auto;">Candidates can now see who you are, where you've been and why they should work with you.</div>
+    <div style="background:white;border:2px solid var(--greenBd);border-radius:16px;padding:22px;margin-bottom:14px;cursor:pointer;text-align:left;box-shadow:0 4px 16px rgba(22,163,74,0.1);max-width:400px;margin-left:auto;margin-right:auto;" onclick="goto('s-jd-builder')">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;">
+        <div style="width:48px;height:48px;border-radius:12px;background:var(--greenLt);border:1px solid var(--greenBd);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">📋</div>
+        <div style="flex:1;">
+          <div style="font-size:16px;font-weight:700;color:var(--greenDk);">Create your first JD</div>
+          <div style="font-size:12px;color:var(--green);margin-top:2px;">Honest JDs get better candidates</div>
+        </div>
+        <span style="font-size:22px;color:var(--green);">›</span>
+      </div>
+      <div style="font-size:12px;color:var(--g6);line-height:1.6;padding-left:62px;">Role title · Real Tuesday tasks · Must-have skills · Non-negotiables · Interview process. Everything a candidate needs to say yes.</div>
+    </div>
+    <div style="color:var(--g3);font-size:12px;margin:14px 0;">or</div>
+    <button class="btn btn-outline" style="max-width:300px;margin:0 auto;color:var(--g5);" onclick="enterRecHome()">Skip — go to my dashboard</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════ JD BUILDER ══════════════════ -->
+<div id="s-jd-builder" class="screen">
+<div class="detail-nav" style="background:var(--greenLt);border-bottom-color:var(--greenBd);">
+  <button class="back-btn" style="color:var(--green);" onclick="goto('s-rec-ready')">‹</button>
+  <span style="font-size:15px;font-weight:700;color:var(--greenDk);">Create JD</span>
+</div>
+<div class="content-pad onboard-content" style="max-width:560px;margin:0 auto;">
+  <div style="font-size:22px;font-weight:700;color:var(--greenDk);margin-bottom:5px;font-family:Georgia,serif;">Your Job Description</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:20px;">Honest JDs attract honest candidates. No corporate speak.</div>
+  <div class="fg"><label class="fl">Role title <span style="color:var(--red);">*</span></label><input class="fi" id="jd-title" placeholder="Senior Software Engineer"/></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div class="fg"><label class="fl">Team / Department</label><input class="fi" id="jd-team" placeholder="Payments Infra"/></div>
+    <div class="fg"><label class="fl">Work style</label>
+      <select class="fi" id="jd-remote">
+        <option>🌏 Remote First</option>
+        <option>🏢 Hybrid</option>
+        <option>📍 Onsite</option>
+      </select>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div class="fg"><label class="fl">Min years exp</label><input class="fi" id="jd-minyears" type="number" placeholder="5" min="0"/></div>
+    <div class="fg"><label class="fl">Salary range</label><input class="fi" id="jd-salary" placeholder="₹40–60 LPA"/></div>
+  </div>
+  <div class="fg"><label class="fl">Must-have skills <span style="color:var(--red);">*</span> (press Enter after each)</label>
+    <div class="tag-wrap" id="jd-must-wrap" onclick="document.getElementById('jd-must-input').focus()" style="border-color:var(--greenBd);">
+      <input class="tag-input" id="jd-must-input" placeholder="e.g. Java, React, AWS..." onkeydown="addJDTag(event,'jd-must-wrap','jdMustSkills')"/>
+    </div>
+  </div>
+  <div class="fg"><label class="fl">Good to have skills (press Enter after each)</label>
+    <div class="tag-wrap" id="jd-good-wrap" onclick="document.getElementById('jd-good-input').focus()">
+      <input class="tag-input" id="jd-good-input" placeholder="e.g. Kubernetes, GraphQL..." onkeydown="addJDTag(event,'jd-good-wrap','jdGoodSkills')"/>
+    </div>
+  </div>
+  <div class="fg"><label class="fl">What a real Tuesday looks like <span style="color:var(--red);">*</span></label><textarea class="fi" id="jd-tuesday" rows="4" placeholder="What does this person actually work on day to day? Not 'responsible for' — what do they do? Be specific."></textarea></div>
+  <div class="fg"><label class="fl">Non-negotiables <span style="color:var(--red);">*</span></label><textarea class="fi" id="jd-nonneg" rows="3" placeholder="What's the real bar? What actually disqualifies someone? Be honest."></textarea></div>
+  <div class="fg"><label class="fl">Good to have (optional)</label><textarea class="fi" id="jd-goodtext" rows="2" placeholder="What gives someone an edge? What would make you say 'wow'?"></textarea></div>
+  <div class="fg"><label class="fl">Interview process (optional)</label><textarea class="fi" id="jd-interview" rows="3" placeholder="e.g. Recruiter screen 30 min → Coding 90 min → System design 60 min → Offer within 5 days"></textarea></div>
+  <button class="btn btn-outline" style="margin-bottom:10px;color:var(--green);border-color:var(--greenBd);" onclick="previewJD()">Preview JD →</button>
+  <button class="btn btn-green" id="jd-publish-btn" onclick="publishJD()" style="margin-bottom:30px;">Submit & Publish JD 🚀</button>
+</div>
+</div>
+
+<!-- ══════════════════ JD PREVIEW ══════════════════ -->
+<div id="s-jd-preview" class="screen">
+<div class="detail-nav" style="background:var(--greenLt);border-bottom-color:var(--greenBd);">
+  <button class="back-btn" style="color:var(--green);" onclick="goto('s-jd-builder')">‹</button>
+  <span style="font-size:15px;font-weight:700;color:var(--greenDk);">JD Preview</span>
+  <button style="margin-left:auto;background:var(--green);border:none;color:white;font-size:12px;font-weight:600;padding:6px 16px;border-radius:999px;cursor:pointer;" onclick="publishJD()">Publish →</button>
+</div>
+<div style="flex:1;overflow-y:auto;padding:14px 16px 30px;">
+  <div style="font-size:12px;color:var(--g4);text-align:center;margin-bottom:14px;">This is exactly what candidates see</div>
+  <div id="jd-preview-content"></div>
+</div>
+</div>
+
+<!-- ══════════════════ MY JDs ══════════════════ -->
+<div id="s-my-jds" class="screen">
+<div class="detail-nav">
+  <button class="back-btn" onclick="goto('s-home')">‹</button>
+  <span style="font-size:15px;font-weight:700;">My JDs</span>
+  <button style="margin-left:auto;background:linear-gradient(135deg,var(--green),#15803D);border:none;color:white;font-size:12px;font-weight:600;padding:6px 14px;border-radius:999px;cursor:pointer;" onclick="goto('s-jd-builder')">+ Post JD</button>
+</div>
+<div style="flex:1;overflow-y:auto;padding:14px;" id="my-jds-content"></div>
+</div>
+
 <!-- ══════════════════ SIGN IN ══════════════════ -->
 <div id="s-signin" class="screen">
 <div style="background:linear-gradient(135deg,var(--navy),#312e81);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;">
@@ -664,8 +906,380 @@ let generatedOTP = '';
 let selectedSkills = new Set();
 
 // ══════════════════════════════════════════
-// DOMAIN DATA
+// RECRUITER STATE
 // ══════════════════════════════════════════
+const R = {
+  email:'', photoData:null,
+  name:'', personalEmail:'', mobile:'', title:'', company:'', city:'', years:'',
+  specs:[], career:[],
+};
+let recGeneratedOTP = '';
+let recSpecs = [];
+let jdMustSkills = [];
+let jdGoodSkills = [];
+let recJDs = [];
+
+function startRecruiter() {
+  Object.assign(R,{email:'',photoData:null,name:'',personalEmail:'',mobile:'',title:'',company:'',city:'',years:'',specs:[],career:[]});
+  recSpecs=[]; jdMustSkills=[]; jdGoodSkills=[];
+  goto('s-rec-email');
+}
+
+// ── Recruiter OTP ──────────────────────────────────────────────────────
+async function sendRecOTP() {
+  const email = document.getElementById('rec-email')?.value?.trim();
+  const err = document.getElementById('rec-email-error');
+  err.style.display='none';
+  if(!email||!email.includes('@')){ err.textContent='Please enter a valid email.'; err.style.display='block'; return; }
+  recGeneratedOTP = generateOTP();
+  R.email = email;
+  localStorage.setItem('naggare_rec_email', email);
+  document.getElementById('rec-otp-email-display').textContent = email;
+  const btn = document.getElementById('rec-email-btn');
+  btn.disabled=true; btn.textContent='Sending...';
+  setTimeout(()=>{ btn.disabled=false; btn.textContent='Send verification code →'; },2000);
+  toast('Code sent! Check your inbox 📬');
+  goto('s-rec-otp');
+  document.getElementById('rec-otp-0').focus();
+  setTimeout(()=>toast(`Your code: ${recGeneratedOTP}`,6000),500);
+}
+
+function recOtpInput(idx) {
+  const el = document.getElementById(`rec-otp-${idx}`);
+  const val = el.value.replace(/[^0-9]/g,'');
+  el.value = val.slice(-1);
+  if(val && idx<5) document.getElementById(`rec-otp-${idx+1}`).focus();
+  if(idx===5 && getRecOTPValue().length===6) verifyRecOTP();
+}
+
+function recOtpKey(e, idx) {
+  if(e.key==='Backspace' && !document.getElementById(`rec-otp-${idx}`).value && idx>0)
+    document.getElementById(`rec-otp-${idx-1}`).focus();
+}
+
+function getRecOTPValue() {
+  return [0,1,2,3,4,5].map(i=>document.getElementById(`rec-otp-${i}`)?.value||'').join('');
+}
+
+function verifyRecOTP() {
+  const entered = getRecOTPValue();
+  const err = document.getElementById('rec-otp-error');
+  err.style.display='none';
+  if(entered.length<6){ err.textContent='Please enter all 6 digits.'; err.style.display='block'; return; }
+  if(entered !== recGeneratedOTP){ err.textContent='Incorrect code. Please try again.'; err.style.display='block'; return; }
+  toast('✅ Email verified!');
+  goto('s-rec-photo');
+}
+
+// ── Recruiter Photo ────────────────────────────────────────────────────
+function handleRecPhoto(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+  if(file.size > 5*1024*1024){ toast('Photo must be under 5MB'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    R.photoData = e.target.result;
+    const circle = document.getElementById('rec-photo-circle');
+    circle.innerHTML = `<img src="${R.photoData}" style="width:100%;height:100%;object-fit:cover;"/>`;
+    toast('Photo added! 👌');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Recruiter Specialisations Tags ────────────────────────────────────
+function addRecTag(e) {
+  if(e.key!=='Enter'&&e.key!==',') return;
+  e.preventDefault();
+  const val = e.target.value.trim().replace(',','');
+  if(!val) return;
+  recSpecs.push(val);
+  const tag = document.createElement('div');
+  tag.className = 'tag green';
+  tag.innerHTML = `${val}<span class="tag-x" onclick="recSpecs=recSpecs.filter(t=>t!=='${val}');this.parentElement.remove()">✕</span>`;
+  e.target.parentElement.insertBefore(tag, e.target);
+  e.target.value = '';
+}
+
+// ── Recruiter Basics ──────────────────────────────────────────────────
+function recBasicsNext() {
+  const name = document.getElementById('rb-name')?.value?.trim();
+  const email = document.getElementById('rb-email')?.value?.trim();
+  const mobile = document.getElementById('rb-mobile')?.value?.trim();
+  const title = document.getElementById('rb-title')?.value?.trim();
+  const company = document.getElementById('rb-company')?.value?.trim();
+  if(!name||!email||!mobile||!title||!company){ toast('Please fill all required fields'); return; }
+  Object.assign(R,{
+    name, personalEmail:email, mobile, title, company,
+    city: document.getElementById('rb-city')?.value?.trim()||'',
+    years: document.getElementById('rb-years')?.value?.trim()||'',
+    specs: [...recSpecs],
+  });
+  goto('s-rec-journey');
+}
+
+// ── Recruiter Career Journey ───────────────────────────────────────────
+function addRecStop() {
+  const div = document.createElement('div');
+  div.className = 'exp-card';
+  div.innerHTML = `
+    <button class="exp-remove" onclick="this.parentElement.remove()">✕</button>
+    <div class="fg" style="margin-bottom:10px;"><label class="fl">Company</label><input class="fi" style="font-size:14px;" placeholder="Previous company" data-field="org"/></div>
+    <div class="fg" style="margin-bottom:10px;"><label class="fl">Your role / title</label><input class="fi" style="font-size:14px;" placeholder="Your title" data-field="role"/></div>
+    <div class="exp-grid">
+      <div class="fg" style="margin-bottom:0;"><label class="fl">Start date</label><input class="fi" style="font-size:13px;padding:10px 11px;" type="month" data-field="from"/></div>
+      <div class="fg" style="margin-bottom:0;"><label class="fl">End date</label><input class="fi" style="font-size:13px;padding:10px 11px;" type="month" data-field="to"/></div>
+    </div>`;
+  document.getElementById('rec-journey-stops').appendChild(div);
+}
+
+function getRecStops() {
+  const stops = [];
+  document.getElementById('rec-journey-stops').querySelectorAll('.exp-card').forEach(card=>{
+    const org = card.querySelector('[data-field="org"]')?.value?.trim();
+    const role = card.querySelector('[data-field="role"]')?.value?.trim();
+    const from = card.querySelector('[data-field="from"]')?.value?.trim();
+    const to = card.querySelector('[data-field="to"]')?.value?.trim();
+    if(org) stops.push({org,role,from,to});
+  });
+  return stops;
+}
+
+// ── Submit Recruiter ──────────────────────────────────────────────────
+async function submitRecruiter() {
+  R.career = getRecStops();
+  const btn = document.getElementById('rec-submit-btn');
+  btn.disabled=true; btn.textContent='Creating profile...';
+  showSaving('Creating your Naggare profile...');
+  const result = await saveRecruiter(R);
+  R.id = result?.id;
+  hideSaving();
+  saveRecSession();
+  btn.disabled=false; btn.textContent='Create Profile ✓';
+  toast('✅ Profile created! Welcome to Naggare.');
+  goto('s-rec-ready');
+}
+
+function recSaveAndExit() {
+  const name = document.getElementById('rb-name')?.value?.trim();
+  if(name) Object.assign(R,{
+    name, personalEmail:document.getElementById('rb-email')?.value?.trim()||'',
+    mobile:document.getElementById('rb-mobile')?.value?.trim()||'',
+    title:document.getElementById('rb-title')?.value?.trim()||'',
+    company:document.getElementById('rb-company')?.value?.trim()||'',
+    city:document.getElementById('rb-city')?.value?.trim()||'',
+    years:document.getElementById('rb-years')?.value?.trim()||'',
+    specs:[...recSpecs],
+  });
+  const stops = getRecStops();
+  if(stops.length) R.career = stops;
+  saveRecSession();
+  if(R.email) saveRecruiter(R).catch(()=>{});
+  toast('✅ Progress saved! Sign in to continue.');
+  setTimeout(()=>goto('s-landing'),1500);
+}
+
+function saveRecSession() {
+  try {
+    localStorage.setItem('naggare_rec_v2', JSON.stringify({type:'recruiter',recruiter:{...R},jds:recJDs}));
+    if(R.email) localStorage.setItem('naggare_rec_email', R.email);
+  } catch(e){}
+}
+
+// ── Recruiter Home ────────────────────────────────────────────────────
+function enterRecHome() {
+  const first = (R.name||'').split(' ')[0]||'there';
+  document.getElementById('nav-name').textContent = first;
+  const avWrap = document.getElementById('nav-av-wrap');
+  if(R.photoData) avWrap.innerHTML=`<div class="nav-av"><img src="${R.photoData}"/></div>`;
+  else avWrap.innerHTML=`<div class="nav-av-fallback">${ini(R.name)}</div>`;
+  document.getElementById('home-greeting').textContent=`Good to see you, ${first}`;
+  document.getElementById('home-headline').innerHTML='Your profile is live.<br>Find the right talent.';
+  document.getElementById('home-browse-icon').textContent='👥';
+  document.getElementById('home-browse-title').textContent='Browse Candidates';
+  document.getElementById('home-browse-sub').textContent='Find the right person';
+  document.getElementById('home-jd-card').style.display='block';
+  document.getElementById('home-jd-card').onclick=()=>{ renderMyJDs(); goto('s-my-jds'); };
+  document.getElementById('home-browse-card').onclick=()=>{ renderBrowse(); };
+  renderHomeFeedRecruiter();
+  goto('s-home');
+}
+
+function renderHomeFeedRecruiter() {
+  document.getElementById('home-feed-label').textContent = 'Candidates for you';
+  document.getElementById('home-feed').innerHTML = candFeedCard('Arjun Sharma','AS','Senior Software Engineer','Razorpay','Technology & Product')
+    + candFeedCard('Priya Nair','PN','Product Manager','Swiggy','Technology & Product');
+}
+
+// ── JD Builder ────────────────────────────────────────────────────────
+function addJDTag(e, wrapId, arrKey) {
+  if(e.key!=='Enter'&&e.key!==',') return;
+  e.preventDefault();
+  const val = e.target.value.trim().replace(',','');
+  if(!val) return;
+  if(arrKey==='jdMustSkills') jdMustSkills.push(val);
+  else jdGoodSkills.push(val);
+  const tag = document.createElement('div');
+  tag.className = 'tag' + (arrKey==='jdGoodSkills'?' green':'');
+  const arr = arrKey==='jdMustSkills'?'jdMustSkills':'jdGoodSkills';
+  tag.innerHTML = `${val}<span class="tag-x" onclick="${arr}=${arr}.filter(t=>t!=='${val}');this.parentElement.remove()">✕</span>`;
+  e.target.parentElement.insertBefore(tag, e.target);
+  e.target.value = '';
+}
+
+function previewJD() {
+  const title = document.getElementById('jd-title')?.value?.trim();
+  if(!title){ toast('Add a role title first'); return; }
+  buildJDPreview();
+  goto('s-jd-preview');
+}
+
+function buildJDPreview() {
+  const title = document.getElementById('jd-title')?.value?.trim()||'';
+  const team = document.getElementById('jd-team')?.value?.trim()||'';
+  const remote = document.getElementById('jd-remote')?.value||'Remote First';
+  const years = document.getElementById('jd-minyears')?.value?.trim()||'';
+  const salary = document.getElementById('jd-salary')?.value?.trim()||'';
+  const tuesday = document.getElementById('jd-tuesday')?.value?.trim()||'';
+  const nonneg = document.getElementById('jd-nonneg')?.value?.trim()||'';
+  const interview = document.getElementById('jd-interview')?.value?.trim()||'';
+  const company = R.company||'Your Company';
+  const initials = company.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+
+  document.getElementById('jd-preview-content').innerHTML = `
+  <div style="background:white;border:0.5px solid var(--g2);border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+    <div style="background:var(--indigoLt);padding:14px;border-bottom:0.5px solid var(--indigoBd);">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+        <span class="pill" style="background:var(--greenLt);color:var(--greenDk);border-color:var(--greenBd);">🌏 ${remote}</span>
+        ${salary?`<span class="pill" style="background:var(--indigoLt);color:#4338CA;border-color:var(--indigoBd);">₹ ${salary}</span>`:''}
+        ${years?`<span class="pill" style="background:var(--g0);color:var(--g6);border-color:var(--g2);">${years}+ yrs</span>`:''}
+        <span class="pill" style="background:var(--skyLt);color:#1D4ED8;border-color:var(--skyBd);margin-left:auto;">✓ Verified</span>
+      </div>
+      <div style="display:flex;gap:12px;">
+        <div style="width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--indigo),var(--indigoDk));display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:white;flex-shrink:0;">${initials}</div>
+        <div>
+          <div style="font-size:18px;font-weight:700;color:#3730A3;">${title}</div>
+          <div style="font-size:12px;color:var(--indigo);font-weight:600;">${company}</div>
+          <div style="font-size:12px;color:var(--g5);">${team}</div>
+        </div>
+      </div>
+    </div>
+    ${jdMustSkills.length?`<div style="padding:12px 14px;border-bottom:0.5px solid var(--g2);">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;">Must-Have Skills</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">${jdMustSkills.map(s=>`<span class="pill" style="background:var(--indigoLt);color:#3730A3;border-color:var(--indigoBd);">${s}</span>`).join('')}</div>
+    </div>`:''}
+    ${jdGoodSkills.length?`<div style="padding:12px 14px;border-bottom:0.5px solid var(--g2);">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--g5);margin-bottom:8px;">Good to Have</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">${jdGoodSkills.map(s=>`<span class="pill" style="background:var(--greenLt);color:var(--greenDk);border-color:var(--greenBd);">${s}</span>`).join('')}</div>
+    </div>`:''}
+    ${nonneg?`<div style="padding:12px 14px;border-bottom:0.5px solid var(--g2);">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--red);margin-bottom:7px;">🚫 Non-Negotiables</div>
+      <div style="background:var(--redLt);border:0.5px solid var(--redBd);border-radius:8px;padding:10px;font-size:13px;color:var(--g9);line-height:1.5;">${nonneg}</div>
+    </div>`:''}
+    ${tuesday?`<div style="padding:12px 14px;border-bottom:0.5px solid var(--g2);">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:7px;">📅 What a Real Tuesday Looks Like</div>
+      <div style="font-size:13px;color:var(--g9);line-height:1.6;">${tuesday}</div>
+    </div>`:''}
+    ${interview?`<div style="padding:12px 14px;border-bottom:0.5px solid var(--g2);">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:7px;">🎯 Interview Process</div>
+      <div style="font-size:13px;color:var(--g9);line-height:1.6;">${interview}</div>
+    </div>`:''}
+    <div style="padding:12px 14px;display:flex;gap:8px;">
+      <div style="flex:1;height:42px;border-radius:999px;background:white;border:1.5px solid var(--g2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--g5);">← Not Interested</div>
+      <div style="flex:1;height:42px;border-radius:999px;background:linear-gradient(135deg,var(--indigo),var(--violet));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:white;">Interested →</div>
+    </div>
+  </div>`;
+}
+
+async function publishJD() {
+  const title = document.getElementById('jd-title')?.value?.trim();
+  const tuesday = document.getElementById('jd-tuesday')?.value?.trim();
+  const nonneg = document.getElementById('jd-nonneg')?.value?.trim();
+  if(!title){ toast('Add a role title'); return; }
+  if(!tuesday){ toast('Add what a real Tuesday looks like'); return; }
+  if(!nonneg){ toast('Add your non-negotiables'); return; }
+  const btn = document.getElementById('jd-publish-btn');
+  if(btn){ btn.disabled=true; btn.textContent='Publishing...'; }
+  showSaving('Publishing your JD...');
+  const jd = {
+    title, team:document.getElementById('jd-team')?.value?.trim()||'',
+    remote:document.getElementById('jd-remote')?.value||'Remote First',
+    years:document.getElementById('jd-minyears')?.value?.trim()||'',
+    salary:document.getElementById('jd-salary')?.value?.trim()||'',
+    mustHave:[...jdMustSkills], goodHave:[...jdGoodSkills],
+    tuesday, nonNeg:nonneg,
+    goodText:document.getElementById('jd-goodtext')?.value?.trim()||'',
+    interview:document.getElementById('jd-interview')?.value?.trim()||'',
+    status:'Open',
+    postedDate:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}),
+    company:R.company||'',
+  };
+  await saveJD(jd, R.id||null);
+  hideSaving();
+  recJDs.unshift(jd);
+  saveRecSession();
+  // Reset form
+  ['jd-title','jd-team','jd-minyears','jd-salary','jd-tuesday','jd-nonneg','jd-goodtext','jd-interview'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  ['jd-must-wrap','jd-good-wrap'].forEach(wrapId=>{
+    document.getElementById(wrapId)?.querySelectorAll('.tag').forEach(t=>t.remove());
+  });
+  jdMustSkills=[]; jdGoodSkills=[];
+  if(btn){ btn.disabled=false; btn.textContent='Submit & Publish JD 🚀'; }
+  toast('✅ JD published! Candidates can see it now.');
+  renderMyJDs();
+  goto('s-my-jds');
+}
+
+function renderMyJDs() {
+  const el = document.getElementById('my-jds-content');
+  if(!recJDs.length) {
+    el.innerHTML=`<div style="text-align:center;padding:48px 20px;">
+      <div style="font-size:40px;margin-bottom:12px;">📋</div>
+      <div style="font-size:18px;font-weight:700;color:var(--g9);margin-bottom:8px;font-family:Georgia,serif;">No JDs posted yet</div>
+      <div style="font-size:14px;color:var(--g5);margin-bottom:24px;line-height:1.6;">Post your first role and start finding the right candidates.</div>
+      <button class="btn btn-green" style="max-width:260px;margin:0 auto;" onclick="goto('s-jd-builder')">+ Post your first JD</button>
+    </div>`; return;
+  }
+  el.innerHTML = `<div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--g4);text-transform:uppercase;margin-bottom:12px;">${recJDs.length} JD${recJDs.length>1?'s':''}</div>`
+    + recJDs.map((jd,i)=>`
+    <div style="background:white;border:0.5px solid var(--g2);border-top:3px solid ${jd.status==='Open'?'var(--green)':'var(--g3)'};border-radius:14px;overflow:hidden;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.05);">
+      <div style="padding:14px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px;">
+          <div>
+            <div style="font-size:15px;font-weight:700;color:var(--g9);">${jd.title}</div>
+            <div style="font-size:12px;color:var(--green);margin-top:1px;">${jd.company||R.company||''} · ${jd.team||''}</div>
+          </div>
+          <span style="background:${jd.status==='Open'?'var(--greenLt)':'var(--g0)'};color:${jd.status==='Open'?'var(--green)':'var(--g4)'};border:0.5px solid ${jd.status==='Open'?'var(--greenBd)':'var(--g2)'};font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap;">${jd.status||'Open'}</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">
+          <span class="pill" style="background:var(--greenLt);color:var(--greenDk);border-color:var(--greenBd);">${jd.remote||'Remote'}</span>
+          ${jd.salary?`<span class="pill" style="background:var(--indigoLt);color:#4338CA;border-color:var(--indigoBd);">${jd.salary}</span>`:''}
+          ${jd.years?`<span class="pill" style="background:var(--g0);color:var(--g6);border-color:var(--g2);">${jd.years}+ yrs</span>`:''}
+        </div>
+        ${jd.mustHave?.length?`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;">${jd.mustHave.slice(0,4).map(s=>`<span class="pill" style="background:var(--indigoLt);color:#4338CA;border-color:var(--indigoBd);font-size:9px;">${s}</span>`).join('')}</div>`:''}
+        <div style="font-size:11px;color:var(--g4);">Posted ${jd.postedDate||'today'}</div>
+      </div>
+      <div style="display:flex;border-top:0.5px solid var(--g1);">
+        <button style="flex:1;padding:10px;background:none;border:none;border-right:0.5px solid var(--g1);font-size:12px;font-weight:600;color:var(--indigo);cursor:pointer;" onclick="previewPostedJD(${i})">View</button>
+        <button style="flex:1;padding:10px;background:none;border:none;border-right:0.5px solid var(--g1);font-size:12px;font-weight:600;color:var(--green);cursor:pointer;" onclick="recJDs[${i}].status='Filled';saveRecSession();toast('✓ Marked as Filled');renderMyJDs();">Mark Filled</button>
+        <button style="flex:1;padding:10px;background:none;border:none;font-size:12px;font-weight:600;color:var(--red);cursor:pointer;" onclick="recJDs[${i}].status=recJDs[${i}].status==='Closed'?'Open':'Closed';saveRecSession();renderMyJDs();">${recJDs[i]?.status==='Closed'?'Reopen':'Close'}</button>
+      </div>
+    </div>`).join('')
+    + `<button class="btn btn-green" onclick="goto('s-jd-builder')" style="margin-top:4px;">+ Post another JD</button>`;
+}
+
+function previewPostedJD(idx) {
+  const jd = recJDs[idx];
+  if(!jd) return;
+  const fields = {'jd-title':jd.title,'jd-team':jd.team,'jd-minyears':jd.years,'jd-salary':jd.salary,'jd-tuesday':jd.tuesday,'jd-nonneg':jd.nonNeg,'jd-goodtext':jd.goodText,'jd-interview':jd.interview};
+  Object.entries(fields).forEach(([id,val])=>{ const el=document.getElementById(id); if(el) el.value=val||''; });
+  jdMustSkills=[...(jd.mustHave||[])]; jdGoodSkills=[...(jd.goodHave||[])];
+  buildJDPreview();
+  goto('s-jd-preview');
+}
+
+
 const DOMAIN_PROMPTS = {
   'Technology & Product': [
     {chip:'🔧 Built something', q:'🔧 The thing I\'ve shipped I\'m most proud of'},
@@ -1255,7 +1869,7 @@ function saveSession() {
 }
 
 async function loadSession() {
-  // Step 1 — check localStorage
+  // Step 1 — check candidate localStorage
   try {
     const keys=['naggare_v2','naggare_user','naggare_v1'];
     for(const key of keys) {
@@ -1270,6 +1884,20 @@ async function loadSession() {
       if(d.skills) d.skills.forEach(s=>selectedSkills.add(s));
       enterHome();
       return true;
+    }
+  } catch(e){}
+
+  // Step 1b — check recruiter localStorage
+  try {
+    const raw = localStorage.getItem('naggare_rec_v2');
+    if(raw) {
+      const d = JSON.parse(raw);
+      if(d?.recruiter?.name) {
+        Object.assign(R, d.recruiter);
+        if(d.jds) recJDs = d.jds;
+        enterRecHome();
+        return true;
+      }
     }
   } catch(e){}
 
@@ -1297,6 +1925,25 @@ async function loadSession() {
         if(C.skills.length) C.skills.forEach(s=>selectedSkills.add(s));
         saveSession();
         enterHome();
+        return true;
+      }
+    }
+    // Check recruiter email
+    const storedRecEmail = localStorage.getItem('naggare_rec_email');
+    if(storedRecEmail) {
+      const recruiter = await getRecruiterByEmail(storedRecEmail);
+      if(recruiter && recruiter.name) {
+        Object.assign(R,{
+          name:recruiter.name||'', email:recruiter.email||storedRecEmail,
+          personalEmail:recruiter.personal_email||'', mobile:recruiter.mobile||'',
+          title:recruiter.title||'', company:recruiter.company||'',
+          city:recruiter.city||'', years:recruiter.years_recruiting?.toString()||'',
+          specs:recruiter.specialisations||[],
+          career:recruiter.career||[],
+          id:recruiter.id,
+        });
+        saveRecSession();
+        enterRecHome();
         return true;
       }
     }
