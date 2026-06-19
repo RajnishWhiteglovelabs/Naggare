@@ -570,7 +570,7 @@ textarea.fi{resize:none;line-height:1.6;}
   <div class="step-hdr-top">
     <button class="back-btn" style="color:var(--green);" onclick="goto('s-rec-photo')">‹</button>
     <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
-    <div class="step-info"><div class="step-label" style="color:var(--green);">Step 3 of 4</div><div class="step-sublabel">Your basics</div></div>
+    <div class="step-info"><div class="step-label" style="color:var(--green);">Step 3 of 6</div><div class="step-sublabel">Your basics</div></div>
   </div>
   <div class="progress-bar"><div class="progress-fill" style="width:75%;background:linear-gradient(90deg,var(--green),#15803D);"></div></div>
 </div>
@@ -578,7 +578,7 @@ textarea.fi{resize:none;line-height:1.6;}
   <div style="font-size:24px;font-weight:700;color:var(--greenDk);margin-bottom:6px;font-family:Georgia,serif;">Your recruiter profile</div>
   <div style="font-size:14px;color:var(--g5);margin-bottom:24px;">Candidates see this before deciding to engage. Make it count.</div>
   <div class="fg"><label class="fl">Full name <span style="color:var(--red);">*</span></label><input class="fi" id="rb-name" placeholder="Sneha Krishnan"/></div>
-  <div class="fg"><label class="fl">Personal email <span style="color:var(--red);">*</span></label><input class="fi" id="rb-email" type="email" placeholder="sneha@gmail.com"/></div>
+  <div class="fg"><label class="fl">Email address <span style="color:var(--red);">*</span></label><input class="fi" id="rb-email" type="email" placeholder="sneha@gmail.com or sneha@company.com"/></div>
   <div class="fg"><label class="fl">Mobile <span style="color:var(--red);">*</span></label>
     <div style="display:flex;gap:8px;">
       <input class="fi" value="+91" style="width:70px;flex-shrink:0;" readonly/>
@@ -607,9 +607,9 @@ textarea.fi{resize:none;line-height:1.6;}
   <div class="step-hdr-top">
     <button class="back-btn" style="color:var(--green);" onclick="goto('s-rec-basics')">‹</button>
     <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
-    <div class="step-info"><div class="step-label" style="color:var(--green);">Step 4 of 4</div><div class="step-sublabel">Your journey</div></div>
+    <div class="step-info"><div class="step-label" style="color:var(--green);">Step 4 of 6</div><div class="step-sublabel">Your journey</div></div>
   </div>
-  <div class="progress-bar"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,var(--green),#15803D);"></div></div>
+  <div class="progress-bar"><div class="progress-fill" style="width:66%;background:linear-gradient(90deg,var(--green),#15803D);"></div></div>
 </div>
 <div class="content-pad step-content">
   <div style="font-size:24px;font-weight:700;color:var(--greenDk);margin-bottom:6px;font-family:Georgia,serif;">Your recruiting journey</div>
@@ -634,13 +634,74 @@ textarea.fi{resize:none;line-height:1.6;}
   </button>
   <div style="display:flex;gap:10px;">
     <button class="btn btn-outline" style="flex:0 0 80px;" onclick="goto('s-rec-basics')">← Back</button>
-    <button class="btn btn-green" id="rec-submit-btn" onclick="submitRecruiter()">Create Profile ✓</button>
+    <button class="btn btn-green" onclick="recJourneyNext()">Continue →</button>
   </div>
   <button class="btn-ghost" style="color:var(--green);" onclick="recSaveAndExit()">Save & come back later</button>
 </div>
 </div>
 
 <!-- ══════════════════ RECRUITER READY ══════════════════ -->
+<!-- ══════════════════ RECRUITER STEP 5: BIO ══════════════════ -->
+<div id="s-rec-bio" class="screen">
+<div class="step-hdr" style="background:var(--greenLt);border-bottom-color:var(--greenBd);">
+  <div class="step-hdr-top">
+    <button class="back-btn" style="color:var(--green);" onclick="goto('s-rec-journey')">‹</button>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
+    <div class="step-info"><div class="step-label" style="color:var(--green);">Step 5 of 6</div><div class="step-sublabel">Your bio</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:83%;background:linear-gradient(90deg,var(--green),#15803D);"></div></div>
+</div>
+<div class="content-pad step-content">
+  <div style="font-size:24px;font-weight:700;color:var(--greenDk);margin-bottom:6px;font-family:Georgia,serif;">Why candidates Super Pursue you</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:16px;">This is what candidates read before deciding to engage. Be specific, honest, human.</div>
+  <div style="background:var(--greenLt);border:0.5px solid var(--greenBd);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:13px;color:var(--greenDk);line-height:1.5;">
+    💡 Think about: What makes you different as a recruiter? How do you treat candidates? What can someone expect when they work with you?
+  </div>
+  <div class="fg">
+    <label class="fl">Your bio <span style="color:var(--red);">*</span></label>
+    <div class="word-count-wrap">
+      <textarea class="fi" id="rec-bio" rows="6" placeholder="e.g. I've spent 12 years building TA functions across APAC. I believe great hiring is built on honesty — I'll tell you what the role is really like, who thrives here and who doesn't. I respond within 24 hours, give real feedback and never ghost. If we're not a fit, I'll tell you why and what might be." oninput="countWords(this,'rec-bio-count',150)"></textarea>
+      <span class="word-count" id="rec-bio-count">0 / 150</span>
+    </div>
+  </div>
+  <div style="display:flex;gap:10px;">
+    <button class="btn btn-outline" style="flex:0 0 80px;color:var(--green);border-color:var(--greenBd);" onclick="goto('s-rec-journey')">← Back</button>
+    <button class="btn btn-green" onclick="recBioNext()">Continue →</button>
+  </div>
+  <button class="btn-ghost" style="color:var(--green);" onclick="recSaveAndExit()">Save & come back later</button>
+</div>
+</div>
+
+<!-- ══════════════════ RECRUITER STEP 6: SKILLS I HIRE FOR ══════════════════ -->
+<div id="s-rec-skills" class="screen">
+<div class="step-hdr" style="background:var(--greenLt);border-bottom-color:var(--greenBd);">
+  <div class="step-hdr-top">
+    <button class="back-btn" style="color:var(--green);" onclick="goto('s-rec-bio')">‹</button>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
+    <div class="step-info"><div class="step-label" style="color:var(--green);">Step 6 of 6</div><div class="step-sublabel">Skills you hire for</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,var(--green),#15803D);"></div></div>
+</div>
+<div class="content-pad step-content">
+  <div style="font-size:24px;font-weight:700;color:var(--greenDk);margin-bottom:6px;font-family:Georgia,serif;">What do you hire for?</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:20px;">Select the roles and skills you recruit for. Candidates use this to find the right recruiter.</div>
+  <div id="rec-hire-skills-container"></div>
+  <div style="margin-bottom:20px;">
+    <div style="font-size:13px;font-weight:600;color:var(--g7);margin-bottom:8px;">Add your own</div>
+    <div class="skills-custom">
+      <input class="skills-custom-input" id="rec-custom-skill-input" placeholder="e.g. Fintech, NBFC, D2C..." onkeydown="if(event.key==='Enter'){event.preventDefault();addRecCustomHireSkill();}"/>
+      <button class="skills-add-btn" style="background:var(--green);" onclick="addRecCustomHireSkill()">Add</button>
+    </div>
+  </div>
+  <div style="font-size:12px;color:var(--g4);margin-bottom:16px;" id="rec-hire-skills-count">0 skills selected</div>
+  <div style="display:flex;gap:10px;">
+    <button class="btn btn-outline" style="flex:0 0 80px;color:var(--green);border-color:var(--greenBd);" onclick="goto('s-rec-bio')">← Back</button>
+    <button class="btn btn-green" id="rec-submit-btn" onclick="submitRecruiter()">Create Profile ✓</button>
+  </div>
+  <button class="btn-ghost" style="color:var(--green);" onclick="recSaveAndExit()">Save & come back later</button>
+</div>
+</div>
+
 <div id="s-rec-ready" class="screen">
 <div style="flex:1;overflow-y:auto;">
   <div style="text-align:center;padding:40px 20px;">
@@ -883,6 +944,8 @@ async function saveRecruiter(data) {
     years_recruiting: parseInt(data.years)||0,
     specialisations: data.specs||[],
     career: data.career||[],
+    bio: data.bio||'',
+    hire_skills: data.hireSkills||[],
   }, { onConflict: 'email' }).select().single();
   if(error) console.warn('Supabase error:', error);
   return result;
@@ -919,9 +982,79 @@ let jdMustSkills = [];
 let jdGoodSkills = [];
 let recJDs = [];
 
+const REC_HIRE_SKILLS = [
+  {cat:'💻 Technology', items:['Software Engineering','Frontend','Backend','Full Stack','Mobile','DevOps / Infra','Data Engineering','AI / ML','Security','QA / Testing','Product Management','UX / Design']},
+  {cat:'🎯 Leadership & Executive', items:['CTO / VP Engineering','CPO / VP Product','CEO / MD','CFO / VP Finance','CHRO / VP HR','CMO / VP Marketing','VP Sales','Director Level','Head of Department','C-Suite']},
+  {cat:'💰 Finance & Banking', items:['Investment Banking','Private Equity','Venture Capital','FP&A','Risk Management','Treasury','Corporate Finance','Accounting','Audit','Compliance']},
+  {cat:'📣 Marketing', items:['Brand Marketing','Performance Marketing','Content Marketing','Product Marketing','Growth Marketing','PR & Communications','Social Media','Events']},
+  {cat:'🤝 Sales & BD', items:['Enterprise Sales','B2B Sales','Account Management','Business Development','Revenue Operations','Presales','Partnerships']},
+  {cat:'🧑‍💼 HR & L&D', items:['HR Business Partnering','L&D','Compensation & Benefits','HRIS','OD & Culture','Employee Relations','DEI']},
+  {cat:'📞 BPO & Ops', items:['Customer Service','Operations','Supply Chain','Process Excellence','Six Sigma','Quality Assurance','Team Management']},
+  {cat:'🌐 Sectors', items:['Fintech','NBFC','D2C','SaaS','E-commerce','Healthcare','EdTech','Real Estate','Logistics','Manufacturing','Consulting','Media & Entertainment']},
+];
+
+let recHireSkills = new Set();
+
+function buildRecHireSkillsUI() {
+  const container = document.getElementById('rec-hire-skills-container');
+  if(!container) return;
+  container.innerHTML = REC_HIRE_SKILLS.map(cat=>`
+    <div class="skills-category">
+      <div class="skills-cat-label">${cat.cat}</div>
+      <div class="skills-grid">
+        ${cat.items.map(skill=>`
+          <div class="skill-chip ${recHireSkills.has(skill)?'selected':''}" onclick="toggleRecHireSkill(this,'${skill.replace(/'/g,"\\'")}')">
+            ${skill}
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+  updateRecHireSkillCount();
+}
+
+function toggleRecHireSkill(el, skill) {
+  if(recHireSkills.has(skill)){ recHireSkills.delete(skill); el.classList.remove('selected'); }
+  else { recHireSkills.add(skill); el.classList.add('selected'); }
+  updateRecHireSkillCount();
+}
+
+function addRecCustomHireSkill() {
+  const input = document.getElementById('rec-custom-skill-input');
+  const val = input?.value?.trim();
+  if(!val) return;
+  recHireSkills.add(val);
+  input.value = '';
+  buildRecHireSkillsUI();
+  updateRecHireSkillCount();
+  toast(`${val} added ✓`);
+}
+
+function updateRecHireSkillCount() {
+  const count = recHireSkills.size;
+  const el = document.getElementById('rec-hire-skills-count');
+  if(!el) return;
+  el.textContent = count===0?'No skills selected yet':count===1?'1 skill selected':`${count} skills selected`;
+  el.style.color = count>=3?'var(--green)':count>0?'var(--amber)':'var(--g4)';
+  el.style.fontWeight = count>=3?'600':'400';
+}
+
+function recJourneyNext() {
+  R.career = getRecStops();
+  if(!R.career.length){ toast('Add at least one role'); return; }
+  goto('s-rec-bio');
+}
+
+function recBioNext() {
+  const bio = document.getElementById('rec-bio')?.value?.trim();
+  if(!bio){ toast('Add your bio — tell candidates who you are'); return; }
+  R.bio = bio;
+  buildRecHireSkillsUI();
+  goto('s-rec-skills');
+}
+
+
 function startRecruiter() {
-  Object.assign(R,{email:'',photoData:null,name:'',personalEmail:'',mobile:'',title:'',company:'',city:'',years:'',specs:[],career:[]});
-  recSpecs=[]; jdMustSkills=[]; jdGoodSkills=[];
+  Object.assign(R,{email:'',photoData:null,name:'',personalEmail:'',mobile:'',title:'',company:'',city:'',years:'',specs:[],career:[],bio:'',hireSkills:[]});
+  recSpecs=[]; jdMustSkills=[]; jdGoodSkills=[]; recHireSkills=new Set();
   goto('s-rec-email');
 }
 
@@ -1047,6 +1180,8 @@ function getRecStops() {
 // ── Submit Recruiter ──────────────────────────────────────────────────
 async function submitRecruiter() {
   R.career = getRecStops();
+  R.bio = document.getElementById('rec-bio')?.value?.trim()||R.bio||'';
+  R.hireSkills = [...recHireSkills];
   const btn = document.getElementById('rec-submit-btn');
   btn.disabled=true; btn.textContent='Creating profile...';
   showSaving('Creating your Naggare profile...');
