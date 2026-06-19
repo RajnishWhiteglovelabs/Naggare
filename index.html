@@ -367,7 +367,6 @@ textarea.fi{resize:none;line-height:1.6;}
     </div>
   </div>
 
-  <!-- Prompts -->
   <div style="font-size:15px;font-weight:700;color:var(--g9);margin-bottom:6px;">Choose your prompts</div>
   <div style="font-size:13px;color:var(--g5);margin-bottom:12px;">Pick up to 3 — or write your own. This is the section recruiters share with hiring managers.</div>
 
@@ -947,7 +946,6 @@ function buildReview() {
 
   document.getElementById('review-content').innerHTML = `
   <div class="profile-card" style="margin-bottom:12px;">
-    <!-- Hero -->
     <div style="background:var(--indigoLt);padding:16px;border-bottom:0.5px solid var(--indigoBd);display:flex;gap:13px;">
       ${C.photoData
         ? `<div class="profile-avatar-wrap" style="width:72px;height:72px;"><img src="${C.photoData}"/></div>`
@@ -959,7 +957,6 @@ function buildReview() {
         ${C.years?`<div style="font-size:11px;color:var(--g4);margin-top:3px;">⏱ ${C.years} yrs experience</div>`:''}
       </div>
     </div>
-    <!-- Career -->
     ${carH?`<div style="padding:12px 14px 10px;border-bottom:0.5px solid var(--g2);">
       <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;">Career Journey</div>
       <div style="overflow-x:auto;"><div style="display:flex;min-width:max-content;position:relative;padding:4px 2px;">
@@ -967,17 +964,14 @@ function buildReview() {
         ${carH}
       </div></div>
     </div>`:''}
-    <!-- Looking for -->
     ${C.lookingFor?`<div style="padding:12px 14px 10px;border-bottom:0.5px solid var(--g2);">
       <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:7px;">What I'm Looking For</div>
       <div style="font-size:13px;color:var(--g9);line-height:1.6;">${C.lookingFor}</div>
     </div>`:''}
-    <!-- Prompts -->
     ${(C.prompts&&C.prompts.length>0)||(C.promptQ&&C.promptA)?`<div style="padding:12px 14px 10px;border-bottom:0.5px solid var(--g2);">
       <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:7px;">In Their Own Words</div>
       ${(C.prompts&&C.prompts.length>0?C.prompts:[{q:C.promptQ,a:C.promptA}]).filter(p=>p&&p.a).map(p=>`<div style="background:var(--indigoLt);border:0.5px solid var(--indigoBd);border-radius:10px;padding:10px 12px;margin-bottom:7px;"><div style="font-size:11px;font-weight:600;color:var(--indigoDk);margin-bottom:4px;">${p.q}</div><div style="font-size:13px;color:var(--g9);line-height:1.6;">${p.a}</div></div>`).join('')}
-    </div>`:''}`
-    <!-- Skills -->
+    </div>`:''}
     ${C.skills.length?`<div style="padding:12px 14px 10px;">
       <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;">Skills · ${C.skills.length} selected</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;">${C.skills.map(s=>`<span class="pill" style="background:var(--indigoLt);color:#3730A3;border-color:var(--indigoBd);">${s}</span>`).join('')}</div>
