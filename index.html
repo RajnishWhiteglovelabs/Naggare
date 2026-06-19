@@ -1556,39 +1556,54 @@ function renderMyProfile() {
       <div style="font-size:7.5px;color:var(--g4);text-align:center;">${s.to?'':'Now ●'}</div>
     </div>`).join('');
 
+  // Domain colours
+  const DOMAIN_COLORS = {
+    'Technology & Product': {bg:'var(--indigo)',lt:'var(--indigoLt)',bd:'var(--indigoBd)',dk:'var(--indigoDk)',icon:'⚙️'},
+    'Talent Acquisition':   {bg:'var(--green)', lt:'var(--greenLt)', bd:'var(--greenBd)', dk:'var(--greenDk)', icon:'🎯'},
+    'Finance & Banking':    {bg:'#0891B2',      lt:'var(--skyLt)',   bd:'var(--skyBd)',   dk:'#0C4A6E',        icon:'💰'},
+    'Marketing':            {bg:'#EA580C',      lt:'#FFF7ED',        bd:'#FED7AA',        dk:'#9A3412',        icon:'📣'},
+    'Sales':                {bg:'var(--amber)', lt:'var(--amberLt)', bd:'var(--amberBd)', dk:'#92400E',        icon:'🤝'},
+    'HR & L&D':             {bg:'var(--violet)',lt:'var(--violetLt)',bd:'var(--violetBd)',dk:'#4C1D95',        icon:'🧑‍💼'},
+    'BPO & Customer Service':{bg:'#0284C7',    lt:'var(--skyLt)',   bd:'var(--skyBd)',   dk:'#0369A1',        icon:'📞'},
+    'Operations':           {bg:'var(--g7)',    lt:'var(--g0)',      bd:'var(--g2)',      dk:'var(--g9)',       icon:'📦'},
+    'Other':                {bg:'var(--indigo)',lt:'var(--indigoLt)',bd:'var(--indigoBd)',dk:'var(--indigoDk)',icon:'🌐'},
+  };
+  const domain = C.domain || 'Technology & Product';
+  const dc = DOMAIN_COLORS[domain] || DOMAIN_COLORS['Technology & Product'];
+
   el.innerHTML=`
-  <div style="background:var(--indigo);padding:8px 14px;display:flex;align-items:center;justify-content:space-between;">
-    <span class="pill" style="background:rgba(255,255,255,0.2);color:white;border-color:transparent;">⚙️ Technology</span>
+  <div style="background:${dc.bg};padding:8px 14px;display:flex;align-items:center;justify-content:space-between;">
+    <span class="pill" style="background:rgba(255,255,255,0.2);color:white;border-color:transparent;">${dc.icon} ${domain}</span>
     <span style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:600;">${C.years||0} yrs exp</span>
   </div>
-  <div style="background:var(--indigoLt);padding:16px;border-bottom:0.5px solid var(--indigoBd);display:flex;gap:13px;align-items:flex-start;">
+  <div style="background:${dc.lt};padding:16px;border-bottom:0.5px solid ${dc.bd};display:flex;gap:13px;align-items:flex-start;">
     ${C.photoData
       ?`<div style="width:72px;height:72px;border-radius:50%;overflow:hidden;border:3px solid white;box-shadow:0 4px 12px rgba(0,0,0,0.15);flex-shrink:0;"><img src="${C.photoData}" style="width:100%;height:100%;object-fit:cover;"/></div>`
-      :`<div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--indigo),var(--violet));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:white;flex-shrink:0;border:3px solid white;box-shadow:0 4px 12px rgba(79,70,229,0.2);">${ini(C.name)}</div>`}
+      :`<div style="width:72px;height:72px;border-radius:50%;background:${dc.bg};display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:white;flex-shrink:0;border:3px solid white;box-shadow:0 4px 12px rgba(0,0,0,0.15);">${ini(C.name)}</div>`}
     <div style="flex:1;min-width:0;">
-      <div style="font-size:20px;font-weight:700;color:var(--indigoDk);">${C.name}</div>
-      <div style="font-size:13px;color:var(--indigo);font-weight:600;margin-top:2px;">${C.title}</div>
+      <div style="font-size:20px;font-weight:700;color:${dc.dk};">${C.name}</div>
+      <div style="font-size:13px;color:${dc.bg};font-weight:600;margin-top:2px;">${C.title}</div>
       <div style="font-size:12px;color:var(--g5);margin-top:1px;">${C.company}${C.city?' · '+C.city:''}</div>
     </div>
   </div>
   ${carH?`<div style="padding:14px;border-bottom:0.5px solid var(--g2);">
-    <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:10px;">Career Journey</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:${dc.bg};margin-bottom:10px;">Career Journey</div>
     <div style="overflow-x:auto;"><div style="display:flex;min-width:max-content;position:relative;padding:4px 2px;">
       <div style="position:absolute;top:12px;left:8px;right:8px;height:1.5px;background:var(--g2);opacity:0.5;"></div>
       ${carH}
     </div></div>
   </div>`:''}
   ${C.lookingFor?`<div style="padding:14px;border-bottom:0.5px solid var(--g2);">
-    <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;">What I'm Looking For</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:${dc.bg};margin-bottom:8px;">What I'm Looking For</div>
     <div style="font-size:13px;color:var(--g9);line-height:1.6;">${C.lookingFor}</div>
   </div>`:''}
   ${(C.prompts&&C.prompts.length>0)||(C.promptQ&&C.promptA)?`<div style="padding:14px;border-bottom:0.5px solid var(--g2);">
-    <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;">In Their Own Words</div>
-    ${(C.prompts&&C.prompts.length>0?C.prompts:[{q:C.promptQ,a:C.promptA}]).filter(p=>p&&p.a).map(p=>`<div style="background:var(--indigoLt);border:0.5px solid var(--indigoBd);border-radius:10px;padding:12px 14px;margin-bottom:8px;"><div style="font-size:12px;font-weight:600;color:var(--indigoDk);margin-bottom:6px;">${p.q}</div><div style="font-size:13px;color:var(--g9);line-height:1.6;">${p.a}</div></div>`).join('')}
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:${dc.bg};margin-bottom:8px;">In Their Own Words</div>
+    ${(C.prompts&&C.prompts.length>0?C.prompts:[{q:C.promptQ,a:C.promptA}]).filter(p=>p&&p.a).map(p=>`<div style="background:${dc.lt};border:0.5px solid ${dc.bd};border-radius:10px;padding:12px 14px;margin-bottom:8px;"><div style="font-size:12px;font-weight:600;color:${dc.dk};margin-bottom:6px;">${p.q}</div><div style="font-size:13px;color:var(--g9);line-height:1.6;">${p.a}</div></div>`).join('')}
   </div>`:''}
   ${C.skills.length?`<div style="padding:14px;">
-    <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--indigo);margin-bottom:10px;">Skills · ${C.skills.length}</div>
-    <div style="display:flex;flex-wrap:wrap;gap:7px;">${C.skills.map(s=>`<span class="pill" style="background:var(--indigoLt);color:#3730A3;border-color:var(--indigoBd);padding:5px 12px;font-size:12px;">${s}</span>`).join('')}</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:${dc.bg};margin-bottom:10px;">Skills · ${C.skills.length}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:7px;">${C.skills.map(s=>`<span class="pill" style="background:${dc.lt};color:${dc.dk};border-color:${dc.bd};padding:5px 12px;font-size:12px;">${s}</span>`).join('')}</div>
   </div>`:''}
   <div style="padding:14px;border-top:0.5px solid var(--g2);">
     <button class="btn btn-outline" onclick="goto('s-reg-basics')" style="margin-bottom:8px;">✏️ Edit profile</button>
