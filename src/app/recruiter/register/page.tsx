@@ -22,7 +22,6 @@ export default function RecruiterRegister() {
   
   const [email, setEmail] = useState('')
   const [otp, setOtp] = useState(['','','','','',''])
-  const [generatedOtp, setGeneratedOtp] = useState('')
   const [photo, setPhoto] = useState<string|null>(null)
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
@@ -41,19 +40,19 @@ export default function RecruiterRegister() {
   const STEPS = ['Email','Verify','Photo','Basics','Journey','Bio','Skills I Hire For']
   const progress = (step / (STEPS.length - 1)) * 100
 
-  function sendOtp() {
+  async function sendOtp() {
     if(!email || !email.includes('@')) { setError('Please enter a valid email'); return }
-    const code = Math.floor(100000 + Math.random() * 900000).toString()
-    setGeneratedOtp(code)
     setError('')
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: true } })
+    if(error) { setError('Failed to send code. Please try again.'); return }
     setStep(1)
-    setTimeout(() => alert(`Your verification code: ${code}`), 300)
   }
 
-  function verifyOtp() {
+  async function verifyOtp() {
     const entered = otp.join('')
     if(entered.length < 6) { setError('Please enter all 6 digits'); return }
-    if(entered !== generatedOtp) { setError('Incorrect code.'); return }
+    const { error } = await supabase.auth.verifyOtp({ email, token: entered, type: 'email' })
+    if(error) { setError('Invalid or expired code. Please try again.'); return }
     setError(''); setStep(2)
   }
 
@@ -100,7 +99,6 @@ export default function RecruiterRegister() {
         status: 'active',
       }, { onConflict:'email' })
       if(err) throw err
-      localStorage.setItem('naggare_user', JSON.stringify({type:'recruiter', email, name, title, company, city, career, bio, hire_skills:[...hireSkills], specialisations:specs}))
       router.push('/recruiter/ready')
     } catch(e: any) {
       setError(e.message || 'Something went wrong')

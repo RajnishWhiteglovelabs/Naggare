@@ -6,42 +6,35 @@ import { supabase } from '@/lib/supabase'
 export default function SignIn() {
   const router = useRouter()
   const [email, setEmail] = useState('')
+  const [otp, setOtp] = useState('')
+  const [step, setStep] = useState<'email'|'otp'>('email')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  async function handleSignIn() {
+  async function handleSendOTP() {
     setError('')
-    if(!email || !email.includes('@')) { setError('Please enter a valid email'); return }
+    if (!email || !email.includes('@')) { setError('Please enter a valid email'); return }
     setLoading(true)
-    
-    // Check candidates
-    const { data: candidate } = await supabase
-      .from('candidates')
-      .select('*')
-      .ilike('email', email)
-      .single()
-    
-    if(candidate) {
-      localStorage.setItem('naggare_user', JSON.stringify({type:'candidate', ...candidate}))
-      router.push('/home')
-      return
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false } })
+    if (error) {
+      setError("We couldn't find an account with that email. Please sign up first.")
+    } else {
+      setStep('otp')
     }
-
-    // Check recruiters
-    const { data: recruiter } = await supabase
-      .from('recruiters')
-      .select('*')
-      .ilike('email', email)
-      .single()
-    
-    if(recruiter) {
-      localStorage.setItem('naggare_user', JSON.stringify({type:'recruiter', ...recruiter}))
-      router.push('/home')
-      return
-    }
-
-    setError("We couldn't find an account with that email. Please sign up first.")
     setLoading(false)
+  }
+
+  async function handleVerifyOTP() {
+    setError('')
+    if (!otp || otp.length < 6) { setError('Please enter the 6-digit code'); return }
+    setLoading(true)
+    const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: 'email' })
+    if (error) {
+      setError('Invalid or expired code. Please try again.')
+      setLoading(false)
+      return
+    }
+    router.push('/home')
   }
 
   return (
@@ -56,28 +49,46 @@ export default function SignIn() {
           </div>
           <span className="text-xl font-bold text-white" style={{fontFamily:'Georgia,serif'}}>Naggare</span>
         </div>
-        
+
         <div className="bg-white rounded-3xl p-8 shadow-2xl">
-          <h2 className="text-2xl font-bold mb-2" style={{color:'#1E1B4B',fontFamily:'Georgia,serif'}}>Welcome back</h2>
-          <p className="text-sm text-gray-500 mb-6">Enter your email to sign back in.</p>
-          
-          <div className="mb-4">
-            <label className="label">Email address</label>
-            <input className="input" type="email" placeholder="you@company.com"
-              value={email} onChange={e => setEmail(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSignIn()}/>
-          </div>
-          
-          {error && <div className="mb-4 p-3 rounded-xl text-sm text-red-600 bg-red-50 border border-red-100">{error}</div>}
-          
-          <button className="btn-primary mb-4" onClick={handleSignIn} disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign in →'}
-          </button>
-          
-          <p className="text-center text-sm text-gray-400">
-            No account?{' '}
-            <span className="text-indigo-600 font-semibold cursor-pointer" onClick={() => router.push('/')}>Sign up</span>
-          </p>
+          {step === 'email' ? (
+            <>
+              <h2 className="text-2xl font-bold mb-2" style={{color:'#1E1B4B',fontFamily:'Georgia,serif'}}>Welcome back</h2>
+              <p className="text-sm text-gray-500 mb-6">Enter your email — we'll send you a sign-in code.</p>
+              <div className="mb-4">
+                <label className="label">Email address</label>
+                <input className="input" type="email" placeholder="you@company.com"
+                  value={email} onChange={e => setEmail(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleSendOTP()}/>
+              </div>
+              {error && <div className="mb-4 p-3 rounded-xl text-sm text-red-600 bg-red-50 border border-red-100">{error}</div>}
+              <button className="btn-primary mb-4" onClick={handleSendOTP} disabled={loading}>
+                {loading ? 'Sending...' : 'Send sign-in code →'}
+              </button>
+              <p className="text-center text-sm text-gray-400">
+                No account?{' '}
+                <span className="text-indigo-600 font-semibold cursor-pointer" onClick={() => router.push('/')}>Sign up</span>
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-bold mb-2" style={{color:'#1E1B4B',fontFamily:'Georgia,serif'}}>Check your email</h2>
+              <p className="text-sm text-gray-500 mb-6">We sent a 6-digit code to <strong>{email}</strong></p>
+              <div className="mb-4">
+                <label className="label">Sign-in code</label>
+                <input className="input text-center text-2xl tracking-widest" type="text" placeholder="000000"
+                  maxLength={6} value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g,''))}
+                  onKeyDown={e => e.key === 'Enter' && handleVerifyOTP()}/>
+              </div>
+              {error && <div className="mb-4 p-3 rounded-xl text-sm text-red-600 bg-red-50 border border-red-100">{error}</div>}
+              <button className="btn-primary mb-4" onClick={handleVerifyOTP} disabled={loading}>
+                {loading ? 'Verifying...' : 'Sign in →'}
+              </button>
+              <button className="w-full text-center text-sm text-gray-400 hover:text-indigo-600" onClick={() => { setStep('email'); setOtp(''); setError('') }}>
+                ← Use a different email
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

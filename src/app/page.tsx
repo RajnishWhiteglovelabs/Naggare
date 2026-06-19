@@ -1,8 +1,17 @@
 'use client'
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase'
 
 export default function Landing() {
   const router = useRouter()
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) router.push('/home')
+    })
+  }, [])
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 text-center"
       style={{background: 'linear-gradient(135deg, #1E1B4B, #312e81)'}}>

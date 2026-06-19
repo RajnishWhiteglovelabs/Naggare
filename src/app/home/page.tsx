@@ -20,9 +20,17 @@ export default function Home() {
   const [toast, setToast] = useState('')
 
   useEffect(() => {
-    const data = localStorage.getItem('naggare_user')
-    if(!data) { router.push('/'); return }
-    setUser(JSON.parse(data))
+    async function loadUser() {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) { router.push('/signin'); return }
+      const email = session.user.email!
+      const { data: candidate } = await supabase.from('candidates').select('*').ilike('email', email).single()
+      if (candidate) { setUser({ type: 'candidate', ...candidate }); return }
+      const { data: recruiter } = await supabase.from('recruiters').select('*').ilike('email', email).single()
+      if (recruiter) { setUser({ type: 'recruiter', ...recruiter }); return }
+      router.push('/')
+    }
+    loadUser()
   }, [])
 
   function showToast(msg: string) {
@@ -30,9 +38,9 @@ export default function Home() {
     setTimeout(() => setToast(''), 3000)
   }
 
-  function signOut() {
+  async function signOut() {
     if(!confirm('Sign out of Naggare?')) return
-    localStorage.removeItem('naggare_user')
+    await supabase.auth.signOut()
     router.push('/')
   }
 
