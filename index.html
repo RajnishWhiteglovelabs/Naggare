@@ -41,6 +41,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-green:hover:not(:disabled){opacity:0.92;transform:translateY(-1px);}
 .btn-outline{background:white;color:var(--g6);border:1.5px solid var(--g2);}
 .btn-outline:hover:not(:disabled){border-color:var(--indigo);color:var(--indigo);}
+
+.domain-card{padding:16px 10px;border:2px solid var(--g2);border-radius:14px;background:white;cursor:pointer;text-align:center;transition:all 0.15s;}
+.domain-card:hover{border-color:var(--indigo);background:var(--indigoLt);}
+.domain-card.selected{border-color:var(--indigo);background:var(--indigoLt);}
+.domain-card.selected div{color:var(--indigo);}
+
 .btn-ghost{background:none;border:none;color:var(--indigo);font-size:13px;font-weight:600;cursor:pointer;padding:10px 0;text-align:center;width:100%;}
 
 /* FORMS */
@@ -238,13 +244,41 @@ textarea.fi{resize:none;line-height:1.6;}
 </div>
 </div>
 
-<!-- ══════════════════ STEP 2: PROFILE PHOTO ══════════════════ -->
-<div id="s-reg-photo" class="screen">
+<!-- ══════════════════ STEP 2: DOMAIN ══════════════════ -->
+<div id="s-reg-domain" class="screen">
 <div class="step-hdr">
   <div class="step-hdr-top">
     <button class="back-btn" onclick="goto('s-reg-otp')">‹</button>
     <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
-    <div class="step-info"><div class="step-label">Step 2 of 7</div><div class="step-sublabel">Your photo</div></div>
+    <div class="step-info"><div class="step-label">Step 2 of 8</div><div class="step-sublabel">Your domain</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:25%;"></div></div>
+</div>
+<div class="content-pad step-content">
+  <div style="font-size:24px;font-weight:700;color:var(--navy);margin-bottom:6px;font-family:Georgia,serif;">What's your primary domain?</div>
+  <div style="font-size:14px;color:var(--g5);margin-bottom:20px;">This personalises your skills and prompts. You can always add more later.</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;" id="domain-grid">
+    <div class="domain-card" onclick="selectDomain(this,'Technology & Product')"><span style="font-size:28px;display:block;margin-bottom:6px;">⚙️</span><div style="font-size:13px;font-weight:600;color:var(--g7);">Technology & Product</div></div>
+    <div class="domain-card" onclick="selectDomain(this,'Talent Acquisition')"><span style="font-size:28px;display:block;margin-bottom:6px;">🎯</span><div style="font-size:13px;font-weight:600;color:var(--g7);">Talent Acquisition</div></div>
+    <div class="domain-card" onclick="selectDomain(this,'Finance & Banking')"><span style="font-size:28px;display:block;margin-bottom:6px;">💰</span><div style="font-size:13px;font-weight:600;color:var(--g7);">Finance & Banking</div></div>
+    <div class="domain-card" onclick="selectDomain(this,'Marketing')"><span style="font-size:28px;display:block;margin-bottom:6px;">📣</span><div style="font-size:13px;font-weight:600;color:var(--g7);">Marketing</div></div>
+    <div class="domain-card" onclick="selectDomain(this,'Sales')"><span style="font-size:28px;display:block;margin-bottom:6px;">🤝</span><div style="font-size:13px;font-weight:600;color:var(--g7);">Sales</div></div>
+    <div class="domain-card" onclick="selectDomain(this,'HR & L&D')"><span style="font-size:28px;display:block;margin-bottom:6px;">🧑‍💼</span><div style="font-size:13px;font-weight:600;color:var(--g7);">HR & L&D</div></div>
+    <div class="domain-card" onclick="selectDomain(this,'BPO & Customer Service')"><span style="font-size:28px;display:block;margin-bottom:6px;">📞</span><div style="font-size:13px;font-weight:600;color:var(--g7);">BPO & Customer Service</div></div>
+    <div class="domain-card" onclick="selectDomain(this,'Operations')"><span style="font-size:28px;display:block;margin-bottom:6px;">📦</span><div style="font-size:13px;font-weight:600;color:var(--g7);">Operations</div></div>
+    <div class="domain-card" onclick="selectDomain(this,'Other')"><span style="font-size:28px;display:block;margin-bottom:6px;">🌐</span><div style="font-size:13px;font-weight:600;color:var(--g7);">Other</div></div>
+  </div>
+  <button class="btn btn-primary" id="domain-next-btn" onclick="domainNext()" style="font-size:16px;padding:15px;opacity:0.5;" disabled>Continue →</button>
+</div>
+</div>
+
+<!-- ══════════════════ STEP 3: PROFILE PHOTO ══════════════════ -->
+<div id="s-reg-photo" class="screen">
+<div class="step-hdr">
+  <div class="step-hdr-top">
+    <button class="back-btn" onclick="goto('s-reg-domain')">‹</button>
+    <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
+    <div class="step-info"><div class="step-label">Step 3 of 8</div><div class="step-sublabel">Your photo</div></div>
   </div>
   <div class="progress-bar"><div class="progress-fill" style="width:28%;"></div></div>
 </div>
@@ -276,7 +310,7 @@ textarea.fi{resize:none;line-height:1.6;}
   <div class="step-hdr-top">
     <button class="back-btn" onclick="goto('s-reg-photo')">‹</button>
     <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
-    <div class="step-info"><div class="step-label">Step 3 of 7</div><div class="step-sublabel">Your basics</div></div>
+    <div class="step-info"><div class="step-label">Step 4 of 8</div><div class="step-sublabel">Your basics</div></div>
   </div>
   <div class="progress-bar"><div class="progress-fill" style="width:42%;"></div></div>
 </div>
@@ -308,7 +342,7 @@ textarea.fi{resize:none;line-height:1.6;}
   <div class="step-hdr-top">
     <button class="back-btn" onclick="goto('s-reg-basics')">‹</button>
     <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
-    <div class="step-info"><div class="step-label">Step 4 of 7</div><div class="step-sublabel">Experience</div></div>
+    <div class="step-info"><div class="step-label">Step 5 of 8</div><div class="step-sublabel">Experience</div></div>
   </div>
   <div class="progress-bar"><div class="progress-fill" style="width:57%;"></div></div>
 </div>
@@ -351,7 +385,7 @@ textarea.fi{resize:none;line-height:1.6;}
   <div class="step-hdr-top">
     <button class="back-btn" onclick="goto('s-reg-exp')">‹</button>
     <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
-    <div class="step-info"><div class="step-label">Step 5 of 7</div><div class="step-sublabel">In your words</div></div>
+    <div class="step-info"><div class="step-label">Step 6 of 8</div><div class="step-sublabel">In your words</div></div>
   </div>
   <div class="progress-bar"><div class="progress-fill" style="width:71%;"></div></div>
 </div>
@@ -401,7 +435,7 @@ textarea.fi{resize:none;line-height:1.6;}
   <div class="step-hdr-top">
     <button class="back-btn" onclick="goto('s-reg-prompts')">‹</button>
     <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
-    <div class="step-info"><div class="step-label">Step 6 of 7</div><div class="step-sublabel">Your skills</div></div>
+    <div class="step-info"><div class="step-label">Step 7 of 8</div><div class="step-sublabel">Your skills</div></div>
   </div>
   <div class="progress-bar"><div class="progress-fill" style="width:85%;"></div></div>
 </div>
@@ -439,7 +473,7 @@ textarea.fi{resize:none;line-height:1.6;}
   <div class="step-hdr-top">
     <button class="back-btn" onclick="goto('s-reg-skills')">‹</button>
     <div style="display:flex;align-items:center;gap:8px;"><div class="logo-mark" style="width:30px;height:30px;border-radius:8px;"><span class="logo-n" style="font-size:13px;">N</span></div><span style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--navy);">Naggare</span></div>
-    <div class="step-info"><div class="step-label">Step 7 of 7</div><div class="step-sublabel">Your profile</div></div>
+    <div class="step-info"><div class="step-label">Step 8 of 8</div><div class="step-sublabel">Your profile</div></div>
   </div>
   <div class="progress-bar"><div class="progress-fill" style="width:100%;"></div></div>
 </div>
@@ -630,8 +664,169 @@ let generatedOTP = '';
 let selectedSkills = new Set();
 
 // ══════════════════════════════════════════
-// SKILLS DATA
+// DOMAIN DATA
 // ══════════════════════════════════════════
+const DOMAIN_PROMPTS = {
+  'Technology & Product': [
+    {chip:'🔧 Built something', q:'🔧 The thing I\'ve shipped I\'m most proud of'},
+    {chip:'🧠 Problem solving', q:'🧠 The kind of problem I get unreasonably excited about'},
+    {chip:'⚡ System design', q:'⚡ How I approach complex system design decisions'},
+    {chip:'👨‍💻 Code quality', q:'👨‍💻 My approach to code quality and engineering standards'},
+    {chip:'🚀 Origin story', q:'🚀 The moment I knew engineering was my calling'},
+    {chip:'🧭 Leadership', q:'🧭 How I lead engineering teams when there\'s no playbook'},
+    {chip:'📈 Growth mindset', q:'📈 What I\'m actively working on getting better at'},
+    {chip:'✍️ Write my own', q:'✍️ Write my own prompt'},
+  ],
+  'Talent Acquisition': [
+    {chip:'🎯 Hire I\'m proud of', q:'🎯 The hire I\'m most proud of and why it mattered'},
+    {chip:'🔍 Finding talent', q:'🔍 How I find talent others miss'},
+    {chip:'🤝 Hiring manager trust', q:'🤝 How I build trust with hiring managers'},
+    {chip:'🧲 Employer brand', q:'🧲 How I\'ve built a talent brand from scratch'},
+    {chip:'🌏 Scaled TA', q:'🌏 How I\'ve scaled TA operations globally'},
+    {chip:'🤖 AI in TA', q:'🤖 How I use AI to make recruiting more human, not less'},
+    {chip:'📈 Growth mindset', q:'📈 What I\'m actively working on getting better at'},
+    {chip:'✍️ Write my own', q:'✍️ Write my own prompt'},
+  ],
+  'Finance & Banking': [
+    {chip:'📊 Complex model', q:'📊 The most complex model or analysis I\'ve built'},
+    {chip:'💡 Risk identified', q:'💡 A risk I identified that others missed'},
+    {chip:'🔍 Deal I worked on', q:'🔍 A deal or transaction that shaped my thinking'},
+    {chip:'📈 Value created', q:'📈 How I\'ve created measurable value for the business'},
+    {chip:'🧭 Decision making', q:'🧭 How I approach high-stakes financial decisions'},
+    {chip:'📈 Growth mindset', q:'📈 What I\'m actively working on getting better at'},
+    {chip:'✍️ Write my own', q:'✍️ Write my own prompt'},
+  ],
+  'Marketing': [
+    {chip:'🚀 Campaign I\'m proud of', q:'🚀 The campaign I\'m most proud of and its impact'},
+    {chip:'📊 Growth I drove', q:'📊 The growth metric I moved and how I did it'},
+    {chip:'🎨 Brand I built', q:'🎨 How I\'ve built or transformed a brand'},
+    {chip:'🤝 Partnerships', q:'🤝 A partnership or collaboration that exceeded expectations'},
+    {chip:'📈 Growth mindset', q:'📈 What I\'m actively working on getting better at'},
+    {chip:'✍️ Write my own', q:'✍️ Write my own prompt'},
+  ],
+  'Sales': [
+    {chip:'💰 Deal I closed', q:'💰 The deal I\'m most proud of closing and why it was hard'},
+    {chip:'🤝 Relationship built', q:'🤝 A long-term client relationship I built from scratch'},
+    {chip:'🔄 Pipeline transformed', q:'🔄 How I\'ve transformed a struggling pipeline'},
+    {chip:'🧭 Tough negotiation', q:'🧭 How I handle a tough negotiation when things go sideways'},
+    {chip:'📈 Growth mindset', q:'📈 What I\'m actively working on getting better at'},
+    {chip:'✍️ Write my own', q:'✍️ Write my own prompt'},
+  ],
+  'HR & L&D': [
+    {chip:'🌱 Culture built', q:'🌱 A culture or people programme I built that actually worked'},
+    {chip:'📋 Policy that changed things', q:'📋 A policy I introduced that changed how people work'},
+    {chip:'🤝 Conflict resolved', q:'🤝 A difficult conflict I navigated and what I learnt'},
+    {chip:'📈 L&D impact', q:'📈 A learning programme I built and how I measured its impact'},
+    {chip:'🧭 Leadership', q:'🧭 How I lead HR teams through organisational change'},
+    {chip:'📈 Growth mindset', q:'📈 What I\'m actively working on getting better at'},
+    {chip:'✍️ Write my own', q:'✍️ Write my own prompt'},
+  ],
+  'BPO & Customer Service': [
+    {chip:'⭐ Customer I turned around', q:'⭐ The most difficult customer situation I turned around'},
+    {chip:'📊 Metric I improved', q:'📊 A key metric I improved and how I did it'},
+    {chip:'🔄 Process I redesigned', q:'🔄 A process I redesigned that made a real difference'},
+    {chip:'👥 Team I built', q:'👥 How I\'ve built and scaled high-performing service teams'},
+    {chip:'📈 Growth mindset', q:'📈 What I\'m actively working on getting better at'},
+    {chip:'✍️ Write my own', q:'✍️ Write my own prompt'},
+  ],
+  'Operations': [
+    {chip:'⚙️ Process improved', q:'⚙️ A process I improved that had measurable impact'},
+    {chip:'📦 Cost reduced', q:'📦 How I\'ve driven significant cost reduction'},
+    {chip:'🔄 System I built', q:'🔄 An operational system or framework I built from scratch'},
+    {chip:'🧭 Decision making', q:'🧭 How I make decisions when data is incomplete'},
+    {chip:'📈 Growth mindset', q:'📈 What I\'m actively working on getting better at'},
+    {chip:'✍️ Write my own', q:'✍️ Write my own prompt'},
+  ],
+  'Other': [
+    {chip:'🔧 Built something', q:'🔧 The thing I\'ve done I\'m most proud of'},
+    {chip:'🧠 Problem solving', q:'🧠 The kind of problem I get unreasonably excited about'},
+    {chip:'🚀 Origin story', q:'🚀 The moment I knew I was in the right field'},
+    {chip:'💡 Lessons learnt', q:'💡 A decision I\'d make differently today'},
+    {chip:'🎯 Team fit', q:'🎯 The kind of team I do my best work in'},
+    {chip:'📈 Growth mindset', q:'📈 What I\'m actively working on getting better at'},
+    {chip:'✍️ Write my own', q:'✍️ Write my own prompt'},
+  ],
+};
+
+const DOMAIN_SKILLS = {
+  'Technology & Product': [
+    {cat:'💻 Languages', items:['☕ Java','🐍 Python','⚡ JavaScript','🔷 TypeScript','🐹 Go','🦀 Rust','⚙️ C++','🍎 Swift','🤖 Kotlin','🐘 PHP']},
+    {cat:'⚛️ Frontend & Mobile', items:['⚛️ React','🟢 Vue.js','▲ Next.js','📱 React Native','🎯 Flutter','🍃 Tailwind CSS','📲 SwiftUI']},
+    {cat:'🔧 Backend & Infra', items:['🟢 Node.js','🌿 Spring Boot','🐍 Django','🔥 FastAPI','☸️ Kubernetes','🐳 Docker','🌩️ AWS','☁️ GCP','🔷 Azure','🏗️ Terraform']},
+    {cat:'🗄️ Databases', items:['🐘 PostgreSQL','🍃 MongoDB','🔴 Redis','🔵 MySQL','❄️ Snowflake','🔍 Elasticsearch']},
+    {cat:'🤖 AI / ML', items:['🧠 Machine Learning','🔥 PyTorch','🤗 Hugging Face','✨ Prompt Engineering','🔗 LLM Integration','📚 RAG','🔮 LangChain','🔬 MLOps']},
+    {cat:'🏗️ System Design', items:['📐 Distributed Systems','⚡ Microservices','📨 Event-Driven','🔄 Message Queues','🌐 API Design','📈 Scalability','🔒 Security']},
+    {cat:'🎯 Product', items:['🗺️ Product Strategy','📋 Roadmapping','📋 Agile / Scrum','🔍 UX Research','📈 Growth','📊 Product Analytics','🤝 Stakeholder Management']},
+  ],
+  'Talent Acquisition': [
+    {cat:'🎯 Core TA', items:['🔍 Technical Sourcing','🤝 Executive Hiring','🌱 Campus Recruiting','🌏 Global TA','🎯 Diversity Hiring','⚡ High Volume Hiring','📋 Structured Interviewing','🌟 Candidate Experience']},
+    {cat:'🧲 Brand & Strategy', items:['🧲 Employer Branding','🗺️ TA Strategy','📈 Workforce Planning','📊 TA Analytics','🤖 AI in Recruiting','💼 RPO Management']},
+    {cat:'🛠️ Tools & Process', items:['🏗️ ATS Implementation','🔗 LinkedIn Recruiting','📋 Interview Process Design','🤝 Hiring Manager Training','📊 Recruiting Metrics']},
+    {cat:'🧭 Leadership', items:['👥 Team Building','🌏 Global TA Leadership','🤝 C-Suite Partnering','📈 TA Transformation','🌱 Mentoring Recruiters']},
+  ],
+  'Finance & Banking': [
+    {cat:'💰 Core Finance', items:['📊 Financial Modelling','💰 FP&A','📋 Budgeting','📑 Financial Reporting','🔢 Accounting','💳 Corporate Finance']},
+    {cat:'🏦 Investment & Markets', items:['📈 Equity Research','🏦 Investment Banking','💹 Private Equity','🏗️ M&A','🌏 Treasury','⚖️ Risk Management']},
+    {cat:'📊 Analysis', items:['🔍 Due Diligence','📊 Business Analysis','💡 Valuation','📈 Cost Optimisation','🔄 Financial Transformation']},
+  ],
+  'Marketing': [
+    {cat:'📣 Brand & Content', items:['📣 Brand Strategy','✍️ Content Marketing','🎨 Creative Direction','📰 PR & Communications','🎪 Event Marketing']},
+    {cat:'📊 Performance & Growth', items:['🎯 Performance Marketing','🔍 SEO / SEM','📧 Email Marketing','📊 Marketing Analytics','📈 Growth Marketing','🤖 Marketing Automation']},
+    {cat:'🌐 Digital & Social', items:['📱 Social Media','🌐 Digital Marketing','📺 Campaign Management','💡 Product Marketing','🤝 Partnerships']},
+  ],
+  'Sales': [
+    {cat:'🤝 Core Sales', items:['🤝 B2B Sales','🌐 Enterprise Sales','💼 Account Management','🎯 Business Development','📣 Pre-Sales','🔄 Renewals & Expansion']},
+    {cat:'📊 Operations & Strategy', items:['💰 Revenue Operations','📊 Sales Analytics','🌏 International Sales','📋 CRM Management','🎪 Sales Enablement','🔍 Market Research']},
+  ],
+  'HR & L&D': [
+    {cat:'🧑‍💼 HR Business Partnering', items:['🤝 HR Business Partnering','📋 Performance Management','⚖️ Employee Relations','🌱 Talent Management','📊 HR Analytics','🏗️ Org Design']},
+    {cat:'📚 L&D', items:['📚 Learning & Development','🎓 Leadership Development','📋 Competency Frameworks','🔄 Change Management','🌟 Culture Building']},
+    {cat:'⚙️ Operations', items:['💰 Compensation & Benefits','🏗️ HRIS Implementation','🌏 DEI','📋 HR Policy','🔄 HR Transformation']},
+  ],
+  'BPO & Customer Service': [
+    {cat:'📞 Service & Operations', items:['⭐ Customer Service','📊 Quality Assurance','🔄 Process Excellence','📋 SLA Management','👥 Team Management','📈 CSAT / NPS']},
+    {cat:'⚙️ Process & Improvement', items:['🔬 Six Sigma','📦 Process Redesign','🤖 Automation','📊 Operations Analytics','💰 Cost Optimisation']},
+    {cat:'🌐 Channels', items:['📞 Voice Support','💬 Non-Voice / Chat','📧 Email Support','🌐 Omnichannel','🤖 AI / Chatbots']},
+  ],
+  'Operations': [
+    {cat:'⚙️ Core Operations', items:['⚙️ Operations Management','📦 Supply Chain','🔄 Process Improvement','📊 Data Analysis','💰 Cost Reduction','🤝 Vendor Management']},
+    {cat:'📋 Project & Programme', items:['📦 Project Management','🗺️ Programme Management','📋 Agile / Scrum','🔬 Six Sigma','🏗️ Business Transformation']},
+    {cat:'🧭 Strategy', items:['💡 Strategy Consulting','🌏 Global Operations','🏗️ Org Design','📊 Business Intelligence','🔄 Change Management']},
+  ],
+  'Other': [
+    {cat:'🧭 Leadership & Strategy', items:['👥 People Management','🗺️ Strategic Planning','🌱 Mentoring & Coaching','🔄 Change Management','💡 Innovation','📊 P&L Ownership']},
+    {cat:'📊 General Business', items:['📊 Data Analysis','📋 Project Management','🤝 Stakeholder Management','📈 Business Development','🌐 International Business']},
+  ],
+};
+
+// ══════════════════════════════════════════
+// DOMAIN FUNCTIONS
+// ══════════════════════════════════════════
+function selectDomain(el, domain) {
+  document.querySelectorAll('.domain-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  C.domain = domain;
+  const btn = document.getElementById('domain-next-btn');
+  btn.disabled = false;
+  btn.style.opacity = '1';
+}
+
+function domainNext() {
+  if(!C.domain){ toast('Please select your domain'); return; }
+  goto('s-reg-photo');
+}
+
+function buildDomainPrompts() {
+  const domain = C.domain || 'Other';
+  const prompts = DOMAIN_PROMPTS[domain] || DOMAIN_PROMPTS['Other'];
+  const container = document.getElementById('prompt-chips');
+  if(!container) return;
+  container.innerHTML = prompts.map(p =>
+    `<div class="prompt-chip" onclick="togglePrompt(this,'${p.q.replace(/'/g,"\\'")}')"> ${p.chip}</div>`
+  ).join('');
+}
+
+
 const SKILLS = [
   { cat:'🎯 Talent Acquisition', items:['🔍 Technical Sourcing','🤝 Executive Hiring','🌱 Campus Recruiting','🌏 Global TA','📊 TA Analytics','🧲 Employer Branding','🤖 AI in Recruiting','📋 Structured Interviewing','🗺️ TA Strategy','👥 Team Building','💼 RPO Management','🔗 LinkedIn Recruiting','🏗️ ATS Implementation','🎯 Diversity Hiring','⚡ High Volume Hiring','🌟 Candidate Experience','🤝 Stakeholder Management','📈 Workforce Planning'] },
   { cat:'🧭 Leadership & Strategy', items:['👥 People Management','🗺️ Strategic Planning','🌱 Mentoring & Coaching','🚀 Startup Leadership','🔄 Change Management','🤝 Board Management','💡 Innovation','📋 OKRs & Goal Setting','🌏 Global Operations','🏗️ Org Design','🎯 Business Development','🤝 Executive Stakeholders','📊 P&L Ownership','🌟 Culture Building'] },
@@ -747,7 +942,7 @@ function verifyOTP() {
   if(entered !== generatedOTP){ showErr('otp-error','Incorrect code. Please try again or resend.'); return; }
   clearInterval(otpTimerInterval);
   toast('✅ Email verified!');
-  goto('s-reg-photo');
+  goto('s-reg-domain');
 }
 
 // ══════════════════════════════════════════
@@ -817,6 +1012,7 @@ function expNext() {
   const stops = getExpStops();
   if(!stops.length){ toast('Add at least one role'); return; }
   C.career = stops;
+  buildDomainPrompts();
   goto('s-reg-prompts');
 }
 
@@ -889,20 +1085,52 @@ function promptsNext() {
 // SKILLS
 // ══════════════════════════════════════════
 function buildSkillsUI() {
+  const domain = C.domain || 'Other';
+  const domainSkills = DOMAIN_SKILLS[domain] || DOMAIN_SKILLS['Other'];
+  const allSkillCats = Object.values(DOMAIN_SKILLS).flat().map(c=>c.cat);
+  const shownCats = domainSkills.map(c=>c.cat);
+  const otherSkills = SKILLS.filter(cat => !shownCats.includes(cat.cat));
   const container = document.getElementById('skills-container');
-  container.innerHTML = SKILLS.map(cat=>`
+  if(!container) return;
+
+  const renderChips = (items) => items.map(skill=>`
+    <div class="skill-chip ${selectedSkills.has(skill)?'selected':''}" onclick="toggleSkill(this,'${skill.replace(/'/g,"\\'")}')">
+      <span class="emoji">${skill.split(' ')[0]}</span>${skill.split(' ').slice(1).join(' ')}
+    </div>`).join('');
+
+  let html = domainSkills.map(cat=>`
     <div class="skills-category">
       <div class="skills-cat-label">${cat.cat}</div>
-      <div class="skills-grid">
-        ${cat.items.map(skill=>`
-          <div class="skill-chip ${selectedSkills.has(skill)?'selected':''}" onclick="toggleSkill(this,'${skill.replace(/'/g,"\\'")}')">
-            <span class="emoji">${skill.split(' ')[0]}</span>
-            ${skill.split(' ').slice(1).join(' ')}
-          </div>`).join('')}
-      </div>
+      <div class="skills-grid">${renderChips(cat.items)}</div>
     </div>`).join('');
+
+  if(otherSkills.length) {
+    html += `<div style="margin-top:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;cursor:pointer;border-top:0.5px solid var(--g2);" onclick="toggleOtherSkills()">
+        <span style="font-size:12px;font-weight:600;color:var(--g6);">+ Skills from other domains</span>
+        <span style="font-size:12px;color:var(--indigo);" id="other-skills-toggle">Show</span>
+      </div>
+      <div id="other-skills-body" style="display:none;">
+        ${otherSkills.map(cat=>`<div class="skills-category">
+          <div class="skills-cat-label">${cat.cat}</div>
+          <div class="skills-grid">${renderChips(cat.items)}</div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }
+  container.innerHTML = html;
   updateSkillCount();
 }
+
+function toggleOtherSkills() {
+  const body = document.getElementById('other-skills-body');
+  const toggle = document.getElementById('other-skills-toggle');
+  if(!body) return;
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  if(toggle) toggle.textContent = open ? 'Show' : 'Hide';
+}
+
 
 function toggleSkill(el, skill) {
   if(selectedSkills.has(skill)) {
