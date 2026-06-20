@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (error || !otpRecord) {
-      return NextResponse.json({ error: 'Invalid or expired code' }, { status: 400 })
+      return NextResponse.json({ error: 'Incorrect code. Please check and try again.' }, { status: 400 })
     }
 
     // Mark as used

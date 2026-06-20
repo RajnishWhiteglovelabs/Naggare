@@ -368,7 +368,7 @@ export default function CandidateRegister() {
               <p className="text-base font-semibold text-indigo-600 mb-6">{email}</p>
               <div className="flex gap-2 justify-center mb-6">
                 {otp.map((digit, i) => (
-                  <input key={i} id={`otp-${i}`} className="otp-input" type="number" maxLength={1}
+                  <input key={i} id={`otp-${i}`} className="otp-input" type="text" inputMode="numeric" maxLength={1}
                     value={digit} onChange={e => handleOtpChange(i, e.target.value)}
                     onKeyDown={e => { if(e.key==='Backspace' && !digit && i>0) document.getElementById(`otp-${i-1}`)?.focus() }}/>
                 ))}
