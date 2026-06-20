@@ -34,7 +34,7 @@ export default function Landing() {
           style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)',boxShadow:'0 8px 32px rgba(79,70,229,0.25)',display:'inline-flex',minWidth:'180px'}}>
           <div className="absolute top-3 right-3 w-3 h-3 rounded-sm rotate-45" style={{background:'#EAB308'}}></div>
           <span className="text-5xl font-bold text-white mb-1" style={{fontFamily:'Raleway,sans-serif'}}>N</span>
-          <span className="text-xl font-bold text-white" style={{fontFamily:'Raleway,sans-serif',letterSpacing:'0.05em'}}>Naggare</span>
+          <span className="text-xl font-bold" style={{fontFamily:"Raleway,sans-serif",letterSpacing:"0.05em",color:"#ffffff"}}>Naggare</span>
         </div>
 
         {/* Hiring Humanised below the box */}
