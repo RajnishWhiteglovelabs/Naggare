@@ -259,29 +259,32 @@ export default function CandidateRegister() {
     setLoading(true)
     try {
       const prompts = selectedPrompts.filter(p => p.a.trim())
-      const { error } = await supabase.from('candidates').upsert({
-        email,
-        personal_email: email,
-        mobile,
-        name,
-        title,
-        company,
-        city,
-        years_exp: parseInt(years) || 0,
-        domain,
-        career,
-        looking_for: lookingFor,
-        prompt_1_q: prompts[0]?.q || '',
-        prompt_1_a: prompts[0]?.a || '',
-        prompt_2_q: prompts[1]?.q || '',
-        prompt_2_a: prompts[1]?.a || '',
-        prompt_3_q: prompts[2]?.q || '',
-        prompt_3_a: prompts[2]?.a || '',
-        skills: [...selectedSkills],
-        status: 'active',
-      }, { onConflict: 'email' })
-      
-      if(error) throw error
+      const saveRes = await fetch('/api/candidate/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          personal_email: email,
+          mobile,
+          name,
+          title,
+          company,
+          city,
+          years_exp: parseInt(years) || 0,
+          domain,
+          career,
+          looking_for: lookingFor,
+          prompt_1_q: prompts[0]?.q || '',
+          prompt_1_a: prompts[0]?.a || '',
+          prompt_2_q: prompts[1]?.q || '',
+          prompt_2_a: prompts[1]?.a || '',
+          prompt_3_q: prompts[2]?.q || '',
+          prompt_3_a: prompts[2]?.a || '',
+          skills: [...selectedSkills],
+          status: 'active',
+        })
+      })
+      if (!saveRes.ok) throw new Error('Failed to save profile')
       
       // Send welcome email
       fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name, type:'candidate' }) })
@@ -304,13 +307,20 @@ export default function CandidateRegister() {
   async function saveAndExit() {
     if(name && email) {
       try {
-        await supabase.from('candidates').upsert({
-          email, name, title, company, city, domain,
-          years_exp: parseInt(years)||0,
-          career, looking_for: lookingFor,
-          skills: [...selectedSkills],
-          status: 'incomplete',
-        }, { onConflict:'email' })
+        const exitRes = await fetch('/api/candidate/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email, name, title, company, city, domain,
+            personal_email: email,
+            mobile,
+            years_exp: parseInt(years)||0,
+            career, looking_for: lookingFor,
+            skills: [...selectedSkills],
+            status: 'incomplete',
+          })
+        })
+        if (!exitRes.ok) throw new Error('Failed to save')
 
         // Send welcome email
         fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name, type:'candidate' }) })
