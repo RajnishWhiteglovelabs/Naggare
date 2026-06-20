@@ -51,17 +51,41 @@ export default function RecruiterRegister() {
   async function sendOtp() {
     if(!email || !email.includes('@')) { setError('Please enter a valid email'); return }
     setError('')
-    const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: true } })
-    if(error) { setError('Failed to send code. Please try again.'); return }
-    setStep(1)
+    setLoading(true)
+    try {
+      const res = await fetch('/api/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setError(data.error || 'Failed to send code. Please try again.'); return }
+      setStep(1)
+    } catch {
+      setError('Failed to send code. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function verifyOtp() {
     const entered = otp.join('')
     if(entered.length < 6) { setError('Please enter all 6 digits'); return }
-    const { error } = await supabase.auth.verifyOtp({ email, token: entered, type: 'email' })
-    if(error) { setError('Invalid or expired code. Please try again.'); return }
-    setError(''); setStep(2)
+    setLoading(true)
+    try {
+      const res = await fetch('/api/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code: entered }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setError(data.error || 'Invalid or expired code. Please try again.'); return }
+      setError(''); setStep(2)
+    } catch {
+      setError('Invalid or expired code. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   function handleOtpChange(idx: number, val: string) {
