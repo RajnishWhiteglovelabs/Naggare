@@ -29,20 +29,16 @@ export default function Landing() {
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 text-center bg-white">
       
       <div className="mb-10">
-        {/* Logo */}
-        <div className="w-24 h-24 rounded-3xl mx-auto mb-5 flex items-center justify-center relative"
-          style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)',boxShadow:'0 8px 32px rgba(79,70,229,0.25)'}}>
-          <span className="text-5xl font-bold text-white" style={{fontFamily:'Raleway,sans-serif'}}>N</span>
-          <div className="absolute top-2 right-2 w-3 h-3 rounded-sm rotate-45" style={{background:'#EAB308'}}></div>
+        {/* Logo box with N + Naggare inside */}
+        <div className="mx-auto mb-4 flex flex-col items-center justify-center relative rounded-3xl px-8 py-5"
+          style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)',boxShadow:'0 8px 32px rgba(79,70,229,0.25)',display:'inline-flex',minWidth:'180px'}}>
+          <div className="absolute top-3 right-3 w-3 h-3 rounded-sm rotate-45" style={{background:'#EAB308'}}></div>
+          <span className="text-5xl font-bold text-white mb-1" style={{fontFamily:'Raleway,sans-serif'}}>N</span>
+          <span className="text-xl font-bold text-white" style={{fontFamily:'Raleway,sans-serif',letterSpacing:'0.05em'}}>Naggare</span>
         </div>
 
-        {/* Naggare */}
-        <h1 className="text-5xl font-bold mb-2" style={{fontFamily:'Raleway,sans-serif',color:'#6366F1',letterSpacing:'-0.5px'}}>
-          Naggare
-        </h1>
-
-        {/* Hiring Humanised */}
-        <p className="text-xs font-semibold tracking-widest" style={{fontFamily:'Raleway,sans-serif',color:'#6366F1',letterSpacing:'0.2em'}}>
+        {/* Hiring Humanised below the box */}
+        <p className="text-xs font-semibold tracking-widest mt-3" style={{fontFamily:'Raleway,sans-serif',color:'#6366F1',letterSpacing:'0.2em'}}>
           HIRING, HUMANISED.
         </p>
       </div>
