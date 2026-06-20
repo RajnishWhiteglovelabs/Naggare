@@ -133,6 +133,9 @@ export default function CandidateRegister() {
   }, [])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [saveToast, setSaveToast] = useState(false)
+
+  function showSaveToast() { setSaveToast(true); setTimeout(() => setSaveToast(false), 1500) }
   
   // Form state
   const [email, setEmail] = useState('')
@@ -317,7 +320,9 @@ export default function CandidateRegister() {
           fetch('/api/email/complete-profile', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name }) })
         }, 5000)
 
-        router.push('/home')
+        // Show save confirmation before redirecting
+        showSaveToast()
+        setTimeout(() => router.push('/home'), 1500)
       } catch(e) {
         router.push('/')
       }
@@ -647,6 +652,14 @@ export default function CandidateRegister() {
         </div>
         </div>
       </div>
+
+      {/* Save toast */}
+      {saveToast && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-5 py-3 rounded-full text-white text-sm font-semibold shadow-xl"
+          style={{background:'#16A34A'}}>
+          ✓ Profile saved! Taking you home...
+        </div>
+      )}
     </div>
   )
 }

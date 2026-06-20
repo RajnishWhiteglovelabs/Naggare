@@ -103,6 +103,7 @@ export function emailCandidateWelcome(name: string): { subject: string; html: st
       `${letter([
         `Hi ${first},`,
         `Congratulations on joining Naggare. I'm P. Rajnish Alexander, Founder at Naggare, and I'd like to personally welcome you to a new, more efficient, and faster way to find your next opportunity.`,
+        `After 22 years in Talent Acquisition, I understand how frustrating it is to fill in endless application pages and the feeling of being just another application form. Naggare changes all of that for you.`,
         `As a next step, I'd recommend browsing the JD cards and using Super Pursue to reach out to recruiters whose roles genuinely excite you — it's your strongest signal and keeps you top of their radar.`,
         `I wish you well in your search. And please, share any feedback you have directly through the website — we read every word.`,
         `Happy job seeking!`,
