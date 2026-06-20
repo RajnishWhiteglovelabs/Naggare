@@ -302,7 +302,7 @@ export default function CandidateRegister() {
       const isMinimalProfile = !photo && prompts.filter(p => p.a.trim()).length === 0
       if(isMinimalProfile) {
         setTimeout(() => {
-          fetch('/api/email/complete-profile', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name }) })
+          fetch('/api/email/complete-profile', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, name }) })
         }, 5000)
       }
       
@@ -314,14 +314,20 @@ export default function CandidateRegister() {
   }
 
   async function saveAndExit() {
-    if(email) {
+    // Get email from session if not set in state
+    let saveEmail = email
+    if (!saveEmail) {
+      const { data: { session } } = await supabase.auth.getSession()
+      saveEmail = session?.user?.email || localStorage.getItem('naggare_email') || ''
+    }
+    if(saveEmail) {
       try {
         const exitRes = await fetch('/api/candidate/save', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            email, name, title, company, city, domain,
-            personal_email: email,
+            email: saveEmail, name, title, company, city, domain,
+            personal_email: saveEmail,
             mobile,
             years_exp: parseInt(years)||0,
             career, looking_for: lookingFor,
@@ -332,11 +338,11 @@ export default function CandidateRegister() {
         if (!exitRes.ok) throw new Error('Failed to save')
 
         // Send welcome email
-        fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name, type:'candidate' }) })
+        fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: saveEmail, name, type:'candidate' }) })
 
         // Send complete profile reminder after 5s
         setTimeout(() => {
-          fetch('/api/email/complete-profile', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name }) })
+          fetch('/api/email/complete-profile', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: saveEmail, name }) })
         }, 5000)
 
         // Show save confirmation before redirecting
@@ -348,6 +354,7 @@ export default function CandidateRegister() {
         setLoading(false)
       }
     } else {
+      setError('Could not determine email. Please sign in again.')
       router.push('/')
     }
   }
