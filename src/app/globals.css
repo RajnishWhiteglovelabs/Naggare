@@ -34,6 +34,7 @@ body {
 }
 .btn-primary:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
 .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-primary:active:not(:disabled) { opacity: 0.85; transform: scale(0.98); }
 
 .btn-green {
   width: 100%;
@@ -53,6 +54,7 @@ body {
 }
 .btn-green:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
 .btn-green:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-green:active:not(:disabled) { opacity: 0.85; transform: scale(0.98); }
 
 .btn-outline {
   width: 100%;
@@ -70,6 +72,7 @@ body {
   justify-content: center;
 }
 .btn-outline:hover { border-color: #4F46E5; color: #4F46E5; }
+.btn-outline:active { transform: scale(0.98); background: #F5F3FF; }
 
 .input {
   width: 100%;
