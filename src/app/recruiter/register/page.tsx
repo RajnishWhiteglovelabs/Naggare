@@ -1,7 +1,7 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase-browser'
 
 const REC_HIRE_SKILLS = [
   {cat:'💻 Technology', items:['Software Engineering','Frontend','Backend','Full Stack','Mobile','DevOps','Data Engineering','AI / ML','Security','Product Management']},

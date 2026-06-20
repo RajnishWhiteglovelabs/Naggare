@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase-browser'
 
 const SAMPLE_JDS = [
   {id:1,title:'Senior Software Engineer',company:'Zepto',initials:'ZP',color:'#7C3AED',team:'Core Platform',remote:'Remote First',years:'4+',salary:'₹30–45 LPA',mustHave:['Python','Distributed Systems','AWS'],tuesday:'Own services processing 10M orders/day.',nonNeg:'4+ yrs · Python or Go · High-scale experience'},

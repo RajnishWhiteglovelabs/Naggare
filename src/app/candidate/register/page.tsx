@@ -1,7 +1,7 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase-browser'
 
 const STEPS = ['Email', 'Verify', 'Domain', 'Photo', 'Basics', 'Experience', 'Prompts', 'Skills', 'Review']
 
