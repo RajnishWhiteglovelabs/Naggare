@@ -178,9 +178,10 @@ export default function CandidateRegister() {
     }
   }
 
-  async function verifyOtp() {
-    const entered = otp.join('')
-    if(entered.length < 6) { setError('Please enter all 6 digits'); return }
+  async function verifyOtp(otpOverride?: string[]) {
+    const digits = otpOverride ?? otp
+    const entered = digits.join('')
+    if(entered.length < 6 || digits.some(d => !d)) { setError('Please enter all 6 digits'); return }
     setLoading(true)
     try {
       const res = await fetch('/api/verify-otp', {
@@ -218,7 +219,7 @@ export default function CandidateRegister() {
     newOtp[idx] = val.replace(/[^0-9]/g,'').slice(-1)
     setOtp(newOtp)
     if(val && idx < 5) document.getElementById(`otp-${idx+1}`)?.focus()
-    if(idx === 5 && newOtp.every(d => d)) setTimeout(verifyOtp, 100)
+    // auto-submit removed — stale closure causes false 'enter all 6 digits' error
   }
 
   function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
@@ -373,7 +374,7 @@ export default function CandidateRegister() {
                     onKeyDown={e => { if(e.key==='Backspace' && !digit && i>0) document.getElementById(`otp-${i-1}`)?.focus() }}/>
                 ))}
               </div>
-              <button className="btn-primary py-4 mb-3" onClick={verifyOtp}>Verify →</button>
+              <button className="btn-primary py-4 mb-3" onClick={() => verifyOtp()}>Verify →</button>
               <p className="text-center text-sm text-gray-500">Didn't get it? <span className="text-indigo-600 font-semibold cursor-pointer" onClick={sendOtp}>Resend</span></p>
             </div>
           )}
@@ -426,7 +427,7 @@ export default function CandidateRegister() {
               <div className="mb-4"><label className="label">Full name <span className="text-red-500">*</span></label><input className="input" placeholder="Arjun Sharma" value={name} onChange={e=>setName(e.target.value)}/></div>
               <div className="mb-4"><label className="label">Personal email <span className="text-red-500">*</span></label><input className="input" type="email" placeholder="arjun@gmail.com" value={personalEmail} onChange={e=>setPersonalEmail(e.target.value)}/></div>
               <div className="mb-4"><label className="label">Mobile <span className="text-red-500">*</span></label>
-                <div className="flex gap-2 items-center"><span className="input w-16 text-center text-gray-500 bg-gray-50 flex items-center justify-center pointer-events-none">+91</span><input className="input flex-1" type="tel" inputMode="numeric" placeholder="98765 43210" value={mobile} onChange={e=>setMobile(e.target.value.replace(/[^0-9]/g,"").slice(0,10))}/></div>
+                <div className="flex gap-2 items-center"><span style={{display:"flex",alignItems:"center",justifyContent:"center",padding:"0 12px",background:"#F9FAFB",border:"1px solid #E5E7EB",borderRadius:"12px",color:"#6B7280",fontSize:"15px",whiteSpace:"nowrap",flexShrink:0}}>+91</span><input className="input flex-1" type="tel" inputMode="numeric" placeholder="98765 43210" value={mobile} onChange={e=>setMobile(e.target.value.replace(/[^0-9]/g,"").slice(0,10))}/></div>
               </div>
               <div className="mb-4"><label className="label">Current title <span className="text-red-500">*</span></label><input className="input" placeholder="Senior Software Engineer" value={title} onChange={e=>setTitle(e.target.value)}/></div>
               <div className="mb-4"><label className="label">Current company <span className="text-red-500">*</span></label><input className="input" placeholder="Razorpay" value={company} onChange={e=>setCompany(e.target.value)}/></div>
