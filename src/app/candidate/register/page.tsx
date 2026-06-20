@@ -494,7 +494,7 @@ export default function CandidateRegister() {
               <p className="text-sm text-gray-500 mb-4">Your current role is pre-filled. Add previous roles below.</p>
               <div className="p-3 rounded-xl mb-4 flex gap-3 items-start" style={{background:'#EEF2FF',border:'0.5px solid #C7D2FE'}}>
                 <span className="text-xl">🚀</span>
-                <p className="text-sm text-indigo-800 font-medium">The more you add, the stronger your profile. <strong>Recruiters spend 70% of their time on the career section.</strong></p>
+                <p className="text-sm text-indigo-800 font-medium">We recommend completing your profile in one go — it takes less than 5 minutes.</p>
               </div>
               {career.map((stop, i) => (
                 <div key={i} className="mb-4 p-4 rounded-xl border relative" style={{background:'#F9FAFB',borderColor:i===0?'#C7D2FE':'#E5E7EB'}}>
