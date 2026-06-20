@@ -318,7 +318,7 @@ export default function CandidateRegister() {
   const domainPrompts = DOMAIN_PROMPTS[domain] || DOMAIN_PROMPTS['Other']
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{background:"linear-gradient(135deg,#1E1B4B,#312e81)"}}>
       {/* Header */}
       <div className="step-header">
         <div className="max-w-lg mx-auto">
@@ -343,7 +343,8 @@ export default function CandidateRegister() {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto">
-        <div className="max-w-lg mx-auto px-5 py-6">
+        <div className="max-w-lg mx-auto px-4 py-6">
+        <div className="bg-white rounded-3xl px-5 py-6 shadow-2xl">
           {error && <div className="mb-4 p-3 rounded-xl text-sm text-red-600 bg-red-50 border border-red-100">{error}</div>}
 
           {/* STEP 0: EMAIL */}
@@ -632,6 +633,7 @@ export default function CandidateRegister() {
               </div>
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>
