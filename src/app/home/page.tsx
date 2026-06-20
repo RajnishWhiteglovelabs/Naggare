@@ -18,6 +18,7 @@ export default function Home() {
   const [swipedLeft, setSwipedLeft] = useState<Set<number>>(new Set())
   const [swipedRight, setSwipedRight] = useState<Set<number>>(new Set())
   const [toast, setToast] = useState('')
+  const [welcomeBanner, setWelcomeBanner] = useState(false)
 
   useEffect(() => {
     async function loadUser() {
@@ -36,6 +37,13 @@ export default function Home() {
         if (res.ok) {
           const profile = await res.json()
           setUser(profile)
+          // Show welcome banner briefly
+          const isNewSession = !sessionStorage.getItem('naggare_welcomed')
+          if (isNewSession) {
+            setWelcomeBanner(true)
+            sessionStorage.setItem('naggare_welcomed', '1')
+            setTimeout(() => setWelcomeBanner(false), 4000)
+          }
           return
         }
 
@@ -260,6 +268,21 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      {/* Welcome banner */}
+      {welcomeBanner && (
+        <div className="fixed top-14 left-0 right-0 z-40 px-4 py-3 flex items-center justify-between shadow-lg"
+          style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
+          <div className="flex items-center gap-3">
+            <span className="text-xl">👋</span>
+            <div>
+              <div className="text-white text-sm font-semibold">Welcome back, {firstName}!</div>
+              <div className="text-xs" style={{color:'#C7D2FE'}}>Your Naggare profile is active.</div>
+            </div>
+          </div>
+          <button onClick={() => setWelcomeBanner(false)} className="text-white opacity-60 hover:opacity-100 text-lg">✕</button>
+        </div>
+      )}
 
       {/* Toast */}
       {toast && (
