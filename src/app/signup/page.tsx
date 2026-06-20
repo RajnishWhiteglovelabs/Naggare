@@ -38,13 +38,7 @@ function SignUpInner() {
 
       if (signUpError) throw signUpError
 
-      // Send welcome email fire-and-forget (don't block signup)
-      fetch('/api/welcome', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.toLowerCase(), name: email.split('@')[0], type })
-      }).catch(() => {}) // silently ignore email errors
-
+      // Welcome email is now handled by Supabase confirm signup template
       router.push('/verify-email')
     } catch (e: any) {
       setError(e.message || 'Something went wrong')
