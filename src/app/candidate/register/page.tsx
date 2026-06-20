@@ -191,9 +191,9 @@ export default function CandidateRegister() {
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Invalid or expired code. Please try again.'); setLoading(false); return }
 
-      // Set Supabase session using hashed token from magic link
-      if (data.token) {
-        if (data.accessToken && data.refreshToken) { await supabase.auth.setSession({ access_token: data.accessToken, refresh_token: data.refreshToken }) }
+      // Set Supabase session
+      if (data.accessToken && data.refreshToken) {
+        await supabase.auth.setSession({ access_token: data.accessToken, refresh_token: data.refreshToken })
       }
 
       setError('')
