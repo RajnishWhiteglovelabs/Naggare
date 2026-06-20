@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     const { subject, html } = type === 'candidate'
       ? emailCandidateProfileDeleted(name)
       : emailRecruiterAccountDeleted(name)
-    await resend.emails.send({ from: 'Naggare <naggare@whiteglovelabs.io>', to: email, subject, html })
+    await resend.emails.send({ from: 'Naggare <naggare@naggare.com>', to: email, subject, html })
     return NextResponse.json({ success: true })
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : 'Unknown error'

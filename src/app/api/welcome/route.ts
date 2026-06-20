@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       : emailRecruiterWelcome(name)
 
     await resend.emails.send({
-      from: 'Naggare <naggare@whiteglovelabs.io>',
+      from: 'Naggare <naggare@naggare.com>',
       to: email,
       subject,
       html,

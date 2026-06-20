@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   try {
     const { email, name, role, company, expiryDate, signalCount } = await req.json()
     const { subject, html } = emailRecruiterJDExpiring(name, role, company, expiryDate, signalCount ?? 0)
-    await resend.emails.send({ from: 'Naggare <naggare@whiteglovelabs.io>', to: email, subject, html })
+    await resend.emails.send({ from: 'Naggare <naggare@naggare.com>', to: email, subject, html })
     return NextResponse.json({ success: true })
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : 'Unknown error'

@@ -10,14 +10,14 @@ export async function POST(req: NextRequest) {
 
     // Notify recruiter
     const r = emailRecruiterJDDeleted(recruiterName, role, company)
-    const sends = [resend.emails.send({ from: 'Naggare <naggare@whiteglovelabs.io>', to: recruiterEmail, subject: r.subject, html: r.html })]
+    const sends = [resend.emails.send({ from: 'Naggare <naggare@naggare.com>', to: recruiterEmail, subject: r.subject, html: r.html })]
 
     // Notify all candidates who expressed interest
     if (Array.isArray(candidateEmails)) {
       candidateEmails.forEach((email: string, i: number) => {
         const name = candidateNames?.[i] ?? 'there'
         const c = emailCandidateJDClosed(name, role, company)
-        sends.push(resend.emails.send({ from: 'Naggare <naggare@whiteglovelabs.io>', to: email, subject: c.subject, html: c.html }))
+        sends.push(resend.emails.send({ from: 'Naggare <naggare@naggare.com>', to: email, subject: c.subject, html: c.html }))
       })
     }
 

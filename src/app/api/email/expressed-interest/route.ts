@@ -16,8 +16,8 @@ export async function POST(req: NextRequest) {
     const r = emailRecruiterCandidateInterested(recruiterName, role, candidateName, candidateRole, candidateExp, skills)
 
     await Promise.all([
-      resend.emails.send({ from: 'Naggare <naggare@whiteglovelabs.io>', to: candidateEmail, subject: c.subject, html: c.html }),
-      resend.emails.send({ from: 'Naggare <naggare@whiteglovelabs.io>', to: recruiterEmail, subject: r.subject, html: r.html }),
+      resend.emails.send({ from: 'Naggare <naggare@naggare.com>', to: candidateEmail, subject: c.subject, html: c.html }),
+      resend.emails.send({ from: 'Naggare <naggare@naggare.com>', to: recruiterEmail, subject: r.subject, html: r.html }),
     ])
 
     return NextResponse.json({ success: true })
