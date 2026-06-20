@@ -34,7 +34,7 @@ export default function Landing() {
           <span className="text-5xl font-bold text-white" style={{fontFamily:'Georgia,serif'}}>N</span>
           <div className="absolute top-2 right-2 w-3 h-3 rounded-sm rotate-45" style={{background:'#EAB308'}}></div>
         </div>
-        <h1 className="text-5xl font-bold mb-2" style={{fontFamily:'Georgia,serif',color:'#1E1B4B'}}>Naggare</h1>
+        <h1 className="text-5xl font-bold mb-2" style={{fontFamily:'Georgia,serif',color:'#6366F1'}}>Naggare</h1>
         <p className="text-sm font-medium tracking-widest" style={{color:'#6366F1'}}>HIRING, HUMANISED.</p>
       </div>
 
