@@ -198,6 +198,8 @@ export default function CandidateRegister() {
       if (data.accessToken && data.refreshToken) {
         await supabase.auth.setSession({ access_token: data.accessToken, refresh_token: data.refreshToken })
       }
+      // Store email as fallback
+      localStorage.setItem('naggare_email', email.toLowerCase())
 
       setError('')
       setStep(2)
@@ -305,7 +307,7 @@ export default function CandidateRegister() {
   }
 
   async function saveAndExit() {
-    if(name && email) {
+    if(email) {
       try {
         const exitRes = await fetch('/api/candidate/save', {
           method: 'POST',
@@ -333,8 +335,10 @@ export default function CandidateRegister() {
         // Show save confirmation before redirecting
         showSaveToast()
         setTimeout(() => router.push('/home'), 1500)
-      } catch(e) {
-        router.push('/')
+      } catch(e: any) {
+        console.error('saveAndExit error:', e)
+        setError(e?.message || 'Failed to save. Please try again.')
+        setLoading(false)
       }
     } else {
       router.push('/')

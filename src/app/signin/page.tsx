@@ -55,7 +55,8 @@ export default function SignIn() {
       if (data.accessToken && data.refreshToken) {
         await supabase.auth.setSession({ access_token: data.accessToken, refresh_token: data.refreshToken })
       }
-
+      // Store email as fallback for session recovery
+      localStorage.setItem('naggare_email', email.toLowerCase())
       router.push('/home')
     } catch {
       setError('Something went wrong. Please try again.')

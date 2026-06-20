@@ -14,11 +14,12 @@ export default function Landing() {
     async function checkSession() {
       try {
         const { data: { session } } = await supabase.auth.getSession()
-        if (session?.user?.email) {
+        const emailToCheck = session?.user?.email || localStorage.getItem('naggare_email')
+        if (emailToCheck) {
           const res = await fetch('/api/me', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: session.user.email }),
+            body: JSON.stringify({ email: emailToCheck }),
           })
           if (res.ok) {
             clearTimeout(timeout)

@@ -23,9 +23,11 @@ export default function Home() {
   useEffect(() => {
     async function loadUser() {
       try {
+        // Try session first, fall back to localStorage email
         const { data: { session } } = await supabase.auth.getSession()
-        if (!session) { router.push('/signin'); return }
-        const email = session.user.email!
+        const email = session?.user?.email || localStorage.getItem('naggare_email')
+
+        if (!email) { router.push('/signin'); return }
 
         // Use service-role API to bypass RLS
         const res = await fetch('/api/me', {
