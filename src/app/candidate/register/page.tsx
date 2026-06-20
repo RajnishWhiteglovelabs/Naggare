@@ -141,7 +141,6 @@ export default function CandidateRegister() {
   const [domain, setDomain] = useState('')
   const [photo, setPhoto] = useState<string|null>(null)
   const [name, setName] = useState('')
-  const [personalEmail, setPersonalEmail] = useState('')
   const [mobile, setMobile] = useState('')
   const [title, setTitle] = useState('')
   const [company, setCompany] = useState('')
@@ -259,7 +258,7 @@ export default function CandidateRegister() {
       const prompts = selectedPrompts.filter(p => p.a.trim())
       const { error } = await supabase.from('candidates').upsert({
         email,
-        personal_email: personalEmail,
+        personal_email: email,
         mobile,
         name,
         title,
@@ -281,19 +280,14 @@ export default function CandidateRegister() {
       
       if(error) throw error
       
-      // Send welcome email to both sign-up email and personal email
-      const welcomeEmails = [email]
-      if(personalEmail && personalEmail !== email) welcomeEmails.push(personalEmail)
-      welcomeEmails.forEach(addr => {
-        fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: addr, name, type:'candidate' }) })
-      })
+      // Send welcome email
+      fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name, type:'candidate' }) })
 
-      // Send complete profile reminder if profile is minimal (no photo or prompts)
+      // Send complete profile reminder if profile is minimal
       const isMinimalProfile = !photo && prompts.filter(p => p.a.trim()).length === 0
       if(isMinimalProfile) {
-        const reminderAddr = personalEmail || email
         setTimeout(() => {
-          fetch('/api/email/complete-profile', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: reminderAddr, name }) })
+          fetch('/api/email/complete-profile', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name }) })
         }, 5000)
       }
       
@@ -431,7 +425,6 @@ export default function CandidateRegister() {
               <h2 className="text-2xl font-bold mb-2" style={{fontFamily:'Georgia,serif',color:'#1E1B4B'}}>Tell us who you are</h2>
               <p className="text-sm text-gray-500 mb-6">Quick basics. Under 2 minutes.</p>
               <div className="mb-4"><label className="label">Full name <span className="text-red-500">*</span></label><input className="input" placeholder="Arjun Sharma" value={name} onChange={e=>setName(e.target.value)}/></div>
-              <div className="mb-4"><label className="label">Personal email <span className="text-red-500">*</span></label><input className="input" type="email" placeholder="arjun@gmail.com" value={personalEmail} onChange={e=>setPersonalEmail(e.target.value)}/></div>
               <div className="mb-4"><label className="label">Mobile <span className="text-red-500">*</span></label>
                 <div className="flex gap-2 items-center"><span style={{display:"flex",alignItems:"center",justifyContent:"center",padding:"0 12px",background:"#F9FAFB",border:"1px solid #E5E7EB",borderRadius:"12px",color:"#6B7280",fontSize:"15px",whiteSpace:"nowrap",flexShrink:0}}>+91</span><input className="input flex-1" type="tel" inputMode="numeric" placeholder="98765 43210" value={mobile} onChange={e=>setMobile(e.target.value.replace(/[^0-9]/g,"").slice(0,10))}/></div>
               </div>
@@ -441,7 +434,7 @@ export default function CandidateRegister() {
                 <div><label className="label">City</label><input className="input" placeholder="Bengaluru" value={city} onChange={e=>setCity(e.target.value)}/></div>
                 <div><label className="label">Years exp</label><input className="input" type="number" placeholder="7" value={years} onChange={e=>setYears(e.target.value)}/></div>
               </div>
-              <button className="btn-primary py-4 mb-3" onClick={() => { if(!name||!personalEmail||!mobile||!title||!company){setError('Please fill all required fields');return}; setError(''); setStep(5) }}>Continue →</button>
+              <button className="btn-primary py-4 mb-3" onClick={() => { if(!name||!mobile||!title||!company){setError('Please fill all required fields');return}; setError(''); setStep(5) }}>Continue →</button>
               <button className="text-sm font-semibold text-indigo-600 w-full py-3 text-center" onClick={saveAndExit}>Save & come back later</button>
             </div>
           )}
