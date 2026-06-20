@@ -538,3 +538,31 @@ export function emailRecruiterJDExpiring(recruiterName: string, role: string, co
     )
   }
 }
+
+// ─── Complete your profile reminder ──────────────────────────────────────────
+
+export function emailCandidateCompleteProfile(candidateName: string, email: string): { subject: string; html: string } {
+  const first = candidateName.split(' ')[0]
+  return {
+    subject: `${first}, your Naggare profile is waiting to be completed`,
+    html: layout(
+      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
+      hero(`${first}, your profile is almost there.`, 'A complete profile gets seen by the right recruiters.'),
+      `${letter([
+        `Hi ${first},`,
+        `You've started building your Naggare profile — which means you've already taken the first step. Now let's finish it.`,
+        `A complete profile with your photo, career journey, prompts, and skills is what gets you noticed by recruiters who match your non-negotiables. An incomplete one stays invisible.`,
+        `It takes under 5 minutes. And once it's live, the right roles will find you.`,
+        `Happy job seeking!`,
+      ])}
+      ${infoBox('indigo', 'What to complete',
+        `<strong>📸 Profile photo</strong> — puts a face to your name<br/><br/>
+         <strong>💼 Career journey</strong> — your story in organisations<br/><br/>
+         <strong>💬 Prompts</strong> — what makes you, you<br/><br/>
+         <strong>🎯 Skills</strong> — what you bring to the table`
+      )}
+      ${cta('https://naggare.com/candidate/register', 'Complete my profile', 'indigo')}`,
+      sig('indigo')
+    )
+  }
+}

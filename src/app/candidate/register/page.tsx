@@ -281,8 +281,21 @@ export default function CandidateRegister() {
       
       if(error) throw error
       
-      // Send welcome email
-      fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name, type:'candidate' }) })
+      // Send welcome email to both sign-up email and personal email
+      const welcomeEmails = [email]
+      if(personalEmail && personalEmail !== email) welcomeEmails.push(personalEmail)
+      welcomeEmails.forEach(addr => {
+        fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: addr, name, type:'candidate' }) })
+      })
+
+      // Send complete profile reminder if profile is minimal (no photo or prompts)
+      const isMinimalProfile = !photo && prompts.filter(p => p.a.trim()).length === 0
+      if(isMinimalProfile) {
+        const reminderAddr = personalEmail || email
+        setTimeout(() => {
+          fetch('/api/email/complete-profile', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: reminderAddr, name }) })
+        }, 5000)
+      }
       
       router.push('/home')
     } catch(e: any) {
