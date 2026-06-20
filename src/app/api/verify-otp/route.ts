@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     // Mark as used
     await supabaseAdmin.from('otp_codes').update({ used: true }).eq('id', otpRecord.id)
 
-    // Create user if doesn't exist
+    // Create user if doesn't exist, or get existing
     let userId: string | undefined
 
     const { data: userData, error: createError } = await supabaseAdmin.auth.admin.createUser({
@@ -50,18 +50,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Could not create or find user' }, { status: 500 })
     }
 
-    // Generate magic link to establish browser session
+    // Generate a magic link and extract the token
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: 'magiclink',
       email: email.toLowerCase(),
     })
 
-    if (linkError) throw new Error(linkError.message)
+    if (linkError || !linkData?.properties?.hashed_token) {
+      throw new Error(linkError?.message || 'Could not generate session token')
+    }
 
     return NextResponse.json({
       success: true,
       userId,
-      actionLink: linkData?.properties?.action_link ?? null,
+      token: linkData.properties.hashed_token,
     })
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : 'Unknown error'

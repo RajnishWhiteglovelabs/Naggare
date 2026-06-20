@@ -81,16 +81,9 @@ export default function RecruiterRegister() {
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Invalid or expired code. Please try again.'); setLoading(false); return }
 
-      // Set Supabase session so subsequent DB writes work
-      if (data.accessToken && data.refreshToken) {
-        await supabase.auth.setSession({ access_token: data.accessToken, refresh_token: data.refreshToken })
-      } else if (data.actionLink) {
-        const url = new URL(data.actionLink)
-        const token = url.searchParams.get('token') || ''
-        const type = (url.searchParams.get('type') || 'magiclink') as 'magiclink'
-        if (token) {
-          await supabase.auth.verifyOtp({ token_hash: token, type })
-        }
+      // Set Supabase session using hashed token
+      if (data.token) {
+        await supabase.auth.verifyOtp({ token_hash: data.token, type: 'magiclink' })
       }
 
       setError(''); setStep(2)
