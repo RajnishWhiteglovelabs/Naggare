@@ -15,10 +15,12 @@ export default function Landing() {
       try {
         const { data: { session } } = await supabase.auth.getSession()
         if (session?.user?.email) {
-          // Verify they actually have a profile before redirecting
-          const { data: candidate } = await supabase.from('candidates').select('email').eq('email', session.user.email).single()
-          const { data: recruiter } = await supabase.from('recruiters').select('email').eq('email', session.user.email).single()
-          if (candidate || recruiter) {
+          const res = await fetch('/api/me', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: session.user.email }),
+          })
+          if (res.ok) {
             clearTimeout(timeout)
             router.push('/home')
             return

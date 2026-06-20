@@ -84,14 +84,10 @@ function cta(url: string, label: string, color: 'indigo'|'navy'): string {
   </div>`
 }
 
-function sig(color: 'indigo'|'navy'): string {
-  const bg = color === 'indigo' ? BRAND_INDIGO : BRAND_NAVY
-  return `<div style="display:flex;align-items:center;gap:14px;padding:20px 40px;background:#F1EFE8;border-top:1px solid #D3D1C7;">
-    <div style="width:40px;height:40px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:#ffffff;flex-shrink:0;">RA</div>
-    <div>
-      <div style="font-size:13px;font-weight:500;color:#26215C;">P. Rajnish Alexander</div>
-      <div style="font-size:11px;color:#5F5E5A;">Founder, Naggare · Whiteglove Labs</div>
-    </div>
+function sig(_color: 'indigo'|'navy'): string {
+  return `<div style="padding:20px 40px;background:#F1EFE8;border-top:1px solid #D3D1C7;">
+    <div style="font-size:13px;font-weight:600;color:#26215C;">P. Rajnish Alexander</div>
+    <div style="font-size:11px;color:#5F5E5A;margin-top:2px;">Founder, Naggare · Whiteglove Labs</div>
   </div>`
 }
 
