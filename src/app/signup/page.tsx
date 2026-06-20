@@ -38,12 +38,12 @@ function SignUpInner() {
 
       if (signUpError) throw signUpError
 
-      // Send welcome email immediately
-      await fetch('/api/welcome', {
+      // Send welcome email fire-and-forget (don't block signup)
+      fetch('/api/welcome', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.toLowerCase(), name: email.split('@')[0], type })
-      })
+      }).catch(() => {}) // silently ignore email errors
 
       router.push('/verify-email')
     } catch (e: any) {
