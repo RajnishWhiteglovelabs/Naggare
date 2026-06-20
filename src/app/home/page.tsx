@@ -25,12 +25,13 @@ export default function Home() {
         const { data: { session } } = await supabase.auth.getSession()
         if (!session) { router.push('/signin'); return }
         const email = session.user.email!
-        const { data: candidate } = await supabase.from('candidates').select('*').ilike('email', email).single()
+        const { data: candidate, error: candError } = await supabase.from('candidates').select('*').ilike('email', email).single()
+        console.log('candidate lookup:', email, candidate, candError)
         if (candidate) { setUser({ type: 'candidate', ...candidate }); return }
         const { data: recruiter } = await supabase.from('recruiters').select('*').ilike('email', email).single()
         if (recruiter) { setUser({ type: 'recruiter', ...recruiter }); return }
-        // No profile found — go to landing to register
-        router.push('/')
+        // Authenticated but no profile — send to complete registration
+        router.push('/candidate/register')
       } catch {
         router.push('/signin')
       }
