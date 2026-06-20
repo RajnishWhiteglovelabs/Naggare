@@ -447,7 +447,7 @@ export default function CandidateRegister() {
                 <div><label className="label">City</label><input className="input" placeholder="Bengaluru" value={city} onChange={e=>setCity(e.target.value)}/></div>
                 <div><label className="label">Years exp</label><input className="input" type="number" placeholder="7" value={years} onChange={e=>setYears(e.target.value)}/></div>
               </div>
-              <button className="btn-primary py-4 mb-3" onClick={() => { if(!name||!mobile||!title||!company){setError('Please fill all required fields');return}; setError(''); setStep(5) }}>Continue →</button>
+              <button className="btn-primary py-4 mb-3" onClick={() => { if(!name||!mobile||!title||!company){setError('Please fill all required fields');return}; setError(''); setCareer(prev => { const updated = [...prev]; updated[0] = { ...updated[0], org: company, role: title }; return updated; }); setStep(5) }}>Continue →</button>
               <button className="text-sm font-semibold text-indigo-600 w-full py-3 text-center" onClick={saveAndExit}>Save & come back later</button>
             </div>
           )}
@@ -456,17 +456,17 @@ export default function CandidateRegister() {
           {step === 5 && (
             <div>
               <h2 className="text-2xl font-bold mb-2" style={{fontFamily:'Georgia,serif',color:'#1E1B4B'}}>Your career journey</h2>
-              <p className="text-sm text-gray-500 mb-4">Most recent first. This becomes your timeline.</p>
+              <p className="text-sm text-gray-500 mb-4">Your current role is pre-filled. Add previous roles below.</p>
               <div className="p-3 rounded-xl mb-4 flex gap-3 items-start" style={{background:'#EEF2FF',border:'0.5px solid #C7D2FE'}}>
                 <span className="text-xl">🚀</span>
                 <p className="text-sm text-indigo-800 font-medium">The more you add, the stronger your profile. <strong>Recruiters spend 70% of their time on the career section.</strong></p>
               </div>
               {career.map((stop, i) => (
                 <div key={i} className="mb-4 p-4 rounded-xl border relative" style={{background:'#F9FAFB',borderColor:i===0?'#C7D2FE':'#E5E7EB'}}>
-                  <p className="text-xs font-bold mb-3" style={{color:i===0?'#4F46E5':'#6B7280'}}>{i===0?'Current / most recent role':`Role ${i+1}`}</p>
+                  <p className="text-xs font-bold mb-3" style={{color:i===0?'#4F46E5':'#6B7280'}}>{i===0?'Current role (from basics)':`Previous role ${i}`}</p>
                   {i > 0 && <button className="absolute top-3 right-3 text-gray-400 hover:text-red-500" onClick={() => setCareer(career.filter((_,j)=>j!==i))}>✕</button>}
-                  <div className="mb-3"><label className="label">Organisation</label><input className="input text-sm py-2" placeholder="Razorpay" value={stop.org} onChange={e=>setCareer(career.map((c,j)=>j===i?{...c,org:e.target.value}:c))}/></div>
-                  <div className="mb-3"><label className="label">Role / Title</label><input className="input text-sm py-2" placeholder="Senior Engineer" value={stop.role} onChange={e=>setCareer(career.map((c,j)=>j===i?{...c,role:e.target.value}:c))}/></div>
+                  <div className="mb-3"><label className="label">Organisation</label><input className="input text-sm py-2" placeholder="Razorpay" value={stop.org} onChange={e=>setCareer(career.map((c,j)=>j===i?{...c,org:e.target.value}:c))} style={i===0?{background:'#F1EFE8'}:{}}/></div>
+                  <div className="mb-3"><label className="label">Role / Title</label><input className="input text-sm py-2" placeholder="Senior Engineer" value={stop.role} onChange={e=>setCareer(career.map((c,j)=>j===i?{...c,role:e.target.value}:c))} style={i===0?{background:'#F1EFE8'}:{}}/></div>
                   <div className="grid grid-cols-2 gap-2">
                     <div><label className="label">Start date</label><input className="input text-sm py-2" type="month" value={stop.from} onChange={e=>setCareer(career.map((c,j)=>j===i?{...c,from:e.target.value}:c))}/></div>
                     <div><label className="label">End (blank=now)</label><input className="input text-sm py-2" type="month" value={stop.to} onChange={e=>setCareer(career.map((c,j)=>j===i?{...c,to:e.target.value}:c))}/></div>
@@ -474,7 +474,7 @@ export default function CandidateRegister() {
                 </div>
               ))}
               <button className="w-full py-3 mb-4 rounded-xl border-2 border-dashed border-gray-200 text-sm text-gray-500 font-medium hover:border-indigo-400 hover:text-indigo-600 transition-all"
-                onClick={() => setCareer([...career, {org:'',role:'',from:'',to:''}])}>+ Add another role</button>
+                onClick={() => setCareer([...career, {org:'',role:'',from:'',to:''}])}>+ Add previous role</button>
               <div className="flex gap-3">
                 <button className="btn-outline flex-none w-20 py-3" onClick={()=>setStep(4)}>← Back</button>
                 <button className="btn-primary py-3" onClick={() => { if(!career[0].org){setError('Add at least one role');return}; setError(''); setStep(6) }}>Continue →</button>
