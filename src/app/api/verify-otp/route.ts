@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
+const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Find valid OTP
-    const { data: otpRecord, error } = await supabase
+    const { data: otpRecord, error } = await supabaseAdmin
       .from('otp_codes')
       .select('*')
       .eq('email', email.toLowerCase())
@@ -28,36 +28,41 @@ export async function POST(req: NextRequest) {
     }
 
     // Mark as used
-    await supabase.from('otp_codes').update({ used: true }).eq('id', otpRecord.id)
+    await supabaseAdmin.from('otp_codes').update({ used: true }).eq('id', otpRecord.id)
 
-    // Create or get user via admin API
-    const { data: userData, error: userError } = await supabase.auth.admin.createUser({
+    // Create user if doesn't exist
+    let userId: string | undefined
+
+    const { data: userData, error: createError } = await supabaseAdmin.auth.admin.createUser({
       email: email.toLowerCase(),
       email_confirm: true,
     })
 
-    let userId = userData?.user?.id
-
-    // If user already exists, just get them
-    if (userError && userError.message.includes('already been registered')) {
-      const { data: existingUser } = await supabase.auth.admin.listUsers()
-      const found = existingUser?.users?.find((u: any) => u.email === email.toLowerCase())
+    if (userData?.user?.id) {
+      userId = userData.user.id
+    } else if (createError?.message?.includes('already been registered')) {
+      const { data: list } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 })
+      const found = list?.users?.find((u) => u.email === email.toLowerCase())
       userId = found?.id
     }
 
     if (!userId) {
-      return NextResponse.json({ error: 'Could not create user' }, { status: 500 })
+      return NextResponse.json({ error: 'Could not create or find user' }, { status: 500 })
     }
 
-    // Generate a session for the user
-    const { data: sessionData, error: sessionError } = await supabase.auth.admin.generateLink({
+    // Generate magic link to establish browser session
+    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: 'magiclink',
       email: email.toLowerCase(),
     })
 
-    if (sessionError) throw new Error(sessionError.message)
+    if (linkError) throw new Error(linkError.message)
 
-    return NextResponse.json({ success: true, userId, actionLink: sessionData?.properties?.action_link })
+    return NextResponse.json({
+      success: true,
+      userId,
+      actionLink: linkData?.properties?.action_link ?? null,
+    })
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : 'Unknown error'
     return NextResponse.json({ error: msg }, { status: 500 })

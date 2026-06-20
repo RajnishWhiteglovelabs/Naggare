@@ -15,26 +15,57 @@ export default function SignIn() {
     setError('')
     if (!email || !email.includes('@')) { setError('Please enter a valid email'); return }
     setLoading(true)
-    const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false } })
-    if (error) {
-      setError("We couldn't find an account with that email. Please sign up first.")
-    } else {
-      setStep('otp')
+    try {
+      const res = await fetch('/api/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError("We couldn't find an account with that email. Please sign up first.")
+      } else {
+        setStep('otp')
+      }
+    } catch {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   async function handleVerifyOTP() {
     setError('')
     if (!otp || otp.length < 6) { setError('Please enter the 6-digit code'); return }
     setLoading(true)
-    const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: 'email' })
-    if (error) {
-      setError('Invalid or expired code. Please try again.')
+    try {
+      const res = await fetch('/api/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code: otp }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError('Invalid or expired code. Please try again.')
+        setLoading(false)
+        return
+      }
+
+      // Set Supabase session
+      if (data.accessToken && data.refreshToken) {
+        await supabase.auth.setSession({ access_token: data.accessToken, refresh_token: data.refreshToken })
+      } else if (data.actionLink) {
+        const url = new URL(data.actionLink)
+        const token = url.searchParams.get('token') || ''
+        const type = (url.searchParams.get('type') || 'magiclink') as 'magiclink'
+        if (token) await supabase.auth.verifyOtp({ token_hash: token, type })
+      }
+
+      router.push('/home')
+    } catch {
+      setError('Something went wrong. Please try again.')
       setLoading(false)
-      return
     }
-    router.push('/home')
   }
 
   return (

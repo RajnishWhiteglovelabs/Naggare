@@ -189,7 +189,21 @@ export default function CandidateRegister() {
         body: JSON.stringify({ email, code: entered }),
       })
       const data = await res.json()
-      if (!res.ok) { setError(data.error || 'Invalid or expired code. Please try again.'); return }
+      if (!res.ok) { setError(data.error || 'Invalid or expired code. Please try again.'); setLoading(false); return }
+
+      // Set Supabase session so subsequent DB writes work
+      if (data.accessToken && data.refreshToken) {
+        await supabase.auth.setSession({ access_token: data.accessToken, refresh_token: data.refreshToken })
+      } else if (data.actionLink) {
+        // Extract tokens from magic link and set session
+        const url = new URL(data.actionLink)
+        const token = url.searchParams.get('token') || ''
+        const type = (url.searchParams.get('type') || 'magiclink') as 'magiclink'
+        if (token) {
+          await supabase.auth.verifyOtp({ token_hash: token, type })
+        }
+      }
+
       setError('')
       setStep(2)
     } catch {
@@ -412,7 +426,7 @@ export default function CandidateRegister() {
               <div className="mb-4"><label className="label">Full name <span className="text-red-500">*</span></label><input className="input" placeholder="Arjun Sharma" value={name} onChange={e=>setName(e.target.value)}/></div>
               <div className="mb-4"><label className="label">Personal email <span className="text-red-500">*</span></label><input className="input" type="email" placeholder="arjun@gmail.com" value={personalEmail} onChange={e=>setPersonalEmail(e.target.value)}/></div>
               <div className="mb-4"><label className="label">Mobile <span className="text-red-500">*</span></label>
-                <div className="flex gap-2"><input className="input w-20" value="+91" readOnly/><input className="input flex-1" type="tel" placeholder="98765 43210" value={mobile} onChange={e=>setMobile(e.target.value)}/></div>
+                <div className="flex gap-2 items-center"><span className="input w-16 text-center text-gray-500 bg-gray-50 flex items-center justify-center pointer-events-none">+91</span><input className="input flex-1" type="tel" inputMode="numeric" placeholder="98765 43210" value={mobile} onChange={e=>setMobile(e.target.value.replace(/[^0-9]/g,"").slice(0,10))}/></div>
               </div>
               <div className="mb-4"><label className="label">Current title <span className="text-red-500">*</span></label><input className="input" placeholder="Senior Software Engineer" value={title} onChange={e=>setTitle(e.target.value)}/></div>
               <div className="mb-4"><label className="label">Current company <span className="text-red-500">*</span></label><input className="input" placeholder="Razorpay" value={company} onChange={e=>setCompany(e.target.value)}/></div>
