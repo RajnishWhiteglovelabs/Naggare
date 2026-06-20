@@ -21,14 +21,19 @@ export default function Home() {
 
   useEffect(() => {
     async function loadUser() {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) { router.push('/signin'); return }
-      const email = session.user.email!
-      const { data: candidate } = await supabase.from('candidates').select('*').ilike('email', email).single()
-      if (candidate) { setUser({ type: 'candidate', ...candidate }); return }
-      const { data: recruiter } = await supabase.from('recruiters').select('*').ilike('email', email).single()
-      if (recruiter) { setUser({ type: 'recruiter', ...recruiter }); return }
-      router.push('/')
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) { router.push('/signin'); return }
+        const email = session.user.email!
+        const { data: candidate } = await supabase.from('candidates').select('*').ilike('email', email).single()
+        if (candidate) { setUser({ type: 'candidate', ...candidate }); return }
+        const { data: recruiter } = await supabase.from('recruiters').select('*').ilike('email', email).single()
+        if (recruiter) { setUser({ type: 'recruiter', ...recruiter }); return }
+        // No profile found — go to landing to register
+        router.push('/')
+      } catch {
+        router.push('/signin')
+      }
     }
     loadUser()
   }, [])
