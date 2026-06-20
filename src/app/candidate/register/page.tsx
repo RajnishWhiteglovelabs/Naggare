@@ -336,7 +336,8 @@ export default function CandidateRegister() {
             status: 'incomplete',
           })
         })
-        if (!exitRes.ok) throw new Error('Failed to save')
+        const exitData = await exitRes.json()
+        if (!exitRes.ok) throw new Error(exitData.error || 'Failed to save')
 
         // Send welcome email
         fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: saveEmail, name, type:'candidate' }) })
