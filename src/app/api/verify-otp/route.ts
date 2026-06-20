@@ -27,10 +27,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Incorrect code. Please check and try again.' }, { status: 400 })
     }
 
-    // Mark as used
+    // Mark OTP as used
     await supabaseAdmin.from('otp_codes').update({ used: true }).eq('id', otpRecord.id)
 
-    // Create user if doesn't exist, or get existing
+    // Get or create user
     let userId: string | undefined
 
     const { data: userData, error: createError } = await supabaseAdmin.auth.admin.createUser({
@@ -50,20 +50,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Could not create or find user' }, { status: 500 })
     }
 
-    // Generate a magic link and extract the token
-    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
-      type: 'magiclink',
+    // Set a temporary password, sign in to get real session tokens, then remove password
+    const tempPassword = `Naggare_${code}_${Date.now()}`
+
+    await supabaseAdmin.auth.admin.updateUserById(userId, { password: tempPassword })
+
+    const { data: signInData, error: signInError } = await supabaseAdmin.auth.signInWithPassword({
       email: email.toLowerCase(),
+      password: tempPassword,
     })
 
-    if (linkError || !linkData?.properties?.hashed_token) {
-      throw new Error(linkError?.message || 'Could not generate session token')
+    // Remove temp password immediately
+    await supabaseAdmin.auth.admin.updateUserById(userId, { password: `Naggare_${Math.random()}_${Date.now()}` })
+
+    if (signInError || !signInData?.session) {
+      throw new Error(signInError?.message || 'Could not create session')
     }
 
     return NextResponse.json({
       success: true,
       userId,
-      token: linkData.properties.hashed_token,
+      accessToken: signInData.session.access_token,
+      refreshToken: signInData.session.refresh_token,
     })
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : 'Unknown error'

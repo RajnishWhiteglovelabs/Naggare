@@ -193,7 +193,7 @@ export default function CandidateRegister() {
 
       // Set Supabase session using hashed token from magic link
       if (data.token) {
-        await supabase.auth.verifyOtp({ token_hash: data.token, type: 'magiclink' })
+        if (data.accessToken && data.refreshToken) { await supabase.auth.setSession({ access_token: data.accessToken, refresh_token: data.refreshToken }) }
       }
 
       setError('')

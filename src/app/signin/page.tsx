@@ -51,9 +51,9 @@ export default function SignIn() {
         return
       }
 
-      // Set Supabase session using hashed token
-      if (data.token) {
-        await supabase.auth.verifyOtp({ token_hash: data.token, type: 'magiclink' })
+      // Set real Supabase session
+      if (data.accessToken && data.refreshToken) {
+        await supabase.auth.setSession({ access_token: data.accessToken, refresh_token: data.refreshToken })
       }
 
       router.push('/home')
