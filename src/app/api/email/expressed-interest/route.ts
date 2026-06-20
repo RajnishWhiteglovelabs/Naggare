@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { emailCandidateExpressedInterest, emailRecruiterCandidateInterested } from '@/lib/emails'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function getResend() { const { Resend } = require('resend'); return new Resend(process.env.RESEND_API_KEY) }
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,8 +16,8 @@ export async function POST(req: NextRequest) {
     const r = emailRecruiterCandidateInterested(recruiterName, role, candidateName, candidateRole, candidateExp, skills)
 
     await Promise.all([
-      resend.emails.send({ from: 'Naggare <naggare@naggare.com>', to: candidateEmail, subject: c.subject, html: c.html }),
-      resend.emails.send({ from: 'Naggare <naggare@naggare.com>', to: recruiterEmail, subject: r.subject, html: r.html }),
+      getResend().emails.send({ from: 'Naggare <naggare@naggare.com>', to: candidateEmail, subject: c.subject, html: c.html }),
+      getResend().emails.send({ from: 'Naggare <naggare@naggare.com>', to: recruiterEmail, subject: r.subject, html: r.html }),
     ])
 
     return NextResponse.json({ success: true })

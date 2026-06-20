@@ -125,7 +125,8 @@ export default function CandidateRegister() {
   const [step, setStep] = useState(2)
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data }: { data: any }) => {
+      const session = data?.session
       if (!session) { router.push('/signin'); return }
       const userEmail = session.user.email!
       setEmail(userEmail)

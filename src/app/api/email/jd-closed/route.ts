@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { emailCandidateJDClosed, emailRecruiterJDDeleted } from '@/lib/emails'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function getResend() { const { Resend } = require('resend'); return new Resend(process.env.RESEND_API_KEY) }
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,14 +10,14 @@ export async function POST(req: NextRequest) {
 
     // Notify recruiter
     const r = emailRecruiterJDDeleted(recruiterName, role, company)
-    const sends = [resend.emails.send({ from: 'Naggare <naggare@naggare.com>', to: recruiterEmail, subject: r.subject, html: r.html })]
+    const sends = [getResend().emails.send({ from: 'Naggare <naggare@naggare.com>', to: recruiterEmail, subject: r.subject, html: r.html })]
 
     // Notify all candidates who expressed interest
     if (Array.isArray(candidateEmails)) {
       candidateEmails.forEach((email: string, i: number) => {
         const name = candidateNames?.[i] ?? 'there'
         const c = emailCandidateJDClosed(name, role, company)
-        sends.push(resend.emails.send({ from: 'Naggare <naggare@naggare.com>', to: email, subject: c.subject, html: c.html }))
+        sends.push(getResend().emails.send({ from: 'Naggare <naggare@naggare.com>', to: email, subject: c.subject, html: c.html }))
       })
     }
 

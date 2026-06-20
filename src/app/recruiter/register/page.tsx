@@ -19,7 +19,8 @@ export default function RecruiterRegister() {
   const [step, setStep] = useState(0)
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(async (result: any) => {
+      const session = result?.data?.session
       if (!session) return
       const { data: recruiter } = await supabase.from('recruiters').select('email').ilike('email', session.user.email!).single()
       if (recruiter) router.push('/home')
