@@ -122,13 +122,20 @@ const DOMAIN_ICONS: Record<string,string> = {
 
 export default function CandidateRegister() {
   const router = useRouter()
-  const [step, setStep] = useState(0)
+  const [step, setStep] = useState(2)
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) return
-      const { data: candidate } = await supabase.from('candidates').select('email').ilike('email', session.user.email!).single()
-      if (candidate) router.push('/home')
+      if (!session) { router.push('/signin'); return }
+      const userEmail = session.user.email!
+      setEmail(userEmail)
+      // Check if already has a profile
+      const res = await fetch('/api/me', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail }),
+      })
+      if (res.ok) router.push('/home')
     })
   }, [])
   const [loading, setLoading] = useState(false)

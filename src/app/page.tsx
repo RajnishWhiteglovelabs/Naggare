@@ -64,10 +64,10 @@ export default function Landing() {
       </p>
 
       <div className="w-full max-w-sm flex flex-col gap-3">
-        <button className="btn-primary text-lg py-5" onClick={() => router.push('/candidate/register')}>
+        <button className="btn-primary text-lg py-5" onClick={() => router.push('/signup?type=candidate')}>
           👤 I'm a Candidate
         </button>
-        <button className="btn-green text-base py-4" onClick={() => router.push('/recruiter/register')}>
+        <button className="btn-green text-base py-4" onClick={() => router.push('/signup?type=recruiter')}>
           🤝 I'm a Recruiter / TA
         </button>
         <div className="h-px my-1" style={{background:'#E5E7EB'}}></div>

@@ -23,13 +23,12 @@ export default function Home() {
   useEffect(() => {
     async function loadUser() {
       try {
-        // Try session first, fall back to localStorage email
         const { data: { session } } = await supabase.auth.getSession()
-        const email = session?.user?.email || localStorage.getItem('naggare_email')
+        if (!session?.user?.email) { router.push('/signin'); return }
 
-        if (!email) { router.push('/signin'); return }
+        const email = session.user.email
 
-        // Use service-role API to bypass RLS
+        // Use service-role API to look up profile
         const res = await fetch('/api/me', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -39,7 +38,6 @@ export default function Home() {
         if (res.ok) {
           const profile = await res.json()
           setUser(profile)
-          // Show welcome banner briefly
           const isNewSession = !sessionStorage.getItem('naggare_welcomed')
           if (isNewSession) {
             setWelcomeBanner(true)
@@ -49,7 +47,7 @@ export default function Home() {
           return
         }
 
-        // No profile found — send to registration
+        // No profile yet — build it
         router.push('/candidate/register')
       } catch {
         router.push('/signin')

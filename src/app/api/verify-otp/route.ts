@@ -24,55 +24,15 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (error || !otpRecord) {
-      return NextResponse.json({ error: 'Incorrect code. Please check and try again.' }, { status: 400 })
+      return NextResponse.json({ error: 'Incorrect code. Please try again.' }, { status: 400 })
     }
 
-    // Mark OTP as used
+    // Mark as used
     await supabaseAdmin.from('otp_codes').update({ used: true }).eq('id', otpRecord.id)
 
-    // Get or create user
-    let userId: string | undefined
-
-    const { data: userData, error: createError } = await supabaseAdmin.auth.admin.createUser({
-      email: email.toLowerCase(),
-      email_confirm: true,
-    })
-
-    if (userData?.user?.id) {
-      userId = userData.user.id
-    } else if (createError?.message?.includes('already been registered')) {
-      const { data: list } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 })
-      const found = list?.users?.find((u) => u.email === email.toLowerCase())
-      userId = found?.id
-    }
-
-    if (!userId) {
-      return NextResponse.json({ error: 'Could not create or find user' }, { status: 500 })
-    }
-
-    // Set a temporary password, sign in to get real session tokens, then remove password
-    const tempPassword = `Naggare_${code}_${Date.now()}`
-
-    await supabaseAdmin.auth.admin.updateUserById(userId, { password: tempPassword })
-
-    const { data: signInData, error: signInError } = await supabaseAdmin.auth.signInWithPassword({
-      email: email.toLowerCase(),
-      password: tempPassword,
-    })
-
-    // Remove temp password immediately
-    await supabaseAdmin.auth.admin.updateUserById(userId, { password: `Naggare_${Math.random()}_${Date.now()}` })
-
-    if (signInError || !signInData?.session) {
-      throw new Error(signInError?.message || 'Could not create session')
-    }
-
-    return NextResponse.json({
-      success: true,
-      userId,
-      accessToken: signInData.session.access_token,
-      refreshToken: signInData.session.refresh_token,
-    })
+    // OTP is valid — session is already set from email+password sign-in
+    // Just confirm the second factor passed
+    return NextResponse.json({ success: true })
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : 'Unknown error'
     return NextResponse.json({ error: msg }, { status: 500 })
