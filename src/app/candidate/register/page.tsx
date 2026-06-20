@@ -306,11 +306,24 @@ export default function CandidateRegister() {
           years_exp: parseInt(years)||0,
           career, looking_for: lookingFor,
           skills: [...selectedSkills],
+          status: 'incomplete',
         }, { onConflict:'email' })
-      } catch(e) {}
-    }
 
-    router.push('/')
+        // Send welcome email
+        fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name, type:'candidate' }) })
+
+        // Send complete profile reminder after 5s
+        setTimeout(() => {
+          fetch('/api/email/complete-profile', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name }) })
+        }, 5000)
+
+        router.push('/home')
+      } catch(e) {
+        router.push('/')
+      }
+    } else {
+      router.push('/')
+    }
   }
 
   const domainSkills = DOMAIN_SKILLS[domain] || DOMAIN_SKILLS['Other']

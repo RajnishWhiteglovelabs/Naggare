@@ -51,14 +51,9 @@ export default function SignIn() {
         return
       }
 
-      // Set Supabase session
-      if (data.accessToken && data.refreshToken) {
-        await supabase.auth.setSession({ access_token: data.accessToken, refresh_token: data.refreshToken })
-      } else if (data.actionLink) {
-        const url = new URL(data.actionLink)
-        const token = url.searchParams.get('token') || ''
-        const type = (url.searchParams.get('type') || 'magiclink') as 'magiclink'
-        if (token) await supabase.auth.verifyOtp({ token_hash: token, type })
+      // Set Supabase session using hashed token
+      if (data.token) {
+        await supabase.auth.verifyOtp({ token_hash: data.token, type: 'magiclink' })
       }
 
       router.push('/home')
