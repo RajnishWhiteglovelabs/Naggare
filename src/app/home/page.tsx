@@ -89,7 +89,7 @@ export default function Home() {
   )
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <>
 
       {/* NAV */}
       <nav className="bg-white border-b border-gray-100 px-4 h-14 flex items-center justify-between sticky top-0 z-50 shadow-sm">
@@ -360,6 +360,6 @@ export default function Home() {
         </div>
       )}
 
-    </div>
+    </>
   )
 }
