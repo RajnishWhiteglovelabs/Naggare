@@ -28,7 +28,6 @@ export default function Home() {
 
         const email = session.user.email
 
-        // Use service-role API to look up profile
         const res = await fetch('/api/me', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -47,7 +46,6 @@ export default function Home() {
           return
         }
 
-        // No profile yet — build it
         router.push('/candidate/register')
       } catch {
         router.push('/signin')
@@ -71,6 +69,13 @@ export default function Home() {
   const initials = user?.name?.split(' ').map((w:string)=>w[0]).join('').slice(0,2).toUpperCase() || '?'
   const isCandidate = user?.type === 'candidate'
 
+  // Build prompts array from flat DB fields
+  const prompts = [
+    user?.prompt_1_q ? { q: user.prompt_1_q, a: user.prompt_1_a } : null,
+    user?.prompt_2_q ? { q: user.prompt_2_q, a: user.prompt_2_a } : null,
+    user?.prompt_3_q ? { q: user.prompt_3_q, a: user.prompt_3_a } : null,
+  ].filter(Boolean) as { q: string; a: string }[]
+
   const filteredJDs = SAMPLE_JDS.filter(jd =>
     !search || jd.title.toLowerCase().includes(search.toLowerCase()) ||
     jd.company.toLowerCase().includes(search.toLowerCase()) ||
@@ -91,10 +96,12 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-3">
           <span className="text-sm font-semibold text-gray-600">{firstName}</span>
-          <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold cursor-pointer"
+          <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold cursor-pointer overflow-hidden"
             style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}
             onClick={() => setView('profile')}>
-            {user?.photo_url ? <img src={user.photo_url} className="w-full h-full object-cover rounded-full"/> : initials}
+            {user?.photo_url
+              ? <img src={user.photo_url} className="w-full h-full object-cover" alt={firstName}/>
+              : initials}
           </div>
           <button className="text-xs text-gray-400 hover:text-red-500" onClick={signOut}>Sign out</button>
         </div>
@@ -115,7 +122,12 @@ export default function Home() {
               <div className="flex gap-3 justify-center">
                 <div className="flex-1 max-w-36 p-3 rounded-2xl cursor-pointer border border-white/20 text-left" 
                   style={{background:'rgba(255,255,255,0.1)'}} onClick={() => setView('profile')}>
-                  <div className="text-2xl mb-1">👤</div>
+                  <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center text-white text-sm font-bold mb-1"
+                    style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
+                    {user?.photo_url
+                      ? <img src={user.photo_url} className="w-full h-full object-cover" alt={firstName}/>
+                      : initials}
+                  </div>
                   <div className="text-sm font-bold text-white">My Profile</div>
                   <div className="text-xs" style={{color:'#A5B4FC'}}>View & edit</div>
                 </div>
@@ -225,9 +237,15 @@ export default function Home() {
             </div>
             <div className="p-5">
               <div className="card mb-4">
+                {/* Header */}
                 <div className="p-4" style={{background:'#EEF2FF',borderBottom:'0.5px solid #C7D2FE'}}>
                   <div className="flex gap-3">
-                    <div className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl border-2 border-white shadow-md flex-shrink-0 overflow-hidden" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>{user?.photo_url ? <img src={user.photo_url} className="w-full h-full object-cover"/> : initials}</div>
+                    <div className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl border-2 border-white shadow-md flex-shrink-0 overflow-hidden"
+                      style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
+                      {user?.photo_url
+                        ? <img src={user.photo_url} className="w-full h-full object-cover" alt={user.name}/>
+                        : initials}
+                    </div>
                     <div>
                       <p className="text-lg font-bold" style={{color:'#3730A3'}}>{user.name}</p>
                       <p className="text-sm font-semibold text-indigo-600">{user.title}</p>
@@ -236,6 +254,8 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
+
+                {/* Career */}
                 {user.career?.filter((c:any)=>c.org).length > 0 && (
                   <div className="p-4 border-b border-gray-100">
                     <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">Career Journey</p>
@@ -250,12 +270,29 @@ export default function Home() {
                     </div>
                   </div>
                 )}
+
+                {/* Looking for */}
                 {user.looking_for && (
                   <div className="p-4 border-b border-gray-100">
                     <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">What I'm Looking For</p>
                     <p className="text-sm text-gray-900 leading-relaxed">{user.looking_for}</p>
                   </div>
                 )}
+
+                {/* Prompts */}
+                {prompts.filter(p => p.a).length > 0 && (
+                  <div className="p-4 border-b border-gray-100">
+                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">In My Own Words</p>
+                    {prompts.filter(p => p.a).map((p, i) => (
+                      <div key={i} className="mb-3 p-3 rounded-xl" style={{background:'#EEF2FF',border:'0.5px solid #C7D2FE'}}>
+                        <p className="text-xs font-semibold text-indigo-800 mb-1">{p.q}</p>
+                        <p className="text-sm text-gray-900 leading-relaxed">{p.a}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Skills */}
                 {user.skills?.length > 0 && (
                   <div className="p-4">
                     <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Skills · {user.skills.length}</p>
