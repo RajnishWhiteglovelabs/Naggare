@@ -362,6 +362,13 @@ function CandidateRegisterInner() {
             mobile,
             years_exp: parseInt(years)||0,
             career, looking_for: lookingFor,
+            photo_url: photo,
+            prompt_1_q: selectedPrompts[0]?.q || '',
+            prompt_1_a: selectedPrompts[0]?.a || '',
+            prompt_2_q: selectedPrompts[1]?.q || '',
+            prompt_2_a: selectedPrompts[1]?.a || '',
+            prompt_3_q: selectedPrompts[2]?.q || '',
+            prompt_3_a: selectedPrompts[2]?.a || '',
             skills: [...selectedSkills],
             status: 'incomplete',
           })
