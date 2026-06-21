@@ -356,6 +356,8 @@ export default function Home() {
           </div>
         )}
 
+      </div>
+
       {/* Welcome banner */}
       {welcomeBanner && (
         <div className="fixed top-14 left-0 right-0 z-40 px-4 py-3 flex items-center justify-between shadow-lg"
