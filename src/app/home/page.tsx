@@ -228,44 +228,51 @@ export default function Home() {
           </div>
         )}
 
-        {/* PROFILE VIEW */}
+                {/* PROFILE VIEW */}
         {view === 'profile' && (
           <div>
+            {/* Header bar */}
             <div className="flex items-center gap-3 px-5 py-3 bg-white border-b border-gray-100 sticky top-14 z-10">
               <button className="text-2xl text-indigo-600" onClick={() => setView('home')}>‹</button>
               <h2 className="text-base font-bold">My Profile</h2>
-              <button className="ml-auto text-xs font-semibold px-3 py-1.5 rounded-full" style={{background:'#EEF2FF',color:'#4F46E5',border:'0.5px solid #C7D2FE'}} onClick={() => showToast('Profile link copied! Share naggare.com 🔗')}>Share 🔗</button>
+              <button className="ml-auto text-xs font-semibold px-3 py-1.5 rounded-full"
+                style={{background:'#EEF2FF',color:'#4F46E5',border:'0.5px solid #C7D2FE'}}
+                onClick={() => showToast('Share naggare.com 🔗')}>Share 🔗</button>
             </div>
-            <div className="p-5">
-              <div className="card mb-4">
-                {/* Header */}
-                <div className="p-4" style={{background:'#EEF2FF',borderBottom:'0.5px solid #C7D2FE'}}>
-                  <div className="flex gap-3">
-                    <div className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl border-2 border-white shadow-md flex-shrink-0 overflow-hidden"
-                      style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
-                      {user?.photo_url
-                        ? <img src={user.photo_url} className="w-full h-full object-cover" alt={user.name}/>
-                        : initials}
-                    </div>
-                    <div>
-                      <p className="text-lg font-bold" style={{color:'#3730A3'}}>{user.name}</p>
-                      <p className="text-sm font-semibold text-indigo-600">{user.title}</p>
-                      <p className="text-xs text-gray-500">{user.company}{user.city?` · ${user.city}`:''}</p>
-                      {user.domain && <span className="inline-block mt-1 text-xs px-2 py-0.5 rounded-full" style={{background:'rgba(79,70,229,0.1)',color:'#4F46E5'}}>{user.domain}</span>}
-                    </div>
+
+            <div className="px-4 py-5 max-w-md mx-auto">
+              {/* Bumble-style card */}
+              <div className="rounded-3xl overflow-hidden shadow-xl mb-5 border border-gray-100">
+
+                {/* Hero */}
+                <div className="relative flex flex-col items-center pt-8 pb-6 px-4 text-center"
+                  style={{background:'linear-gradient(160deg,#4F46E5,#7C3AED)'}}>
+                  <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg mb-3 flex items-center justify-center text-white font-bold text-2xl"
+                    style={{background:'rgba(255,255,255,0.2)'}}>
+                    {user?.photo_url
+                      ? <img src={user.photo_url} className="w-full h-full object-cover" alt={user.name}/>
+                      : initials}
                   </div>
+                  <p className="text-xl font-bold text-white" style={{fontFamily:'Georgia,serif'}}>{user.name}</p>
+                  <p className="text-sm font-semibold text-indigo-200">{user.title}</p>
+                  <p className="text-xs text-indigo-300 mt-0.5">{user.company}{user.city ? ` · ${user.city}` : ''}</p>
+                  {user.domain && (
+                    <span className="mt-2 px-3 py-1 rounded-full text-xs font-semibold"
+                      style={{background:'rgba(255,255,255,0.2)',color:'white'}}>{user.domain}</span>
+                  )}
                 </div>
 
                 {/* Career */}
                 {user.career?.filter((c:any)=>c.org).length > 0 && (
-                  <div className="p-4 border-b border-gray-100">
+                  <div className="p-4 border-b border-gray-100 bg-white">
                     <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">Career Journey</p>
-                    <div className="flex gap-3 overflow-x-auto pb-1">
+                    <div className="flex gap-4 overflow-x-auto pb-1">
                       {user.career.filter((c:any)=>c.org).map((c:any,i:number) => (
-                        <div key={i} className="flex flex-col items-center min-w-16">
-                          <div className={`rounded-full border-2 border-white mb-1 ${i===0?'w-3 h-3':'w-2 h-2'}`} style={{background:'#4F46E5',boxShadow:i===0?'0 0 0 3px rgba(79,70,229,0.2)':''}}></div>
-                          <p className="text-xs font-bold text-center" style={{color:i===0?'#4F46E5':'#111827'}}>{c.org}</p>
-                          <p className="text-xs text-gray-500 text-center">{c.role}</p>
+                        <div key={i} className="flex flex-col items-center min-w-[60px]">
+                          <div className={`rounded-full mb-1 ${i===0?'w-3 h-3':'w-2 h-2'}`}
+                            style={{background:'#4F46E5',boxShadow:i===0?'0 0 0 3px rgba(79,70,229,0.2)':''}}></div>
+                          <p className="text-xs font-bold text-center leading-tight" style={{color:i===0?'#4F46E5':'#111827'}}>{c.org}</p>
+                          <p className="text-xs text-gray-400 text-center leading-tight">{c.role}</p>
                         </div>
                       ))}
                     </div>
@@ -274,20 +281,22 @@ export default function Home() {
 
                 {/* Looking for */}
                 {user.looking_for && (
-                  <div className="p-4 border-b border-gray-100">
+                  <div className="p-4 border-b border-gray-100 bg-white">
                     <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">What I'm Looking For</p>
-                    <p className="text-sm text-gray-900 leading-relaxed">{user.looking_for}</p>
+                    <p className="text-sm text-gray-800 leading-relaxed">{user.looking_for}</p>
                   </div>
                 )}
 
                 {/* Prompts */}
                 {prompts.filter(p => p.a?.trim()).length > 0 && (
-                  <div className="p-4 border-b border-gray-100">
-                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">In My Own Words</p>
+                  <div className="bg-white border-b border-gray-100">
+                    <div className="px-4 pt-4 pb-2">
+                      <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider">In My Own Words</p>
+                    </div>
                     {prompts.filter(p => p.a?.trim()).map((p, i) => (
-                      <div key={i} className="mb-3 p-3 rounded-xl" style={{background:'#EEF2FF',border:'0.5px solid #C7D2FE'}}>
-                        <p className="text-xs font-semibold text-indigo-800 mb-1">{p.q}</p>
-                        <p className="text-sm text-gray-900 leading-relaxed">{p.a}</p>
+                      <div key={i} className="mx-4 mb-4 p-4 rounded-2xl" style={{background:'#EEF2FF',border:'0.5px solid #C7D2FE'}}>
+                        <p className="text-xs font-bold text-indigo-700 mb-2">{p.q}</p>
+                        <p className="text-sm text-gray-800 leading-relaxed">{p.a}</p>
                       </div>
                     ))}
                   </div>
@@ -295,17 +304,20 @@ export default function Home() {
 
                 {/* Skills */}
                 {user.skills?.length > 0 && (
-                  <div className="p-4">
+                  <div className="p-4 bg-white">
                     <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Skills · {user.skills.length}</p>
-                    <div className="flex flex-wrap gap-1">{user.skills.map((s:string)=><span key={s} className="tag">{s}</span>)}</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {user.skills.map((s:string) => <span key={s} className="tag">{s}</span>)}
+                    </div>
                   </div>
                 )}
               </div>
-              <button className="btn-outline py-3 text-sm" onClick={() => router.push('/candidate/register?edit=true')}>✏️ Edit profile</button>
+
+              <button className="btn-outline py-3 text-sm w-full"
+                onClick={() => router.push('/candidate/register?edit=true')}>✏️ Edit profile</button>
             </div>
           </div>
         )}
-      </div>
 
       {/* Welcome banner */}
       {welcomeBanner && (
