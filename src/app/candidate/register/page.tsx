@@ -363,25 +363,38 @@ function CandidateRegisterInner() {
     }
     if(saveEmail) {
       try {
+        // Build payload carefully - never overwrite existing data with empty values
+        const exitPayload: Record<string, any> = {
+          email: saveEmail,
+          personal_email: saveEmail,
+          status: 'incomplete',
+        }
+        if (name) exitPayload.name = name
+        if (mobile) exitPayload.mobile = mobile
+        if (title) exitPayload.title = title
+        if (company) exitPayload.company = company
+        if (city) exitPayload.city = city
+        if (years) exitPayload.years_exp = parseInt(years) || 0
+        if (domain) exitPayload.domain = domain
+        if (career?.length) exitPayload.career = career
+        if (lookingFor) exitPayload.looking_for = lookingFor
+        if (photo) exitPayload.photo_url = photo
+        // Only save prompts if user has actually selected some
+        if (selectedPrompts.length > 0) {
+          exitPayload.prompt_1_q = selectedPrompts[0]?.q || ''
+          exitPayload.prompt_1_a = selectedPrompts[0]?.a || ''
+          exitPayload.prompt_2_q = selectedPrompts[1]?.q || ''
+          exitPayload.prompt_2_a = selectedPrompts[1]?.a || ''
+          exitPayload.prompt_3_q = selectedPrompts[2]?.q || ''
+          exitPayload.prompt_3_a = selectedPrompts[2]?.a || ''
+        }
+        // Only save skills if user has actually selected some
+        if (selectedSkills.size > 0) exitPayload.skills = [...selectedSkills]
+
         const exitRes = await fetch('/api/candidate/save', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: saveEmail, name, title, company, city, domain,
-            personal_email: saveEmail,
-            mobile,
-            years_exp: parseInt(years)||0,
-            career, looking_for: lookingFor,
-            photo_url: photo || undefined,
-            prompt_1_q: selectedPrompts[0]?.q || '',
-            prompt_1_a: selectedPrompts[0]?.a || '',
-            prompt_2_q: selectedPrompts[1]?.q || '',
-            prompt_2_a: selectedPrompts[1]?.a || '',
-            prompt_3_q: selectedPrompts[2]?.q || '',
-            prompt_3_a: selectedPrompts[2]?.a || '',
-            skills: [...selectedSkills],
-            status: 'incomplete',
-          })
+          body: JSON.stringify(exitPayload)
         })
         const exitData = await exitRes.json()
         if (!exitRes.ok) throw new Error(exitData.error || 'Failed to save')
