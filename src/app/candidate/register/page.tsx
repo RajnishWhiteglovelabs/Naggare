@@ -1,5 +1,6 @@
 'use client'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
 
@@ -120,9 +121,11 @@ const DOMAIN_ICONS: Record<string,string> = {
   'Marketing':'📣','Sales':'🤝','HR & L&D':'🧑‍💼','BPO & Customer Service':'📞','Operations':'📦','Other':'🌐'
 }
 
-export default function CandidateRegister() {
+function CandidateRegisterInner() {
   const router = useRouter()
   const [step, setStep] = useState(2)
+
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }: { data: any }) => {
@@ -130,13 +133,40 @@ export default function CandidateRegister() {
       if (!session) { router.push('/signin'); return }
       const userEmail = session.user.email!
       setEmail(userEmail)
+
       // Check if already has a profile
       const res = await fetch('/api/me', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: userEmail }),
       })
-      if (res.ok) router.push('/home')
+
+      if (res.ok) {
+        const profile = await res.json()
+        const isEditing = searchParams.get('edit') === 'true'
+        if (isEditing) {
+          // Pre-fill all fields from saved profile
+          if (profile.name) setName(profile.name)
+          if (profile.mobile) setMobile(profile.mobile)
+          if (profile.title) setTitle(profile.title)
+          if (profile.company) setCompany(profile.company)
+          if (profile.city) setCity(profile.city)
+          if (profile.years_exp) setYears(String(profile.years_exp))
+          if (profile.domain) setDomain(profile.domain)
+          if (profile.career) setCareer(profile.career)
+          if (profile.looking_for) setLookingFor(profile.looking_for)
+          if (profile.skills) setSelectedSkills(new Set(profile.skills))
+          const restoredPrompts = []
+          if (profile.prompt_1_q) restoredPrompts.push({q: profile.prompt_1_q, a: profile.prompt_1_a||'', id: profile.prompt_1_q})
+          if (profile.prompt_2_q) restoredPrompts.push({q: profile.prompt_2_q, a: profile.prompt_2_a||'', id: profile.prompt_2_q})
+          if (profile.prompt_3_q) restoredPrompts.push({q: profile.prompt_3_q, a: profile.prompt_3_a||'', id: profile.prompt_3_q})
+          if (restoredPrompts.length > 0) setSelectedPrompts(restoredPrompts)
+          // Jump to basics step
+          setStep(4)
+        } else {
+          router.push('/home')
+        }
+      }
     })
   }, [])
   const [loading, setLoading] = useState(false)
@@ -691,5 +721,13 @@ export default function CandidateRegister() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function CandidateRegister() {
+  return (
+    <Suspense>
+      <CandidateRegisterInner />
+    </Suspense>
   )
 }

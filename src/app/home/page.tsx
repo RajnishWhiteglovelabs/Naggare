@@ -263,7 +263,7 @@ export default function Home() {
                   </div>
                 )}
               </div>
-              <button className="btn-outline py-3 text-sm" onClick={() => router.push('/candidate/register')}>✏️ Edit profile</button>
+              <button className="btn-outline py-3 text-sm" onClick={() => router.push('/candidate/register?edit=true')}>✏️ Edit profile</button>
             </div>
           </div>
         )}

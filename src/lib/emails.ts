@@ -563,3 +563,30 @@ export function emailCandidateCompleteProfile(candidateName: string, email: stri
     )
   }
 }
+
+// ─── Profile completed email ──────────────────────────────────────────────────
+
+export function emailCandidateProfileComplete(candidateName: string): { subject: string; html: string } {
+  const first = candidateName.split(' ')[0]
+  return {
+    subject: `${first}, your Naggare profile is complete!`,
+    html: layout(
+      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
+      hero(`Your profile is live, ${first}.`, 'Recruiters who match your experience can now find you.'),
+      `${letter([
+        `Hi ${first},`,
+        `Your Naggare profile is now complete and live. Recruiters whose roles match your skills, experience, and non-negotiables will be able to find you and express interest.`,
+        `One recommendation — keep your profile current. As you hit new milestones, ship new products, or take on new responsibilities, update your experience section. A profile that reflects your latest achievements is always stronger.`,
+        `The right role is out there. We'll make sure it finds you.`,
+        `Happy job seeking!`,
+      ])}
+      ${infoBox('indigo', 'What happens next',
+        `<strong>Browse JD cards</strong> — explore roles matched to your profile.<br/><br/>
+         <strong>Use Super Pursue</strong> — once a month, go all-in on a recruiter you genuinely want to work with.<br/><br/>
+         <strong>Watch your Monday digest</strong> — fresh matched JDs arrive every week.`
+      )}
+      ${cta('https://naggare.com/home', 'Browse JD cards', 'indigo')}`,
+      sig('indigo')
+    )
+  }
+}
