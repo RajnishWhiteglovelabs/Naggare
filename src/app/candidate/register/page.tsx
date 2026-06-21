@@ -153,6 +153,7 @@ function CandidateRegisterInner() {
           if (profile.city) setCity(profile.city)
           if (profile.years_exp) setYears(String(profile.years_exp))
           if (profile.domain) setDomain(profile.domain)
+          if (profile.photo_url) setPhoto(profile.photo_url)
           if (profile.career) setCareer(profile.career)
           if (profile.looking_for) setLookingFor(profile.looking_for)
           if (profile.skills) setSelectedSkills(new Set(profile.skills))
@@ -374,7 +375,7 @@ function CandidateRegisterInner() {
             mobile,
             years_exp: parseInt(years)||0,
             career, looking_for: lookingFor,
-            photo_url: photo,
+            photo_url: photo || undefined,
             prompt_1_q: selectedPrompts[0]?.q || '',
             prompt_1_a: selectedPrompts[0]?.a || '',
             prompt_2_q: selectedPrompts[1]?.q || '',
