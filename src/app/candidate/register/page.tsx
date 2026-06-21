@@ -646,11 +646,29 @@ function CandidateRegisterInner() {
               ))}
               <div className="mb-4">
                 <p className="text-sm font-semibold text-gray-700 mb-2">Add your own</p>
-                <div className="flex gap-2">
+                <div className="flex gap-2 mb-3">
                   <input className="input flex-1" placeholder="e.g. Kafka, Temporal..." value={customSkill}
                     onChange={e=>setCustomSkill(e.target.value)} onKeyDown={e=>e.key==='Enter'&&addCustomSkill()}/>
                   <button className="px-4 rounded-xl text-white text-sm font-semibold" style={{background:'#4F46E5'}} onClick={addCustomSkill}>Add</button>
                 </div>
+                {/* Show custom skills (not in domain list) as removable chips */}
+                {(() => {
+                  const allDomainItems = new Set(domainSkills.flatMap(c => c.items))
+                  const customSkills = [...selectedSkills].filter(s => !allDomainItems.has(s))
+                  return customSkills.length > 0 ? (
+                    <div>
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Your added skills</p>
+                      <div className="flex flex-wrap gap-2">
+                        {customSkills.map(s => (
+                          <button key={s} className="skill-chip selected flex items-center gap-1"
+                            onClick={() => toggleSkill(s)}>
+                            {s} <span className="text-xs opacity-60">✕</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null
+                })()}
               </div>
               <p className="text-xs mb-4" style={{color: selectedSkills.size>=3?'#16A34A':selectedSkills.size>0?'#D97706':'#9CA3AF'}}>
                 {selectedSkills.size} skill{selectedSkills.size!==1?'s':''} selected{selectedSkills.size>=3?' ✓':''}
