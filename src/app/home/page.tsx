@@ -121,8 +121,8 @@ export default function Home() {
                 {[
                   {icon:'🏠', label:'Home', action:() => { setView('home'); setMenuOpen(false) }},
                   {icon:'✏️', label:'Edit Profile', action:() => { router.push('/candidate/register?edit=true'); setMenuOpen(false) }},
-                  {icon:'⚙️', label:'Account Settings', action:() => { showToast('Coming soon!'); setMenuOpen(false) }},
-                  {icon:'💬', label:'Feedback', action:() => { showToast('Coming soon!'); setMenuOpen(false) }},
+                  {icon:'⚙️', label:'Account Settings', action:() => { router.push('/account-settings'); setMenuOpen(false) }},
+                  {icon:'💬', label:'Feedback', action:() => { router.push('/feedback'); setMenuOpen(false) }},
                 ].map(item => (
                   <button key={item.label}
                     className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors text-left"
