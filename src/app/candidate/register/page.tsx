@@ -686,64 +686,79 @@ function CandidateRegisterInner() {
             </div>
           )}
 
-          {/* STEP 8: REVIEW */}
+                    {/* STEP 8: REVIEW */}
           {step === 8 && (
             <div>
-              <h2 className="text-2xl font-bold mb-2" style={{fontFamily:'Georgia,serif',color:'#1E1B4B'}}>Looking good 👀</h2>
-              <p className="text-sm text-gray-500 mb-5">This is what recruiters will see. Happy with it?</p>
-              <div className="card mb-5">
-                <div className="p-4" style={{background:'#EEF2FF',borderBottom:'0.5px solid #C7D2FE'}}>
-                  <div className="flex gap-3 items-start">
+              <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#1E1B4B'}}>Looking good 👀</h2>
+              <p className="text-sm text-gray-500 mb-4">This is what recruiters will see.</p>
+
+              {/* Bumble-style profile card */}
+              <div className="rounded-3xl overflow-hidden shadow-xl mb-5 border border-gray-100">
+
+                {/* Hero: photo + name */}
+                <div className="relative" style={{background:'linear-gradient(160deg,#4F46E5,#7C3AED)', minHeight:'180px'}}>
+                  <div className="flex flex-col items-center pt-8 pb-6 px-4 text-center">
                     {photo
-                      ? <img src={photo} className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md flex-shrink-0"/>
-                      : <div className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 border-2 border-white shadow-md" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>{name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
+                      ? <img src={photo} className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg mb-3"/>
+                      : <div className="w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-2xl border-4 border-white shadow-lg mb-3" style={{background:'rgba(255,255,255,0.2)'}}>{name.split(' ').map((w:any)=>w[0]).join('').slice(0,2).toUpperCase()}</div>
                     }
-                    <div>
-                      <p className="text-lg font-bold" style={{color:'#3730A3'}}>{name}</p>
-                      <p className="text-sm font-semibold text-indigo-600">{title}</p>
-                      <p className="text-xs text-gray-500">{company}{city?` · ${city}`:''}</p>
-                      <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium" style={{background:'rgba(79,70,229,0.1)',color:'#4F46E5'}}>{DOMAIN_ICONS[domain]} {domain}</span>
-                    </div>
+                    <p className="text-xl font-bold text-white" style={{fontFamily:'Georgia,serif'}}>{name}</p>
+                    <p className="text-sm font-semibold text-indigo-200">{title}</p>
+                    <p className="text-xs text-indigo-300 mt-0.5">{company}{city ? ` · ${city}` : ''}</p>
+                    <span className="mt-2 px-3 py-1 rounded-full text-xs font-semibold" style={{background:'rgba(255,255,255,0.2)',color:'white'}}>{DOMAIN_ICONS[domain]} {domain}</span>
                   </div>
                 </div>
+
+                {/* Career journey */}
                 {career[0].org && (
-                  <div className="p-4 border-b border-gray-100">
-                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Career Journey</p>
-                    <div className="flex gap-1 overflow-x-auto pb-1">
-                      {career.filter(c=>c.org).map((c,i) => (
-                        <div key={i} className="flex flex-col items-center min-w-16 px-1">
-                          <div className={`rounded-full border-2 border-white mb-1 ${i===0?'w-3 h-3':'w-2 h-2'}`} style={{background:'#4F46E5',boxShadow:i===0?'0 0 0 3px rgba(79,70,229,0.2)':''}}></div>
-                          <p className="text-xs font-bold text-center" style={{color:i===0?'#4F46E5':'#111827'}}>{c.org}</p>
-                          <p className="text-xs text-gray-500 text-center">{c.role}</p>
+                  <div className="p-4 border-b border-gray-100 bg-white">
+                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">Career Journey</p>
+                    <div className="flex gap-4 overflow-x-auto pb-1">
+                      {career.filter((c:any)=>c.org).map((c:any,i:number) => (
+                        <div key={i} className="flex flex-col items-center min-w-[60px]">
+                          <div className={`rounded-full mb-1 ${i===0?'w-3 h-3':'w-2 h-2'}`} style={{background:'#4F46E5',boxShadow:i===0?'0 0 0 3px rgba(79,70,229,0.2)':''}}></div>
+                          <p className="text-xs font-bold text-center leading-tight" style={{color:i===0?'#4F46E5':'#111827'}}>{c.org}</p>
+                          <p className="text-xs text-gray-400 text-center leading-tight">{c.role}</p>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
+
+                {/* What I'm looking for */}
                 {lookingFor && (
-                  <div className="p-4 border-b border-gray-100">
+                  <div className="p-4 border-b border-gray-100 bg-white">
                     <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">What I'm Looking For</p>
-                    <p className="text-sm text-gray-900 leading-relaxed">{lookingFor}</p>
+                    <p className="text-sm text-gray-800 leading-relaxed">{lookingFor}</p>
                   </div>
                 )}
-                {selectedPrompts.filter(p=>p.a).length > 0 && (
-                  <div className="p-4 border-b border-gray-100">
-                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">In Their Own Words</p>
-                    {selectedPrompts.filter(p=>p.a).map(p => (
-                      <div key={p.id} className="mb-3 p-3 rounded-xl" style={{background:'#EEF2FF',border:'0.5px solid #C7D2FE'}}>
-                        <p className="text-xs font-semibold text-indigo-800 mb-1">{p.id==='own'?ownPromptQ:p.q}</p>
-                        <p className="text-sm text-gray-900 leading-relaxed">{p.a}</p>
+
+                {/* Prompts */}
+                {selectedPrompts.length > 0 && (
+                  <div className="bg-white border-b border-gray-100">
+                    <div className="p-4">
+                      <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">In My Own Words</p>
+                    </div>
+                    {selectedPrompts.map((p,i) => (
+                      <div key={i} className="mx-4 mb-4 p-4 rounded-2xl" style={{background:'#EEF2FF',border:'0.5px solid #C7D2FE'}}>
+                        <p className="text-xs font-bold text-indigo-700 mb-2">{p.id==='own'?ownPromptQ:p.q}</p>
+                        <p className="text-sm text-gray-800 leading-relaxed">{p.a || <span className="text-gray-400 italic">No answer yet</span>}</p>
                       </div>
                     ))}
                   </div>
                 )}
+
+                {/* Skills */}
                 {selectedSkills.size > 0 && (
-                  <div className="p-4">
+                  <div className="p-4 bg-white">
                     <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Skills · {selectedSkills.size}</p>
-                    <div className="flex flex-wrap gap-1">{[...selectedSkills].map(s=><span key={s} className="tag">{s}</span>)}</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[...selectedSkills].map(s => <span key={s} className="tag">{s}</span>)}
+                    </div>
                   </div>
                 )}
               </div>
+
               <div className="flex gap-3 mb-2">
                 <button className="btn-outline flex-none w-24 py-3" onClick={()=>setStep(7)}>← Edit</button>
                 <button className="btn-primary py-3" onClick={submit} disabled={loading}>
