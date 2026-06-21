@@ -100,7 +100,7 @@ export default function Home() {
           <span className="text-sm font-semibold text-gray-600">{firstName}</span>
           <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold cursor-pointer overflow-hidden flex-shrink-0"
             style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}
-            onClick={() => setMenuOpen(v => !v)}>
+            onClick={() => setMenuOpen(prev => !prev)}>
             {user?.photo_url
               ? <img src={user.photo_url} className="w-full h-full object-cover" alt={firstName}/>
               : initials}
