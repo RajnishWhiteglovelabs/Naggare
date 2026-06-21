@@ -1,4 +1,5 @@
 'use client'
+// v3 - prompts+photo fix
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
@@ -280,10 +281,10 @@ export default function Home() {
                 )}
 
                 {/* Prompts */}
-                {prompts.filter(p => p.a).length > 0 && (
+                {prompts.filter(p => p.a?.trim()).length > 0 && (
                   <div className="p-4 border-b border-gray-100">
                     <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">In My Own Words</p>
-                    {prompts.filter(p => p.a).map((p, i) => (
+                    {prompts.filter(p => p.a?.trim()).map((p, i) => (
                       <div key={i} className="mb-3 p-3 rounded-xl" style={{background:'#EEF2FF',border:'0.5px solid #C7D2FE'}}>
                         <p className="text-xs font-semibold text-indigo-800 mb-1">{p.q}</p>
                         <p className="text-sm text-gray-900 leading-relaxed">{p.a}</p>
