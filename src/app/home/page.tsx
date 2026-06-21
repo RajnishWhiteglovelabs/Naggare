@@ -77,17 +77,6 @@ export default function Home() {
       jd.company.toLowerCase().includes(search.toLowerCase()) ||
       jd.mustHave.some(s => s.toLowerCase().includes(search.toLowerCase())))
 
-  const Avatar = ({ size = 9, className = '' }: { size?: number; className?: string }) => (
-    <div
-      className={`w-${size} h-${size} rounded-full overflow-hidden flex items-center justify-center text-white font-bold flex-shrink-0 ${className}`}
-      style={{ background: 'linear-gradient(135deg,#4F46E5,#7C3AED)', fontSize: size < 10 ? '0.75rem' : '1.25rem' }}
-    >
-      {user?.photo_url
-        ? <img src={user.photo_url} className="w-full h-full object-cover" alt={firstName} />
-        : initials}
-    </div>
-  )
-
   return (
     <>
 
