@@ -1,4 +1,5 @@
 'use client'
+// v2 - prompts+photo fix
 import { useState, useRef, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
