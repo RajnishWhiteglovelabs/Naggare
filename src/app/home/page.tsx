@@ -20,6 +20,7 @@ export default function Home() {
   const [swipedRight, setSwipedRight] = useState<Set<number>>(new Set())
   const [toast, setToast] = useState('')
   const [welcomeBanner, setWelcomeBanner] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     async function loadUser() {
@@ -95,16 +96,52 @@ export default function Home() {
           </div>
           <span className="font-bold text-lg" style={{fontFamily:'Georgia,serif',color:'#1E1B4B'}}>Naggare</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 relative">
           <span className="text-sm font-semibold text-gray-600">{firstName}</span>
-          <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold cursor-pointer overflow-hidden"
+          <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold cursor-pointer overflow-hidden flex-shrink-0"
             style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}
-            onClick={() => setView('profile')}>
+            onClick={() => setMenuOpen(v => !v)}>
             {user?.photo_url
               ? <img src={user.photo_url} className="w-full h-full object-cover" alt={firstName}/>
               : initials}
           </div>
-          <button className="text-xs text-gray-400 hover:text-red-500" onClick={signOut}>Sign out</button>
+
+          {/* Dropdown menu */}
+          {menuOpen && (
+            <>
+              {/* Backdrop */}
+              <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)}/>
+              {/* Menu */}
+              <div className="absolute right-0 top-11 z-50 w-52 rounded-2xl shadow-xl overflow-hidden"
+                style={{background:'white',border:'1px solid #E5E7EB'}}>
+                <div className="px-4 py-3 border-b border-gray-100">
+                  <p className="text-sm font-bold text-gray-900">{user?.name}</p>
+                  <p className="text-xs text-gray-400 truncate">{user?.email || ''}</p>
+                </div>
+                {[
+                  {icon:'🏠', label:'Home', action:() => { setView('home'); setMenuOpen(false) }},
+                  {icon:'✏️', label:'Edit Profile', action:() => { router.push('/candidate/register?edit=true'); setMenuOpen(false) }},
+                  {icon:'⚙️', label:'Account Settings', action:() => { showToast('Coming soon!'); setMenuOpen(false) }},
+                  {icon:'💬', label:'Feedback', action:() => { showToast('Coming soon!'); setMenuOpen(false) }},
+                ].map(item => (
+                  <button key={item.label}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors text-left"
+                    onClick={item.action}>
+                    <span>{item.icon}</span>
+                    <span className="font-medium">{item.label}</span>
+                  </button>
+                ))}
+                <div className="border-t border-gray-100">
+                  <button
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-500 hover:bg-red-50 transition-colors text-left"
+                    onClick={() => { setMenuOpen(false); signOut() }}>
+                    <span>🚪</span>
+                    <span className="font-medium">Sign out</span>
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </nav>
 
