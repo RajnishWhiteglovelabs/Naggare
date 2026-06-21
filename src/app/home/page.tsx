@@ -287,7 +287,7 @@ export default function Home() {
                     <div className="flex gap-5 overflow-x-auto pb-1">
                       {user.career.filter((c: any) => c.org).map((c: any, i: number) => (
                         <div key={i} className="flex flex-col items-center" style={{ minWidth: '64px' }}>
-                          <div className={`rounded-full mb-1 ${i === 0 ? 'w-3 h-3' : 'w-2 h-2'}`} style={{ background: '#4F46E5', boxShadow: i === 0 ? '0 0 0 3px rgba(79,70,229,0.2)' : '' }} />
+                          <div className={`rounded-full mb-1 ${i === 0 ? 'w-3 h-3' : 'w-2 h-2'}`} style={{ background: '#4F46E5', boxShadow: i === 0 ? '0 0 0 3px rgba(79,70,229,0.2)' : '' }}></div>
                           <p className="text-xs font-bold text-center leading-tight" style={{ color: i === 0 ? '#4F46E5' : '#111827' }}>{c.org}</p>
                           <p className="text-xs text-center leading-tight" style={{ color: '#9CA3AF' }}>{c.role}</p>
                         </div>
@@ -310,12 +310,14 @@ export default function Home() {
                     <div className="px-4 pt-4 pb-1">
                       <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider">In My Own Words</p>
                     </div>
-                    {prompts.filter(p => p.a?.trim()).map((p, i) => (
-                      <div key={i} className="mx-4 mb-4 p-4 rounded-2xl" style={{ background: '#EEF2FF', border: '0.5px solid #C7D2FE' }}>
-                        <p className="text-xs font-bold mb-2" style={{ color: '#3730A3' }}>{p.q}</p>
-                        <p className="text-sm leading-relaxed" style={{ color: '#1F2937' }}>{p.a}</p>
-                      </div>
-                    ))}
+                    <div className="pb-2">
+                      {prompts.filter(p => p.a?.trim()).map((p, i) => (
+                        <div key={i} className="mx-4 mb-4 p-4 rounded-2xl" style={{ background: '#EEF2FF', border: '0.5px solid #C7D2FE' }}>
+                          <p className="text-xs font-bold mb-2" style={{ color: '#3730A3' }}>{p.q}</p>
+                          <p className="text-sm leading-relaxed" style={{ color: '#1F2937' }}>{p.a}</p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
 
@@ -357,6 +359,8 @@ export default function Home() {
           {toast}
         </div>
       )}
+
+  </div>
     </div>
   )
 }
