@@ -227,7 +227,7 @@ export default function Home() {
               <div className="card mb-4">
                 <div className="p-4" style={{background:'#EEF2FF',borderBottom:'0.5px solid #C7D2FE'}}>
                   <div className="flex gap-3">
-                    <div className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl border-2 border-white shadow-md flex-shrink-0" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>{initials}</div>
+                    <div className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl border-2 border-white shadow-md flex-shrink-0 overflow-hidden" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>{user?.photo_url ? <img src={user.photo_url} className="w-full h-full object-cover"/> : initials}</div>
                     <div>
                       <p className="text-lg font-bold" style={{color:'#3730A3'}}>{user.name}</p>
                       <p className="text-sm font-semibold text-indigo-600">{user.title}</p>

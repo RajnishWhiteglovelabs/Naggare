@@ -256,12 +256,24 @@ function CandidateRegisterInner() {
     // auto-submit removed — stale closure causes false 'enter all 6 digits' error
   }
 
-  function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if(!file) return
+    // Show preview immediately
     const reader = new FileReader()
     reader.onload = ev => setPhoto(ev.target?.result as string)
     reader.readAsDataURL(file)
+    // Upload to storage
+    try {
+      const sessionResult = await supabase.auth.getSession()
+      const userEmail = sessionResult?.data?.session?.user?.email || email
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('email', userEmail)
+      const res = await fetch('/api/upload-photo', { method: 'POST', body: formData })
+      const data = await res.json()
+      if (data.url) setPhoto(data.url)
+    } catch { /* preview still shows */ }
   }
 
   function togglePrompt(promptQ: string, promptId: string) {
