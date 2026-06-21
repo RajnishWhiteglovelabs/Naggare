@@ -311,7 +311,6 @@ function CandidateRegisterInner() {
   async function submit() {
     setLoading(true)
     try {
-      const prompts = selectedPrompts.filter(p => p.a.trim())
       const saveRes = await fetch('/api/candidate/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -327,29 +326,26 @@ function CandidateRegisterInner() {
           domain,
           career,
           looking_for: lookingFor,
-          prompt_1_q: prompts[0]?.q || '',
-          prompt_1_a: prompts[0]?.a || '',
-          prompt_2_q: prompts[1]?.q || '',
-          prompt_2_a: prompts[1]?.a || '',
-          prompt_3_q: prompts[2]?.q || '',
-          prompt_3_a: prompts[2]?.a || '',
+          photo_url: photo || '',
+          prompt_1_q: selectedPrompts[0]?.q || '',
+          prompt_1_a: selectedPrompts[0]?.a || '',
+          prompt_2_q: selectedPrompts[1]?.q || '',
+          prompt_2_a: selectedPrompts[1]?.a || '',
+          prompt_3_q: selectedPrompts[2]?.q || '',
+          prompt_3_a: selectedPrompts[2]?.a || '',
           skills: [...selectedSkills],
           status: 'active',
         })
       })
       if (!saveRes.ok) throw new Error('Failed to save profile')
       
-      // Send welcome email
-      fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name, type:'candidate' }) })
-
-      // Send complete profile reminder if profile is minimal
-      const isMinimalProfile = !photo && prompts.filter(p => p.a.trim()).length === 0
-      if(isMinimalProfile) {
-        setTimeout(() => {
-          fetch('/api/email/complete-profile', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, name }) })
-        }, 5000)
+      // Send welcome email only on first submission
+      const isFirstSubmit = !sessionStorage.getItem('naggare_submitted')
+      if (isFirstSubmit) {
+        sessionStorage.setItem('naggare_submitted', '1')
+        fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name, type:'candidate' }) })
       }
-      
+
       router.push('/home')
     } catch(e: any) {
       setError(e.message || 'Something went wrong')
@@ -388,14 +384,6 @@ function CandidateRegisterInner() {
         })
         const exitData = await exitRes.json()
         if (!exitRes.ok) throw new Error(exitData.error || 'Failed to save')
-
-        // Send welcome email
-        fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: saveEmail, name, type:'candidate' }) })
-
-        // Send complete profile reminder after 5s
-        setTimeout(() => {
-          fetch('/api/email/complete-profile', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: saveEmail, name }) })
-        }, 5000)
 
         // Show save confirmation before redirecting
         showSaveToast()
