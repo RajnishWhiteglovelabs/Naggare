@@ -72,9 +72,9 @@ export default function RecruiterHome() {
     if (action === 'golden_buzzer') {
       showToast('⚡ Golden Buzzer sent! They'll be notified.', 'buzzer')
     } else if (data.mutual) {
-      showToast('🎉 It\'s a match! You both expressed interest.', 'pursue')
+      showToast('Match! You both expressed interest.', 'pursue')
     } else {
-      showToast('💙 Pursuing — they\'ll see your interest.', 'pursue')
+      showToast('Pursuing — they will see your interest.', 'pursue')
     }
   }
 
