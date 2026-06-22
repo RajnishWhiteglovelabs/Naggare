@@ -38,7 +38,8 @@ function SignUpInner() {
 
       if (signUpError) throw signUpError
 
-      // Welcome email is now handled by Supabase confirm signup template
+      // Store type so verified page can route correctly
+      localStorage.setItem('naggare_signup_type', type)
       router.push('/verify-email')
     } catch (e: any) {
       setError(e.message || 'Something went wrong')
