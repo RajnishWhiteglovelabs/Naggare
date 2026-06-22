@@ -122,6 +122,7 @@ function RecruiterRegisterInner() {
   const [title, setTitle] = useState('')
   const [domain, setDomain] = useState('')
   const [photo, setPhoto] = useState<string|null>(null)
+  const [lookingFor, setLookingFor] = useState('')
   const [selectedSkills, setSelectedSkills] = useState<Set<string>>(new Set())
   const [customSkill, setCustomSkill] = useState('')
   const [selectedPrompts, setSelectedPrompts] = useState<{q:string,a:string,id:string}[]>([])
@@ -160,6 +161,7 @@ function RecruiterRegisterInner() {
           if (p.title) setTitle(p.title)
           if (p.domain) setDomain(p.domain)
           if (p.photo_url) setPhoto(p.photo_url)
+          if (p.looking_for) setLookingFor(p.looking_for)
           if (p.skills) setSelectedSkills(new Set(p.skills))
           if (p.prompt_1_q) {
             const restored = []
@@ -246,6 +248,7 @@ function RecruiterRegisterInner() {
     if (title) exitPayload.title = title
     if (domain) exitPayload.domain = domain
     if (photo) exitPayload.photo_url = photo
+    if (lookingFor) exitPayload.looking_for = lookingFor
     if (selectedSkills.size > 0) exitPayload.skills = [...selectedSkills]
     if (selectedPrompts.length > 0) {
       exitPayload.prompt_1_q = selectedPrompts[0]?.q || ''
@@ -280,6 +283,7 @@ function RecruiterRegisterInner() {
           title,
           domain,
           photo_url: photo || '',
+          looking_for: lookingFor,
           skills: [...selectedSkills],
           prompt_1_q: selectedPrompts[0]?.q || '',
           prompt_1_a: selectedPrompts[0]?.a || '',
@@ -353,9 +357,14 @@ function RecruiterRegisterInner() {
                   <label className="label">Company *</label>
                   <input className="input" placeholder="e.g. Zepto, CRED, Groww..." value={company} onChange={e=>setCompany(e.target.value)}/>
                 </div>
-                <div className="mb-6">
+                <div className="mb-4">
                   <label className="label">Your title *</label>
                   <input className="input" placeholder="e.g. Head of Talent, VP HR..." value={title} onChange={e=>setTitle(e.target.value)}/>
+                </div>
+                <div className="mb-6">
+                  <label className="label">Your hiring philosophy <span className="text-gray-400 font-normal">(optional)</span></label>
+                  <textarea className="input" rows={3} placeholder="e.g. I don't just fill roles. I find people who'll grow with the business. Great hires happen when both sides are honest about what they want..." value={lookingFor} onChange={e=>setLookingFor(e.target.value)}/>
+                  <p className="text-xs text-gray-400 mt-1">Candidates read this first — make it human, make it yours.</p>
                 </div>
                 <button className="btn-green mb-3" style={{background:GREEN_BG}} onClick={()=>{if(!name||!company||!title){showToast('Please fill all required fields');return}setStep(2)}}>Continue →</button>
                 <button className="text-center w-full text-sm font-semibold py-2" style={{color:GREEN}} onClick={saveAndExit}>Save & come back later</button>
@@ -470,9 +479,9 @@ function RecruiterRegisterInner() {
             {/* STEP 5: PROMPTS */}
             {step === 5 && (
               <div>
-                <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#14532D'}}>In your own words</h2>
-                <p className="text-sm text-gray-500 mb-1">This is what candidates actually read. Be honest, be human.</p>
-                <p className="text-xs text-green-600 font-semibold mb-5">Pick up to 3 prompts.</p>
+                <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#14532D'}}>Your recruiter voice</h2>
+                <p className="text-sm text-gray-500 mb-1">This is what candidates read to decide if they trust you. Make it count.</p>
+                <p className="text-xs text-green-600 font-semibold mb-5">Pick up to 3 prompts — start with your hiring philosophy.</p>
 
                 <div className="flex flex-wrap gap-2 mb-5">
                   {domainPrompts.map(p => (
@@ -525,6 +534,12 @@ function RecruiterRegisterInner() {
                     <p className="text-xs mt-0.5" style={{color:'#86EFAC'}}>{company}</p>
                     {domain && <span className="mt-2 px-3 py-1 rounded-full text-xs font-semibold text-white" style={{background:'rgba(255,255,255,0.2)'}}>{DOMAIN_ICONS[domain]} {domain}</span>}
                   </div>
+                  {lookingFor && (
+                    <div className="p-4 bg-white border-b border-gray-100">
+                      <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{color:GREEN}}>My hiring philosophy</p>
+                      <p className="text-sm text-gray-800 leading-relaxed">{lookingFor}</p>
+                    </div>
+                  )}
                   {selectedSkills.size > 0 && (
                     <div className="p-4 bg-white border-b border-gray-100">
                       <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{color:GREEN}}>Skills hiring for · {selectedSkills.size}</p>
@@ -533,7 +548,7 @@ function RecruiterRegisterInner() {
                   )}
                   {selectedPrompts.filter(p=>p.a).length > 0 && (
                     <div className="p-4 bg-white">
-                      <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{color:GREEN}}>In my own words</p>
+                      <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{color:GREEN}}>My recruiter voice</p>
                       {selectedPrompts.filter(p=>p.a).map((p,i)=>(
                         <div key={i} className="mb-3 p-3 rounded-xl" style={{background:'#F0FDF4',border:'0.5px solid #BBF7D0'}}>
                           <p className="text-xs font-bold mb-1" style={{color:'#14532D'}}>{p.id==='own'?ownPromptQ:p.q}</p>
