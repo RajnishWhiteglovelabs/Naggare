@@ -83,12 +83,32 @@ export default function AccountSettings() {
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.user?.email) throw new Error('Not signed in')
-      // Delete candidate record
-      await fetch('/api/candidate/save', {
+      const userEmail = session.user.email
+
+      // Get name for email
+      const meRes = await fetch('/api/me', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: session.user.email, status: 'deleted' }),
+        body: JSON.stringify({ email: userEmail }),
       })
+      const profile = meRes.ok ? await meRes.json() : null
+      const userName = profile?.name || userEmail
+
+      // Mark as deleted in DB
+      const saveRoute = profile?.type === 'recruiter' ? '/api/recruiter/save' : '/api/candidate/save'
+      await fetch(saveRoute, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail, status: 'deleted' }),
+      })
+
+      // Send deletion confirmation email
+      await fetch('/api/email/account-deleted', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail, name: userName }),
+      })
+
       await supabase.auth.signOut()
       router.push('/')
     } catch (e: any) {
