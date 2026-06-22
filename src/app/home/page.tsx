@@ -271,7 +271,7 @@ export default function Home() {
                 <div className="absolute bottom-0 left-0 right-0 p-5">
                   <p className="text-3xl font-bold text-white mb-1" style={{fontFamily:'Georgia,serif',textShadow:'0 2px 8px rgba(0,0,0,0.4)'}}>{user.name}</p>
                   <p className="text-base font-semibold mb-0.5" style={{color:'rgba(255,255,255,0.9)'}}>{user.title}</p>
-                  <p className="text-sm" style={{color:'rgba(255,255,255,0.7)'}}>{user.company}{user.city ? ` · ${user.city}` : ''}</p>
+                  <p className="text-sm" style={{color:'rgba(255,255,255,0.7)'}}>{user.company}{user.city ? ' · ' + user.city : ''}</p>
                   {user.domain && (
                     <span className="inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold text-white" style={{background:'rgba(255,255,255,0.2)',backdropFilter:'blur(8px)',border:'0.5px solid rgba(255,255,255,0.3)'}}>
                       {user.domain}
