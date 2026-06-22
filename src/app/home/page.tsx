@@ -308,6 +308,16 @@ export default function Home() {
                   </div>
                 )}
 
+                {/* Skills */}
+                {user.skills?.length > 0 && (
+                  <div className="p-5">
+                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">Skills · {user.skills.length}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {user.skills.map((s:string) => <span key={s} className="tag">{s}</span>)}
+                    </div>
+                  </div>
+                )}
+
                 {/* Looking for */}
                 {user.looking_for && (
                   <div className="p-5 border-b border-gray-100">
@@ -333,15 +343,6 @@ export default function Home() {
                   </div>
                 )}
 
-                {/* Skills */}
-                {user.skills?.length > 0 && (
-                  <div className="p-5">
-                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">Skills · {user.skills.length}</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {user.skills.map((s:string) => <span key={s} className="tag">{s}</span>)}
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Edit button */}
