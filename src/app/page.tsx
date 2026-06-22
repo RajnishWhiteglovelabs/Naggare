@@ -14,7 +14,7 @@ export default function Landing() {
     async function checkSession() {
       try {
         const { data: { session } } = await supabase.auth.getSession()
-        const emailToCheck = session?.user?.email || localStorage.getItem('naggare_email')
+        const emailToCheck = session?.user?.email
         if (emailToCheck) {
           const res = await fetch('/api/me', {
             method: 'POST',
