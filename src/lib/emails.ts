@@ -103,9 +103,8 @@ export function emailCandidateWelcome(name: string): { subject: string; html: st
       `${letter([
         `Hi ${first},`,
         `Welcome to Naggare. I'm P. Rajnish Alexander, Founder — and I'd like to personally welcome you here.`,
-        `After 22 years in Talent Acquisition, I've seen hiring from every angle. I built Naggare because both sides of the table deserve better — candidates who feel seen as people, not applications. Recruiters who can find real talent, not just keyword matches.`,
-        `Naggare is built on one simple idea: both sides must want each other. No one gets approached without mutual interest. No one gets ghosted after a match.`,
-        `I wish you well — whatever side of the table you're on. And please send feedback directly through the platform. I read every word.`,
+        `After two decades in Talent Acquisition, I've seen hiring from every angle. Naggare is built to give both sides of the table a faster, efficient and better experience — whether you're a candidate who doesn't want to be seen as just an application, or a Recruiter who is looking to find real talent, not just keyword matches. Naggare aims to bring those together for mutual benefit.`,
+        `I wish you well — whatever side of the table you're on. As always, please send feedback directly through the platform. I personally do read every word.`,
       ])}
       ${infoBox('indigo', 'Next step',
         `<strong>Build your profile</strong> — it takes under 5 minutes and is the only thing standing between you and your next opportunity or your next great hire.<br/><br/>
