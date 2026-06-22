@@ -261,24 +261,23 @@ function CandidateRegisterInner() {
   async function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if(!file) return
-    // Resize and convert to base64 - no external storage needed
+    // Show preview immediately
     const reader = new FileReader()
-    reader.onload = ev => {
-      const img = new Image()
-      img.onload = () => {
-        const canvas = document.createElement('canvas')
-        const MAX = 400
-        const ratio = Math.min(MAX / img.width, MAX / img.height)
-        canvas.width = img.width * ratio
-        canvas.height = img.height * ratio
-        const ctx = canvas.getContext('2d')!
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-        const base64 = canvas.toDataURL('image/jpeg', 0.8)
-        setPhoto(base64)
-      }
-      img.src = ev.target?.result as string
-    }
+    reader.onload = ev => setPhoto(ev.target?.result as string)
     reader.readAsDataURL(file)
+    // Upload to Supabase Storage avatars bucket
+    try {
+      const sessionResult = await supabase.auth.getSession()
+      const userEmail = sessionResult?.data?.session?.user?.email || email
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('email', userEmail)
+      const res = await fetch('/api/upload-photo', { method: 'POST', body: formData })
+      const data = await res.json()
+      if (data.url) {
+        setPhoto(data.url)
+      }
+    } catch { /* preview still shows */ }
   }
 
   function togglePrompt(promptQ: string, promptId: string) {
@@ -343,11 +342,16 @@ function CandidateRegisterInner() {
       })
       if (!saveRes.ok) throw new Error('Failed to save profile')
       
-      // Send welcome email only on first submission
-      const isFirstSubmit = !sessionStorage.getItem('naggare_submitted')
-      if (isFirstSubmit) {
-        sessionStorage.setItem('naggare_submitted', '1')
-        fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name, type:'candidate' }) })
+      if (isEditing) {
+        // Send profile updated email
+        fetch('/api/email/profile-updated', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name }) })
+      } else {
+        // Send welcome email only on first submission
+        const isFirstSubmit = !sessionStorage.getItem('naggare_submitted')
+        if (isFirstSubmit) {
+          sessionStorage.setItem('naggare_submitted', '1')
+          fetch('/api/welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, name, type:'candidate' }) })
+        }
       }
 
       router.push('/home')
