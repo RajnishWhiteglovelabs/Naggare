@@ -245,41 +245,63 @@ export default function Home() {
           </div>
         )}
 
-        {/* PROFILE VIEW */}
+                {/* PROFILE VIEW */}
         {view === 'profile' && (
-          <div>
+          <div className="min-h-screen" style={{background:'#f5f5f5'}}>
+            {/* Sticky top bar */}
             <div className="flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-100 sticky top-14 z-10">
               <button className="text-2xl text-indigo-600" onClick={() => setView('home')}>‹</button>
               <h2 className="text-base font-bold">My Profile</h2>
-              <button className="ml-auto text-xs font-semibold px-3 py-1.5 rounded-full" style={{ background: '#EEF2FF', color: '#4F46E5', border: '0.5px solid #C7D2FE' }} onClick={() => showToast('Share naggare.com 🔗')}>Share 🔗</button>
+              <button className="ml-auto text-xs font-semibold px-3 py-1.5 rounded-full"
+                style={{background:'#EEF2FF',color:'#4F46E5',border:'0.5px solid #C7D2FE'}}
+                onClick={() => showToast('Share naggare.com 🔗')}>Share 🔗</button>
             </div>
 
-            <div className="px-4 py-5" style={{ maxWidth: '420px', margin: '0 auto' }}>
-              <div className="rounded-3xl overflow-hidden shadow-xl mb-4" style={{ border: '1px solid #E5E7EB' }}>
+            {/* Bumble-style card */}
+            <div style={{maxWidth:'420px',margin:'0 auto',paddingBottom:'80px'}}>
 
-                {/* Hero */}
-                <div className="flex flex-col items-center pt-8 pb-6 px-4 text-center" style={{ background: 'linear-gradient(160deg,#4F46E5,#7C3AED)' }}>
-                  <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg mb-3 flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.25)', fontSize: '1.5rem', color: 'white', fontWeight: 'bold' }}>
-                    {user?.photo_url
-                      ? <img src={user.photo_url} className="w-full h-full object-cover" alt={user.name} />
-                      : <span>{initials}</span>}
-                  </div>
-                  <p className="text-xl font-bold text-white mb-0.5" style={{ fontFamily: 'Georgia,serif' }}>{user.name}</p>
-                  <p className="text-sm font-semibold" style={{ color: '#C7D2FE' }}>{user.title}</p>
-                  <p className="text-xs mt-0.5" style={{ color: '#A5B4FC' }}>{user.company}{user.city ? ` · ${user.city}` : ''}</p>
-                  {user.domain && <span className="mt-2 px-3 py-1 rounded-full text-xs font-semibold text-white" style={{ background: 'rgba(255,255,255,0.2)' }}>{user.domain}</span>}
+              {/* Full-bleed photo hero */}
+              <div className="relative" style={{height:'480px',background:'linear-gradient(160deg,#4F46E5,#7C3AED)'}}>
+                {user?.photo_url && (
+                  <img src={user.photo_url} className="absolute inset-0 w-full h-full object-cover" alt={user.name} />
+                )}
+                {/* Gradient overlay at bottom */}
+                <div className="absolute inset-0" style={{background:'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)'}} />
+                {/* Name overlay */}
+                <div className="absolute bottom-0 left-0 right-0 p-5">
+                  <p className="text-3xl font-bold text-white mb-1" style={{fontFamily:'Georgia,serif',textShadow:'0 2px 8px rgba(0,0,0,0.4)'}}>{user.name}</p>
+                  <p className="text-base font-semibold mb-0.5" style={{color:'rgba(255,255,255,0.9)'}}>{user.title}</p>
+                  <p className="text-sm" style={{color:'rgba(255,255,255,0.7)'}}>{user.company}{user.city ? ` · ${user.city}` : ''}</p>
+                  {user.domain && (
+                    <span className="inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold text-white" style={{background:'rgba(255,255,255,0.2)',backdropFilter:'blur(8px)',border:'0.5px solid rgba(255,255,255,0.3)'}}>
+                      {user.domain}
+                    </span>
+                  )}
                 </div>
+                {/* No photo placeholder */}
+                {!user?.photo_url && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <div className="w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold text-white mb-3" style={{background:'rgba(255,255,255,0.2)'}}>
+                      {initials}
+                    </div>
+                    <p className="text-white text-sm opacity-70">Add a photo to complete your profile</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Scrollable sections below photo */}
+              <div className="bg-white mx-4 rounded-3xl shadow-lg overflow-hidden" style={{marginTop:'-24px',position:'relative',zIndex:1}}>
 
                 {/* Career */}
-                {user.career?.filter((c: any) => c.org).length > 0 && (
-                  <div className="p-4 border-b border-gray-100 bg-white">
+                {user.career?.filter((c:any)=>c.org).length > 0 && (
+                  <div className="p-5 border-b border-gray-100">
                     <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">Career Journey</p>
                     <div className="flex gap-5 overflow-x-auto pb-1">
-                      {user.career.filter((c: any) => c.org).map((c: any, i: number) => (
-                        <div key={i} className="flex flex-col items-center" style={{ minWidth: '64px' }}>
-                          <div className={`rounded-full mb-1 ${i === 0 ? 'w-3 h-3' : 'w-2 h-2'}`} style={{ background: '#4F46E5', boxShadow: i === 0 ? '0 0 0 3px rgba(79,70,229,0.2)' : '' }}></div>
-                          <p className="text-xs font-bold text-center leading-tight" style={{ color: i === 0 ? '#4F46E5' : '#111827' }}>{c.org}</p>
-                          <p className="text-xs text-center leading-tight" style={{ color: '#9CA3AF' }}>{c.role}</p>
+                      {user.career.filter((c:any)=>c.org).map((c:any,i:number) => (
+                        <div key={i} className="flex flex-col items-center flex-shrink-0" style={{minWidth:'64px'}}>
+                          <div className={`rounded-full mb-1.5 ${i===0?'w-3 h-3':'w-2 h-2'}`} style={{background:'#4F46E5',boxShadow:i===0?'0 0 0 3px rgba(79,70,229,0.2)':''}}></div>
+                          <p className="text-xs font-bold text-center leading-tight" style={{color:i===0?'#4F46E5':'#111827'}}>{c.org}</p>
+                          <p className="text-xs text-center leading-tight text-gray-400">{c.role}</p>
                         </div>
                       ))}
                     </div>
@@ -288,23 +310,23 @@ export default function Home() {
 
                 {/* Looking for */}
                 {user.looking_for && (
-                  <div className="p-4 border-b border-gray-100 bg-white">
+                  <div className="p-5 border-b border-gray-100">
                     <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">What I'm Looking For</p>
-                    <p className="text-sm leading-relaxed" style={{ color: '#1F2937' }}>{user.looking_for}</p>
+                    <p className="text-sm leading-relaxed text-gray-800">{user.looking_for}</p>
                   </div>
                 )}
 
                 {/* Prompts */}
-                {prompts.filter(p => p.a?.trim()).length > 0 && (
-                  <div className="bg-white border-b border-gray-100">
-                    <div className="px-4 pt-4 pb-1">
+                {prompts.filter(p=>p.a?.trim()).length > 0 && (
+                  <div className="border-b border-gray-100">
+                    <div className="px-5 pt-5 pb-1">
                       <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider">In My Own Words</p>
                     </div>
-                    <div className="pb-2">
-                      {prompts.filter(p => p.a?.trim()).map((p, i) => (
-                        <div key={i} className="mx-4 mb-4 p-4 rounded-2xl" style={{ background: '#EEF2FF', border: '0.5px solid #C7D2FE' }}>
-                          <p className="text-xs font-bold mb-2" style={{ color: '#3730A3' }}>{p.q}</p>
-                          <p className="text-sm leading-relaxed" style={{ color: '#1F2937' }}>{p.a}</p>
+                    <div className="px-5 pb-5">
+                      {prompts.filter(p=>p.a?.trim()).map((p,i) => (
+                        <div key={i} className="mt-4 p-4 rounded-2xl" style={{background:'#EEF2FF',border:'0.5px solid #C7D2FE'}}>
+                          <p className="text-xs font-bold mb-2" style={{color:'#3730A3'}}>{p.q}</p>
+                          <p className="text-sm leading-relaxed text-gray-800">{p.a}</p>
                         </div>
                       ))}
                     </div>
@@ -313,16 +335,19 @@ export default function Home() {
 
                 {/* Skills */}
                 {user.skills?.length > 0 && (
-                  <div className="p-4 bg-white">
-                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Skills · {user.skills.length}</p>
+                  <div className="p-5">
+                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">Skills · {user.skills.length}</p>
                     <div className="flex flex-wrap gap-1.5">
-                      {user.skills.map((s: string) => <span key={s} className="tag">{s}</span>)}
+                      {user.skills.map((s:string) => <span key={s} className="tag">{s}</span>)}
                     </div>
                   </div>
                 )}
               </div>
 
-              <button className="btn-outline py-3 text-sm w-full" onClick={() => router.push('/candidate/register?edit=true')}>✏️ Edit profile</button>
+              {/* Edit button */}
+              <div className="px-4 mt-5">
+                <button className="btn-outline py-3 text-sm w-full" onClick={() => router.push('/candidate/register?edit=true')}>✏️ Edit profile</button>
+              </div>
             </div>
           </div>
         )}
@@ -331,12 +356,12 @@ export default function Home() {
 
       {/* Welcome banner */}
       {welcomeBanner && (
-        <div className="fixed top-14 left-0 right-0 z-40 px-4 py-3 flex items-center justify-between shadow-lg" style={{ background: 'linear-gradient(135deg,#4F46E5,#7C3AED)' }}>
+        <div className="fixed top-14 left-0 right-0 z-40 px-4 py-3 flex items-center justify-between shadow-lg" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
           <div className="flex items-center gap-3">
             <span className="text-xl">👋</span>
             <div>
               <div className="text-white text-sm font-semibold">Welcome back, {firstName}!</div>
-              <div className="text-xs" style={{ color: '#C7D2FE' }}>Your Naggare profile is active.</div>
+              <div className="text-xs" style={{color:'#C7D2FE'}}>Your Naggare profile is active.</div>
             </div>
           </div>
           <button onClick={() => setWelcomeBanner(false)} className="text-white opacity-60 hover:opacity-100 text-lg">✕</button>
@@ -345,11 +370,10 @@ export default function Home() {
 
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-3 rounded-full text-white text-sm font-semibold shadow-xl z-50 whitespace-nowrap" style={{ background: '#1E1B4B' }}>
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-3 rounded-full text-white text-sm font-semibold shadow-xl z-50 whitespace-nowrap" style={{background:'#1E1B4B'}}>
           {toast}
         </div>
       )}
-
     </>
   )
 }
