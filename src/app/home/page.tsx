@@ -303,6 +303,7 @@ export default function Home() {
                             <div className={`rounded-full mb-1.5 ${i===0?'w-3 h-3':'w-2 h-2'}`} style={{background:'#4F46E5',boxShadow:i===0?'0 0 0 3px rgba(79,70,229,0.2)':''}}></div>
                             <p className="text-xs font-bold text-center leading-tight" style={{color:i===0?'#4F46E5':'#111827'}}>{c.org}</p>
                             <p className="text-xs text-center leading-tight text-gray-400">{c.role}</p>
+                            {(c.from||c.to) && <p className="text-center leading-tight" style={{fontSize:'10px',color:'#9CA3AF'}}>{c.from}{c.from&&c.to?' – ':''}{c.to}</p>}
                           </div>
                         ))}
                       </div>
