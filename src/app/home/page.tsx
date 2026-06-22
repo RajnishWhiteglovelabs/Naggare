@@ -306,9 +306,13 @@ export default function Home() {
                           </div>
                         ))}
                       </div>
-                      {/* Fade edge hint */}
-                      <div className="absolute top-0 right-0 h-full pointer-events-none" style={{width:'48px',background:'linear-gradient(to right, transparent, white)',borderRadius:'0 8px 8px 0'}}/>
-                      <span className="absolute text-indigo-500 font-semibold pointer-events-none" style={{top:'50%',right:'4px',transform:'translateY(-50%)',fontSize:'10px'}}>more ›</span>
+                      {/* Fade + arrow indicators */}
+                      <div className="absolute top-0 left-0 h-full pointer-events-none flex items-center" style={{width:'24px',background:'linear-gradient(to left, transparent, white)'}}>
+                        <span style={{color:'#4F46E5',fontSize:'14px',fontWeight:'600',lineHeight:1}}>‹</span>
+                      </div>
+                      <div className="absolute top-0 right-0 h-full pointer-events-none flex items-center justify-end" style={{width:'24px',background:'linear-gradient(to right, transparent, white)'}}>
+                        <span style={{color:'#4F46E5',fontSize:'14px',fontWeight:'600',lineHeight:1}}>›</span>
+                      </div>
                     </div>
                   </div>
                 )}
