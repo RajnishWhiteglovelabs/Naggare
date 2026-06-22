@@ -23,7 +23,8 @@ export default function Landing() {
           })
           if (res.ok) {
             clearTimeout(timeout)
-            router.push('/home')
+            const profile = await res.json()
+            router.push(profile.type === 'recruiter' ? '/recruiter/home' : '/home')
             return
           }
         }
