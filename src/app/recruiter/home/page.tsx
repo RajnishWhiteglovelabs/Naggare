@@ -70,7 +70,7 @@ export default function RecruiterHome() {
     const data = await res.json()
 
     if (action === 'golden_buzzer') {
-      showToast('⚡ Golden Buzzer sent! They'll be notified.', 'buzzer')
+      showToast('Golden Buzzer sent! They will be notified.', 'buzzer')
     } else if (data.mutual) {
       showToast('Match! You both expressed interest.', 'pursue')
     } else {
