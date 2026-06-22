@@ -34,6 +34,7 @@ export default function Home() {
         })
         if (res.ok) {
           const profile = await res.json()
+          if (profile.type === 'recruiter') { router.push('/recruiter/home'); return }
           setUser(profile)
           if (!sessionStorage.getItem('naggare_welcomed')) {
             setWelcomeBanner(true)
