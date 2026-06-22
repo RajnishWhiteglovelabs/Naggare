@@ -762,7 +762,7 @@ function CandidateRegisterInner() {
               <div className="flex gap-3 mb-2">
                 <button className="btn-outline flex-none w-24 py-3" onClick={()=>setStep(7)}>← Edit</button>
                 <button className="btn-primary py-3" onClick={submit} disabled={loading}>
-                  {loading ? 'Creating profile...' : 'Submit & Create Profile 🚀'}
+                  {loading ? (isEditing ? 'Updating...' : 'Creating profile...') : (isEditing ? 'Update Profile ✅' : 'Submit & Create Profile 🚀')}
                 </button>
               </div>
             </div>
