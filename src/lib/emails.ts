@@ -96,204 +96,27 @@ function sig(_color: 'indigo'|'navy'): string {
 export function emailCandidateWelcome(name: string): { subject: string; html: string } {
   const first = name.split(' ')[0]
   return {
-    subject: `Congratulations on joining Naggare, ${first}`,
+    subject: `Welcome to Naggare, ${first} — Hiring, Humanised.`,
     html: layout(
       `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
-      hero('Congratulations on joining Naggare.', 'A new, efficient, and faster job-seeking experience awaits.'),
+      hero('Welcome to Naggare.', 'Hiring, Humanised.'),
       `${letter([
         `Hi ${first},`,
-        `Congratulations on joining Naggare. I'm P. Rajnish Alexander, Founder at Naggare, and I'd like to personally welcome you to a new, more efficient, and faster way to find your next opportunity.`,
-        `After 22 years in Talent Acquisition, I understand how frustrating it is to fill in endless application pages and the feeling of being just another application form. Naggare changes all of that for you.`,
-        `As a next step, I'd recommend browsing the JD cards and using Super Pursue to reach out to recruiters whose roles genuinely excite you — it's your strongest signal and keeps you top of their radar.`,
-        `I wish you well in your search. And please, share any feedback you have directly through the website — we read every word.`,
-        `Happy job seeking!`,
+        `Welcome to Naggare. I'm P. Rajnish Alexander, Founder — and I'd like to personally welcome you here.`,
+        `After 22 years in Talent Acquisition, I've seen hiring from every angle. I built Naggare because both sides of the table deserve better — candidates who feel seen as people, not applications. Recruiters who can find real talent, not just keyword matches.`,
+        `Naggare is built on one simple idea: both sides must want each other. No one gets approached without mutual interest. No one gets ghosted after a match.`,
+        `I wish you well — whatever side of the table you're on. And please send feedback directly through the platform. I read every word.`,
       ])}
-      ${infoBox('indigo', 'Where to start',
-        `<strong>1. Browse JD cards</strong> — explore roles matched to your profile and express interest on the ones that matter.<br/><br/>
-         <strong>2. Use Super Pursue</strong> — once a month, go all-in on a recruiter you truly want. Make it count.<br/><br/>
-         <strong>3. Watch your Monday digest</strong> — fresh matched JDs arrive every week. No noise, just relevant roles.`
+      ${infoBox('indigo', 'Next step',
+        `<strong>Build your profile</strong> — it takes under 5 minutes and is the only thing standing between you and your next opportunity or your next great hire.<br/><br/>
+         Be honest. Be human. That's what the other side is actually looking for.`
       )}
-      ${cta('https://naggare.com', 'Start exploring on Naggare', 'indigo')}
-      <p style="font-size:12px;color:#888780;text-align:center;">Have feedback? <a href="https://naggare.com" style="color:#534AB7;text-decoration:none;">Share it on the website</a> — a real person reads it.</p>`,
+      ${cta('https://naggare.com', 'Go to Naggare', 'indigo')}`,
       sig('indigo')
     )
   }
 }
 
-export function emailCandidateOTP(): { subject: string; html: string } {
-  return {
-    subject: `Your Naggare verification code`,
-    html: layout(
-      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
-      hero('Verify your email to get started.', 'One code. One step. Then you\'re in.'),
-      `${letter([`Hi there,`, `Here's your one-time code to verify your email and continue building your Naggare profile.`])}
-      ${infoBox('indigo', 'Your verification code',
-        `<div style="text-align:center;padding:12px 0;">
-          <div style="font-size:36px;font-weight:700;color:#26215C;letter-spacing:10px;font-family:monospace;">{{.Token}}</div>
-          <div style="font-size:11px;color:#888780;margin-top:8px;">Valid for 10 minutes · Single use only</div>
-        </div>`
-      )}
-      ${infoBox('amber', 'Note', `If you didn't create a Naggare account, you can safely ignore this email.`)}`,
-      `<div style="padding:12px 40px;text-align:center;font-size:12px;color:#888780;">
-        Questions? Write to us at <a href="mailto:hello@naggare.com" style="color:#534AB7;text-decoration:none;">hello@naggare.com</a>
-      </div>`
-    )
-  }
-}
-
-export function emailCandidateSuperPursued(candidateName: string, recruiterName: string, recruiterTitle: string, company: string): { subject: string; html: string } {
-  const first = candidateName.split(' ')[0]
-  return {
-    subject: `You have Super Pursued ${recruiterName.split(' ')[0]}`,
-    html: layout(
-      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
-      hero(`You have Super Pursued ${recruiterName.split(' ')[0]}.`, 'Your strongest signal, delivered directly to them.'),
-      `${badge('indigo', '★ Super Pursue sent')}
-      ${letter([
-        `Hi ${first},`,
-        `Your Super Pursue has been sent to <strong>${recruiterName}</strong>, ${recruiterTitle} at <strong>${company}</strong>. They will see this as your highest-priority signal — it puts you right at the top of their radar.`,
-        `Remember, you have one Super Pursue per month, so you've used it well. We'll let you know the moment ${recruiterName.split(' ')[0]} responds.`,
-        `Until then, keep exploring JD cards and expressing interest in roles that excite you.`,
-        `Wishing you the very best.`,
-      ])}
-      ${infoBox('indigo', 'What happens next',
-        `${recruiterName.split(' ')[0]} will review your profile and either Pursue you back — creating a Candidate &amp; JD match — or pass. You'll be notified either way. Your next Super Pursue resets on the 1st of next month.`
-      )}
-      ${cta('https://naggare.com', 'View my activity', 'indigo')}`,
-      sig('indigo')
-    )
-  }
-}
-
-export function emailCandidateExpressedInterest(candidateName: string, role: string, company: string): { subject: string; html: string } {
-  const first = candidateName.split(' ')[0]
-  return {
-    subject: `You've expressed interest in ${role} at ${company}`,
-    html: layout(
-      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
-      hero('You\'ve expressed interest.<br/>A quality signal sent.', 'On Naggare, intent is everything.'),
-      `${letter([
-        `Hi ${first},`,
-        `You've expressed interest in the <strong>${role}</strong> role at <strong>${company}</strong>. Your profile has been surfaced to the recruiter as a candidate who means it.`,
-        `On Naggare, this is how connections begin — with intent from both sides. If the recruiter expresses interest back, it's a Candidate &amp; JD match and we'll let you know immediately.`,
-        `Keep browsing. The right role finds those who are looking.`,
-      ])}
-      ${infoBox('indigo', 'What happens next',
-        `The recruiter reviews interested candidates every week via their Naggar Digest. If they pursue you back, you'll get a match notification. No response within 30 days means the JD has moved on.`
-      )}
-      ${cta('https://naggare.com', 'Browse more JD cards', 'indigo')}`,
-      sig('indigo')
-    )
-  }
-}
-
-export function emailCandidateMatch(candidateName: string, role: string, company: string): { subject: string; html: string } {
-  const first = candidateName.split(' ')[0]
-  return {
-    subject: `Candidate & JD is a match — ${role} at ${company}`,
-    html: layout(
-      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
-      hero(`Candidate &amp; JD is a match, ${first}.`, 'This is what Naggare is built for.'),
-      `${badge('amber', '🤝 Candidate & JD matched')}
-      ${letter([
-        `Hi ${first},`,
-        `You and the recruiter at <strong>${company}</strong> have both expressed interest in the <strong>${role}</strong> role. Candidate &amp; JD is a match — and on Naggare, that's when conversations begin.`,
-        `This is exactly how hiring should work. Both sides chose each other. No cold outreach, no guessing. Just a real signal from both ends.`,
-        `I wish you a great conversation ahead. Make the most of it.`,
-      ])}
-      ${infoBox('amber', 'What happens next',
-        `The recruiter will reach out to you directly. Expect a message within a few working days. You can also view your match details on your Naggare dashboard.`
-      )}
-      ${cta('https://naggare.com', 'View my match', 'indigo')}`,
-      sig('indigo')
-    )
-  }
-}
-
-export function emailCandidateDigest(candidateName: string, weekOf: string, rolesHtml: string): { subject: string; html: string } {
-  const first = candidateName.split(' ')[0]
-  return {
-    subject: `Your Monday Naggar Digest — ${weekOf}`,
-    html: layout(
-      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
-      hero('Your Monday Naggar Digest.<br/>Fresh roles, matched to you.', `Week of ${weekOf}`),
-      `${letter([
-        `Hi ${first},`,
-        `Here are this week's JD cards matched to your profile. These recruiters have set non-negotiables that align with your skills and experience — worth a look.`,
-      ])}
-      ${infoBox('indigo', 'This week\'s matched roles', rolesHtml)}
-      ${cta('https://naggare.com', 'View all matched JDs', 'indigo')}
-      <p style="font-size:12px;color:#888780;text-align:center;">You're seeing this because your profile is active. <a href="https://naggare.com" style="color:#534AB7;text-decoration:none;">Pause digest</a></p>`,
-      ''
-    )
-  }
-}
-
-export function emailCandidateJDClosed(candidateName: string, role: string, company: string): { subject: string; html: string } {
-  const first = candidateName.split(' ')[0]
-  return {
-    subject: `Update: ${role} at ${company} has closed`,
-    html: layout(
-      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
-      hero('A role you pursued has closed.', 'On to the next one.'),
-      `${letter([
-        `Hi ${first},`,
-        `The <strong>${role}</strong> role at <strong>${company}</strong> that you expressed interest in has been closed by the recruiter.`,
-        `This happens — roles get filled, timelines change. It's not a reflection of your profile or your interest. Keep going. The right match is still out there.`,
-        `Your profile remains active and visible to recruiters who match your skills and experience.`,
-      ])}
-      ${cta('https://naggare.com', 'Browse open JD cards', 'indigo')}`,
-      sig('indigo')
-    )
-  }
-}
-
-export function emailCandidateProfileDeleted(candidateName: string): { subject: string; html: string } {
-  const first = candidateName.split(' ')[0]
-  return {
-    subject: `Your Naggare profile has been removed`,
-    html: layout(
-      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
-      hero(`Your profile has been removed.<br/>We wish you well, ${first}.`, 'It was a pleasure having you on Naggare.'),
-      `${letter([
-        `Hi ${first},`,
-        `Your Naggare profile has been successfully deleted. All your data has been removed from our platform.`,
-        `We hope your time on Naggare brought you closer to the right opportunity. If it did, that's everything we set out to do. If it didn't, we'd genuinely love to know why — your feedback helps us build better.`,
-        `The door is always open. If you ever decide to return, building your profile takes just a few minutes.`,
-        `Wishing you the very best in whatever comes next.`,
-      ])}
-      ${infoBox('amber', 'Have feedback?',
-        `Tell us what we could have done better. Rajnish reads every word personally at <a href="https://naggare.com" style="color:#854F0B;">naggare.com</a>.`
-      )}`,
-      sig('indigo')
-    )
-  }
-}
-
-export function emailCandidateGoldenBuzzer(candidateName: string, role: string, company: string): { subject: string; html: string } {
-  const first = candidateName.split(' ')[0]
-  return {
-    subject: `A recruiter at ${company} just sent you a Golden Buzzer`,
-    html: layout(
-      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
-      hero(`A recruiter just hit your Golden Buzzer, ${first}.`, 'This is their strongest signal. They want you.'),
-      `${badge('amber', '★ Golden Buzzer received')}
-      ${letter([
-        `Hi ${first},`,
-        `The recruiter at <strong>${company}</strong> has sent you a Golden Buzzer for the <strong>${role}</strong> role. This is their highest-priority signal — it means they've reviewed your profile and want to make sure you don't miss this role.`,
-        `A Golden Buzzer is rare. Take a look at the JD card and if it excites you, express your interest back. That's when the Candidate &amp; JD match happens.`,
-        `You've clearly built a profile worth noticing. Well done.`,
-      ])}
-      ${infoBox('amber', 'What happens next',
-        `Review the JD card and hit Pursue if you're interested. A mutual signal from both sides creates a Candidate &amp; JD match and opens the conversation.`
-      )}
-      ${cta('https://naggare.com', 'View the JD card', 'indigo')}`,
-      sig('indigo')
-    )
-  }
-}
-
-// ─── Recruiter emails ─────────────────────────────────────────────────────────
 
 export function emailRecruiterWelcome(name: string): { subject: string; html: string } {
   const first = name.split(' ')[0]
