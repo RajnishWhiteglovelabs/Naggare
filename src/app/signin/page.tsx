@@ -56,7 +56,13 @@ export default function SignIn() {
 
       // Store email for fallback
       localStorage.setItem('naggare_email', email.toLowerCase())
-      router.push('/home')
+      const meRes = await fetch('/api/me', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.toLowerCase() }),
+      })
+      const profile = meRes.ok ? await meRes.json() : null
+      router.push(profile?.type === 'recruiter' ? '/recruiter/home' : '/home')
     } catch (e: any) {
       setError('Something went wrong. Please try again.')
       setLoading(false)
