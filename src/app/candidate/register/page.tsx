@@ -144,6 +144,8 @@ function CandidateRegisterInner() {
 
       if (res.ok) {
         const profile = await res.json()
+        // Recruiter landed here by mistake - send them to correct place
+        if (profile.type === 'recruiter') { router.push('/recruiter/home'); return }
         const isEditing = searchParams.get('edit') === 'true'
         setIsEditing(isEditing)
         if (isEditing) {
