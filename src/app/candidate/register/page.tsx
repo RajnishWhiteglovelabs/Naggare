@@ -145,6 +145,7 @@ function CandidateRegisterInner() {
       if (res.ok) {
         const profile = await res.json()
         const isEditing = searchParams.get('edit') === 'true'
+        setIsEditing(isEditing)
         if (isEditing) {
           // Pre-fill all fields from saved profile
           if (profile.name) setName(profile.name)
@@ -172,6 +173,7 @@ function CandidateRegisterInner() {
     })
   }, [])
   const [loading, setLoading] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
   const [error, setError] = useState('')
   const [saveToast, setSaveToast] = useState(false)
 
