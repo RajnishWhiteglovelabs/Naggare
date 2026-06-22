@@ -296,14 +296,19 @@ export default function Home() {
                 {user.career?.filter((c:any)=>c.org).length > 0 && (
                   <div className="p-5 border-b border-gray-100">
                     <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">Career Journey</p>
-                    <div className="flex gap-5 overflow-x-auto pb-1">
-                      {user.career.filter((c:any)=>c.org).map((c:any,i:number) => (
-                        <div key={i} className="flex flex-col items-center flex-shrink-0" style={{minWidth:'64px'}}>
-                          <div className={`rounded-full mb-1.5 ${i===0?'w-3 h-3':'w-2 h-2'}`} style={{background:'#4F46E5',boxShadow:i===0?'0 0 0 3px rgba(79,70,229,0.2)':''}}></div>
-                          <p className="text-xs font-bold text-center leading-tight" style={{color:i===0?'#4F46E5':'#111827'}}>{c.org}</p>
-                          <p className="text-xs text-center leading-tight text-gray-400">{c.role}</p>
-                        </div>
-                      ))}
+                    <div className="relative">
+                      <div id="career-scroll" className="flex gap-5 overflow-x-auto pb-1" style={{scrollbarWidth:'none'}}>
+                        {user.career.filter((c:any)=>c.org).map((c:any,i:number) => (
+                          <div key={i} className="flex flex-col items-center flex-shrink-0" style={{minWidth:'64px'}}>
+                            <div className={`rounded-full mb-1.5 ${i===0?'w-3 h-3':'w-2 h-2'}`} style={{background:'#4F46E5',boxShadow:i===0?'0 0 0 3px rgba(79,70,229,0.2)':''}}></div>
+                            <p className="text-xs font-bold text-center leading-tight" style={{color:i===0?'#4F46E5':'#111827'}}>{c.org}</p>
+                            <p className="text-xs text-center leading-tight text-gray-400">{c.role}</p>
+                          </div>
+                        ))}
+                      </div>
+                      {/* Fade edge hint */}
+                      <div className="absolute top-0 right-0 h-full pointer-events-none" style={{width:'48px',background:'linear-gradient(to right, transparent, white)',borderRadius:'0 8px 8px 0'}}/>
+                      <span className="absolute text-indigo-500 font-semibold pointer-events-none" style={{top:'50%',right:'4px',transform:'translateY(-50%)',fontSize:'10px'}}>more ›</span>
                     </div>
                   </div>
                 )}
