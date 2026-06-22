@@ -438,3 +438,112 @@ export function emailCandidateProfileUpdated(candidateName: string): { subject: 
     )
   }
 }
+
+// ─── Additional candidate emails ─────────────────────────────────────────────
+
+export function emailCandidateExpressedInterest(name: string, jobTitle: string, company: string): { subject: string; html: string } {
+  const first = name.split(' ')[0]
+  return {
+    subject: `You expressed interest in ${jobTitle} at ${company}`,
+    html: layout(
+      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
+      hero('Interest noted.', `${jobTitle} at ${company}`),
+      `${letter([
+        `Hi ${first},`,
+        `You expressed interest in the ${jobTitle} role at ${company}. The recruiter has been notified.`,
+        `If they're interested too, it's a match — and you'll both be notified. Until then, keep browsing.`,
+      ])}
+      ${cta('https://naggare.com/home', 'Browse more roles', 'indigo')}`,
+      sig('indigo')
+    )
+  }
+}
+
+export function emailCandidateGoldenBuzzer(name: string, recruiterName: string, company: string): { subject: string; html: string } {
+  const first = name.split(' ')[0]
+  return {
+    subject: `${recruiterName} at ${company} just Golden Buzzed you`,
+    html: layout(
+      `linear-gradient(135deg,#D97706 0%,#B45309 100%)`,
+      hero('You got a Golden Buzzer.', `${recruiterName} at ${company} went all in.`),
+      `${letter([
+        `Hi ${first},`,
+        `${recruiterName} from ${company} used their Golden Buzzer on your profile — they only get one a month and they chose you.`,
+        `This is their strongest signal of interest. Visit your profile to see the role and decide if you want to pursue it.`,
+      ])}
+      ${cta('https://naggare.com/home', 'View the role', 'indigo')}`,
+      sig('indigo')
+    )
+  }
+}
+
+export function emailCandidateJDClosed(name: string, jobTitle: string, company: string): { subject: string; html: string } {
+  const first = name.split(' ')[0]
+  return {
+    subject: `Update: ${jobTitle} at ${company} is no longer active`,
+    html: layout(
+      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
+      hero('Role update.', `${jobTitle} at ${company}`),
+      `${letter([
+        `Hi ${first},`,
+        `The ${jobTitle} role at ${company} has been closed by the recruiter. It will no longer appear in your matches.`,
+        `There are plenty of other roles waiting — keep browsing.`,
+      ])}
+      ${cta('https://naggare.com/home', 'Browse roles', 'indigo')}`,
+      sig('indigo')
+    )
+  }
+}
+
+export function emailCandidateMatch(name: string, jobTitle: string, company: string): { subject: string; html: string } {
+  const first = name.split(' ')[0]
+  return {
+    subject: `It is a match — ${jobTitle} at ${company}`,
+    html: layout(
+      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
+      hero('It is a match.', `${jobTitle} at ${company}`),
+      `${letter([
+        `Hi ${first},`,
+        `You and the recruiter at ${company} are both interested in the ${jobTitle} role. That is a mutual match on Naggare.`,
+        `Expect to hear from them directly. In the meantime, keep your profile sharp.`,
+      ])}
+      ${cta('https://naggare.com/home', 'View your matches', 'indigo')}`,
+      sig('indigo')
+    )
+  }
+}
+
+export function emailCandidateProfileDeleted(name: string): { subject: string; html: string } {
+  const first = name.split(' ')[0]
+  return {
+    subject: `Your Naggare account has been deleted`,
+    html: layout(
+      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
+      hero('Account deleted.', 'Your data has been removed.'),
+      `${letter([
+        `Hi ${first},`,
+        `Your Naggare account and all associated data have been permanently deleted as requested.`,
+        `If this was a mistake or you'd like to rejoin in the future, you're always welcome back.`,
+      ])}`,
+      sig('indigo')
+    )
+  }
+}
+
+export function emailCandidateSuperPursued(name: string, recruiterName: string, company: string, jobTitle: string): { subject: string; html: string } {
+  const first = name.split(' ')[0]
+  return {
+    subject: `${recruiterName} at ${company} is pursuing you for ${jobTitle}`,
+    html: layout(
+      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
+      hero('Someone is pursuing you.', `${recruiterName} at ${company}`),
+      `${letter([
+        `Hi ${first},`,
+        `${recruiterName} from ${company} has expressed strong interest in your profile for the ${jobTitle} role.`,
+        `Visit Naggare to review the role and decide if you want to express interest back.`,
+      ])}
+      ${cta('https://naggare.com/home', 'View the role', 'indigo')}`,
+      sig('indigo')
+    )
+  }
+}
