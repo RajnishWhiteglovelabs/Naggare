@@ -76,7 +76,7 @@ function JDBuilderInner() {
       }
     }
     load()
-  }, [])
+  }, [jdId])
 
   function showToast(msg: string) { setToast(msg); setTimeout(() => setToast(''), 3000) }
 
@@ -165,7 +165,7 @@ function JDBuilderInner() {
           {!preview ? (
             <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
               <h2 className="text-xl font-bold mb-1" style={{ fontFamily: 'Georgia,serif', color: '#1E1B4B' }}>
-                {jdId ? 'Edit your JD' : 'Post a role'}
+                {jdId ? 'Edit JD' : 'Post a role'}
               </h2>
               <p className="text-sm text-gray-500 mb-5">Honest JDs attract honest candidates. No corporate speak.</p>
 
