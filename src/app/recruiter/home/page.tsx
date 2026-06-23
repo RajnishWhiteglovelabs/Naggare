@@ -96,6 +96,14 @@ export default function RecruiterHome() {
     candidate.prompt_3_q ? { q: candidate.prompt_3_q, a: candidate.prompt_3_a } : null,
   ].filter(Boolean) as { q: string; a: string }[] : []
 
+  function formatDate(d: string) {
+    if (!d) return ''
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    const parts = d.split('-')
+    if (parts.length === 2) return `${months[parseInt(parts[1])-1] || ''} ${parts[0]}`
+    return parts[0] // just year
+  }
+
   const GREEN = '#16A34A'
   const GREEN_BG = 'linear-gradient(135deg,#16A34A,#15803D)'
 
@@ -237,7 +245,7 @@ export default function RecruiterHome() {
                               style={{ background: '#4F46E5', boxShadow: i === 0 ? '0 0 0 3px rgba(79,70,229,0.2)' : '' }}></div>
                             <p className="text-xs font-bold text-center leading-tight" style={{ color: i === 0 ? '#4F46E5' : '#111827' }}>{c.org}</p>
                             <p className="text-xs text-center leading-tight text-gray-400">{c.role}</p>
-                            {(c.from || c.to) && <p className="text-center" style={{ fontSize: '10px', color: '#9CA3AF' }}>{c.from}{c.from && c.to ? '–' : ''}{c.to}</p>}
+                            {(c.from || c.to) && <p className="text-center" style={{ fontSize: '10px', color: '#9CA3AF' }}>{formatDate(c.from)}{c.from && c.to ? ' – ' : ''}{formatDate(c.to)}</p>}
                           </div>
                         ))}
                       </div>
