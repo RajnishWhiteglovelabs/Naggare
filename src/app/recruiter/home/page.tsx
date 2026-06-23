@@ -109,19 +109,19 @@ export default function RecruiterHome() {
     return parts[0] // just year
   }
 
-  const GREEN = '#16A34A'
-  const GREEN_BG = 'linear-gradient(135deg,#16A34A,#15803D)'
+  const GREEN = '#4F46E5'
+  const GREEN_BG = 'linear-gradient(135deg,#4F46E5,#7C3AED)'
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#F0FDF4' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: '#F5F3FF' }}>
 
       {/* NAV */}
-      <nav className="bg-white border-b px-4 h-14 flex items-center justify-between sticky top-0 z-50 shadow-sm" style={{ borderColor: '#D1FAE5' }}>
+      <nav className="bg-white border-b px-4 h-14 flex items-center justify-between sticky top-0 z-50 shadow-sm" style={{ borderColor: '#E0E7FF' }}>
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: GREEN_BG }}>
             <span className="text-sm font-bold text-white" style={{ fontFamily: 'Georgia,serif' }}>N</span>
           </div>
-          <span className="font-bold text-lg" style={{ fontFamily: 'Georgia,serif', color: '#14532D' }}>Naggare</span>
+          <span className="font-bold text-lg" style={{ fontFamily: 'Georgia,serif', color: '#1E1B4B' }}>Naggare</span>
         </div>
 
         <div className="flex items-center gap-2 relative">
@@ -172,10 +172,10 @@ export default function RecruiterHome() {
         {/* HOME VIEW */}
         {view === 'home' && (
           <div>
-            <div className="px-5 py-8 text-center text-white" style={{ background: 'linear-gradient(135deg,#052e16,#14532d)' }}>
-              <p className="text-xs font-semibold tracking-widest mb-2 uppercase" style={{ color: '#86EFAC' }}>Good to see you, {firstName}</p>
+            <div className="px-5 py-8 text-center text-white" style={{ background: 'linear-gradient(135deg,#1E1B4B,#312e81)' }}>
+              <p className="text-xs font-semibold tracking-widest mb-2 uppercase" style={{ color: '#A5B4FC' }}>Good to see you, {firstName}</p>
               <h1 className="text-xl font-bold leading-snug mb-2" style={{ fontFamily: 'Georgia,serif' }}>Find your next great hire.</h1>
-              <p className="text-sm mb-6" style={{ color: '#BBF7D0' }}>Browse candidates, pursue the ones that fit, use your Golden Buzzer wisely.</p>
+              <p className="text-sm mb-6" style={{ color: '#C7D2FE' }}>Browse candidates, pursue the ones that fit, use your Golden Buzzer wisely.</p>
               <div className="flex gap-3 justify-center max-w-xs mx-auto">
                 <div className="flex-1 p-3 rounded-2xl cursor-pointer border border-white/20 text-left" style={{ background: 'rgba(255,255,255,0.1)' }}
                   onClick={() => router.push('/recruiter/register?edit=true')}>
@@ -186,13 +186,13 @@ export default function RecruiterHome() {
                       : <span className="text-xs font-bold">{initials}</span>}
                   </div>
                   <div className="text-sm font-bold text-white">My Profile</div>
-                  <div className="text-xs" style={{ color: '#86EFAC' }}>View & edit</div>
+                  <div className="text-xs" style={{ color: '#A5B4FC' }}>View & edit</div>
                 </div>
                 <div className="flex-1 p-3 rounded-2xl cursor-pointer border border-white/20 text-left" style={{ background: 'rgba(255,255,255,0.1)' }}
                   onClick={() => setView('browse')}>
                   <div className="text-2xl mb-1">👥</div>
                   <div className="text-sm font-bold text-white">Browse Candidates</div>
-                  <div className="text-xs" style={{ color: '#86EFAC' }}>Find your match</div>
+                  <div className="text-xs" style={{ color: '#A5B4FC' }}>Find your match</div>
                 </div>
               </div>
             </div>
@@ -201,7 +201,7 @@ export default function RecruiterHome() {
               <div className="grid grid-cols-3 gap-3 mb-6">
                 {[
                   [candidates.length.toString(), 'Candidates', '#4F46E5'],
-                  ['0', 'Matches', '#16A34A'],
+                  ['0', 'Matches', '#4F46E5'],
                   ['1', 'Golden Buzzers', '#D97706'],
                 ].map(([n, l, c]) => (
                   <div key={l} className="bg-white rounded-2xl p-3 text-center shadow-sm border border-gray-100">
@@ -227,7 +227,7 @@ export default function RecruiterHome() {
               <p className="text-xs text-gray-400">{currentIdx + 1} of {candidates.length} candidates</p>
               <div className="flex gap-1">
                 {candidates.slice(0, Math.min(candidates.length, 5)).map((_, i) => (
-                  <div key={i} className="h-1 w-5 rounded-full" style={{ background: i <= currentIdx ? GREEN : '#D1FAE5' }} />
+                  <div key={i} className="h-1 w-5 rounded-full" style={{ background: i <= currentIdx ? GREEN : '#E0E7FF' }} />
                 ))}
               </div>
             </div>
@@ -236,9 +236,9 @@ export default function RecruiterHome() {
         {!candidate && candidates.length > 0 && (
           <div className="flex flex-col items-center justify-center min-h-96 px-8 text-center">
             <div className="text-5xl mb-4">🎉</div>
-            <h2 className="text-xl font-bold mb-2" style={{ color: '#14532D', fontFamily: 'Georgia,serif' }}>You've seen everyone!</h2>
+            <h2 className="text-xl font-bold mb-2" style={{ color: '#1E1B4B', fontFamily: 'Georgia,serif' }}>You've seen everyone!</h2>
             <p className="text-sm text-gray-500 mb-6">New candidates join every day. Check back tomorrow.</p>
-            <button className="btn-green py-3 px-8 w-auto rounded-full" style={{ background: GREEN_BG }} onClick={() => { setCurrentIdx(0); setView('home') }}>Back to home</button>
+            <button className="btn-primary py-3 px-8 w-auto rounded-full" style={{ background: GREEN_BG }} onClick={() => { setCurrentIdx(0); setView('home') }}>Back to home</button>
           </div>
         )}
 
@@ -259,13 +259,13 @@ export default function RecruiterHome() {
               <p className="text-xs text-gray-400">{currentIdx + 1} of {candidates.length} candidates</p>
               <div className="flex gap-1">
                 {candidates.slice(0, Math.min(candidates.length, 5)).map((_, i) => (
-                  <div key={i} className="h-1 w-5 rounded-full" style={{ background: i <= currentIdx ? GREEN : '#D1FAE5' }} />
+                  <div key={i} className="h-1 w-5 rounded-full" style={{ background: i <= currentIdx ? GREEN : '#E0E7FF' }} />
                 ))}
               </div>
             </div>
 
             <div className={`rounded-3xl overflow-hidden shadow-xl transition-all duration-300 ${actionDone ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
-              style={{ border: '1px solid #D1FAE5' }}>
+              style={{ border: '1px solid #E0E7FF' }}>
 
               {/* Full-bleed photo hero */}
               <div className="relative" style={{ height: '380px' }}>
