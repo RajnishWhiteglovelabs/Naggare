@@ -236,7 +236,7 @@ export default function RecruiterHome() {
                 {/* Career timeline */}
                 {candidate.career?.filter((c: any) => c.org).length > 0 && (
                   <div className="px-5 py-4 border-b border-gray-100">
-                    <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: GREEN }}>Career Journey</p>
+                    <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: '#4F46E5' }}>Career Journey</p>
                     <div className="relative">
                       <div className="flex gap-5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
                         {candidate.career.filter((c: any) => c.org).map((c: any, i: number) => (
@@ -258,7 +258,7 @@ export default function RecruiterHome() {
                 {/* Skills */}
                 {candidate.skills?.length > 0 && (
                   <div className="px-5 py-4 border-b border-gray-100">
-                    <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: GREEN }}>Skills · {candidate.skills.length}</p>
+                    <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#4F46E5' }}>Skills · {candidate.skills.length}</p>
                     <div className="flex flex-wrap gap-1.5">
                       {candidate.skills.map((s: string) => (
                         <span key={s} className="tag" style={{ fontSize: '11px', padding: '2px 8px' }}>{s}</span>
@@ -270,7 +270,7 @@ export default function RecruiterHome() {
                 {/* Prompts */}
                 {prompts.filter(p => p.a?.trim()).length > 0 && (
                   <div className="px-5 py-4 border-b border-gray-100">
-                    <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: GREEN }}>In their own words</p>
+                    <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: '#4F46E5' }}>In their own words</p>
                     {prompts.filter(p => p.a?.trim()).map((p, i) => (
                       <div key={i} className="mb-3 p-3 rounded-xl" style={{ background: '#EEF2FF', border: '0.5px solid #C7D2FE' }}>
                         <p className="text-xs font-bold mb-1" style={{ color: '#3730A3' }}>{p.q}</p>
@@ -283,7 +283,7 @@ export default function RecruiterHome() {
                 {/* What they're looking for */}
                 {candidate.looking_for && (
                   <div className="px-5 py-4 border-b border-gray-100">
-                    <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: GREEN }}>What they're looking for</p>
+                    <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#4F46E5' }}>What they're looking for</p>
                     <p className="text-sm leading-relaxed text-gray-800">{candidate.looking_for}</p>
                   </div>
                 )}
