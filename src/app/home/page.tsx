@@ -255,7 +255,7 @@ export default function Home() {
                     <span className="tag">{jd.years} yrs</span>
                     <span className="tag" style={{ background: '#F9FAFB', color: '#4B5563', borderColor: '#E5E7EB' }}>{jd.salary}</span>
                   </div>
-                  <div className="flex flex-wrap gap-1 mb-3">{jd.mustHave.map(s => <span key={s} className="tag">{s}</span>)}</div>
+                  <div className="flex flex-wrap gap-1 mb-3">{(jd.must_have_skills || []).map((s: string) => <span key={s} className="tag">{s}</span>)}</div>
                   {jd.tuesday && <div className="text-xs text-gray-600 bg-gray-50 rounded-lg p-2"><strong>📅 Real Tuesday:</strong> {jd.tuesday}</div>}
                 </div>
                 <div className="flex gap-2 px-4 pb-4">
