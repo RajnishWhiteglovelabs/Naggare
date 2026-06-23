@@ -106,9 +106,9 @@ const DOMAIN_ICONS: Record<string,string> = {
 }
 
 const STEPS = ['Your details','Photo','Skills','In your words','Review']
-const GREEN = '#16A34A'
-const GREEN_DARK = '#15803D'
-const GREEN_BG = 'linear-gradient(135deg,#16A34A,#15803D)'
+const GREEN = '#4F46E5'
+const GREEN_DARK = '#6D28D9'
+const GREEN_BG = 'linear-gradient(135deg,#4F46E5,#7C3AED)'
 
 function RecruiterRegisterInner() {
   const router = useRouter()
@@ -314,9 +314,9 @@ function RecruiterRegisterInner() {
   const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() || '?'
 
   return (
-    <div className="min-h-screen flex flex-col" style={{background:'linear-gradient(135deg,#052e16,#14532d)'}}>
+    <div className="min-h-screen flex flex-col" style={{background:'linear-gradient(135deg,#1E1B4B,#312e81)'}}>
       {/* Header */}
-      <div className="step-header" style={{borderBottom:'0.5px solid #D1FAE5'}}>
+      <div className="step-header" style={{borderBottom:'0.5px solid #E0E7FF'}}>
         <div className="max-w-lg mx-auto">
           <div className="flex items-center gap-3 mb-3">
             <button onClick={() => step === 1 ? router.push('/') : setStep(step-1)} className="text-2xl" style={{color:GREEN}}>‹</button>
@@ -324,7 +324,7 @@ function RecruiterRegisterInner() {
               <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{background:GREEN_BG}}>
                 <span className="text-sm font-bold text-white" style={{fontFamily:'Georgia,serif'}}>N</span>
               </div>
-              <span className="font-bold text-base" style={{fontFamily:'Georgia,serif',color:'#14532D'}}>Naggare</span>
+              <span className="font-bold text-base" style={{fontFamily:'Georgia,serif',color:'#1E1B4B'}}>Naggare</span>
             </div>
             <div className="ml-auto text-right">
               <div className="text-xs font-semibold" style={{color:GREEN}}>Step {step} of {STEPS.length}</div>
@@ -344,7 +344,7 @@ function RecruiterRegisterInner() {
             {/* STEP 1: BASICS */}
             {step === 1 && (
               <div>
-                <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#14532D'}}>Let's set you up</h2>
+                <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#1E1B4B'}}>Let's set you up</h2>
                 <p className="text-sm text-gray-500 mb-1">Your profile takes under 5 minutes.</p>
                 <p className="text-xs text-green-600 font-semibold mb-5">Building your profile helps candidates trust you before the first call.</p>
                 <div className="mb-4">
@@ -368,7 +368,7 @@ function RecruiterRegisterInner() {
                   <textarea className="input" rows={3} placeholder="e.g. I don't just fill roles. I find people who'll grow with the business. Great hires happen when both sides are honest about what they want..." value={lookingFor} onChange={e=>setLookingFor(e.target.value)}/>
                   <p className="text-xs text-gray-400 mt-1">Candidates read this first — make it human, make it yours.</p>
                 </div>
-                <button className="btn-green mb-3" style={{background:GREEN_BG}} onClick={()=>{if(!name||!company||!title){showToast('Please fill all required fields');return}setStep(2)}}>Continue →</button>
+                <button className="btn-primary mb-3" style={{background:GREEN_BG}} onClick={()=>{if(!name||!company||!title){showToast('Please fill all required fields');return}setStep(2)}}>Continue →</button>
                 <button className="text-center w-full text-sm font-semibold py-2" style={{color:GREEN}} onClick={saveAndExit}>Save & come back later</button>
               </div>
             )}
@@ -376,10 +376,10 @@ function RecruiterRegisterInner() {
             {/* STEP 2: PHOTO */}
             {step === 2 && (
               <div>
-                <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#14532D'}}>Add your photo</h2>
+                <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#1E1B4B'}}>Add your photo</h2>
                 <p className="text-sm text-gray-500 mb-6">Candidates trust recruiters with a real photo.</p>
                 <div className="flex flex-col items-center mb-8">
-                  <div className="w-32 h-32 rounded-full overflow-hidden flex items-center justify-center text-white text-3xl font-bold mb-4 border-4" style={{background:photo?'transparent':GREEN_BG,borderColor:'#BBF7D0'}}>
+                  <div className="w-32 h-32 rounded-full overflow-hidden flex items-center justify-center text-white text-3xl font-bold mb-4 border-4" style={{background:photo?'transparent':GREEN_BG,borderColor:'#C7D2FE'}}>
                     {photo ? <img src={photo} className="w-full h-full object-cover" alt="Profile"/> : (initials||'?')}
                   </div>
                   <label className="cursor-pointer px-6 py-2.5 rounded-full text-sm font-semibold text-white" style={{background:GREEN_BG}}>
@@ -389,7 +389,7 @@ function RecruiterRegisterInner() {
                 </div>
                 <div className="flex gap-3">
                   <button className="btn-outline flex-none w-24" onClick={()=>setStep(1)}>← Back</button>
-                  <button className="btn-green" style={{background:GREEN_BG}} onClick={()=>setStep(3)}>{photo?'Continue →':'Skip for now →'}</button>
+                  <button className="btn-primary" style={{background:GREEN_BG}} onClick={()=>setStep(3)}>{photo?'Continue →':'Skip for now →'}</button>
                 </div>
                 <button className="text-center w-full text-sm font-semibold py-3 mt-2" style={{color:GREEN}} onClick={saveAndExit}>Save & come back later</button>
               </div>
@@ -398,7 +398,7 @@ function RecruiterRegisterInner() {
             {/* STEP 3: SKILLS */}
             {step === 3 && (
               <div>
-                <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#14532D'}}>Skills you hire for</h2>
+                <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#1E1B4B'}}>Skills you hire for</h2>
                 <p className="text-sm text-gray-500 mb-1">Pick skills relevant to your hiring domain.</p>
                 <p className="text-xs mb-4" style={{color:selectedSkills.size>=3?GREEN:selectedSkills.size>0?'#D97706':'#9CA3AF'}}>
                   {selectedSkills.size} skill{selectedSkills.size!==1?'s':''} selected{selectedSkills.size>=3?' ✓':''}
@@ -411,7 +411,7 @@ function RecruiterRegisterInner() {
                         <button key={skill}
                           className="px-3 py-1.5 rounded-full text-sm font-medium border transition-all"
                           style={{
-                            background: selectedSkills.has(skill) ? '#DCFCE7' : 'white',
+                            background: selectedSkills.has(skill) ? '#EEF2FF' : 'white',
                             borderColor: selectedSkills.has(skill) ? GREEN : '#E5E7EB',
                             color: selectedSkills.has(skill) ? GREEN_DARK : '#374151',
                             fontWeight: selectedSkills.has(skill) ? '600' : '400',
@@ -438,7 +438,7 @@ function RecruiterRegisterInner() {
                         <div className="flex flex-wrap gap-2">
                           {customSkills.map(s => (
                             <button key={s} className="px-3 py-1.5 rounded-full text-sm font-semibold border flex items-center gap-1"
-                              style={{background:'#DCFCE7',borderColor:GREEN,color:GREEN_DARK}}
+                              style={{background:'#EEF2FF',borderColor:GREEN,color:GREEN_DARK}}
                               onClick={()=>toggleSkill(s)}>{s} <span className="text-xs opacity-60">✕</span></button>
                           ))}
                         </div>
@@ -449,7 +449,7 @@ function RecruiterRegisterInner() {
 
                 <div className="flex gap-3">
                   <button className="btn-outline flex-none w-24" onClick={()=>setStep(2)}>← Back</button>
-                  <button className="btn-green" style={{background:GREEN_BG}} onClick={()=>{if(selectedSkills.size===0){showToast('Pick at least 1 skill');return}setStep(4)}}>Continue →</button>
+                  <button className="btn-primary" style={{background:GREEN_BG}} onClick={()=>{if(selectedSkills.size===0){showToast('Pick at least 1 skill');return}setStep(4)}}>Continue →</button>
                 </div>
                 <button className="text-center w-full text-sm font-semibold py-3 mt-2" style={{color:GREEN}} onClick={saveAndExit}>Save & come back later</button>
               </div>
@@ -458,7 +458,7 @@ function RecruiterRegisterInner() {
             {/* STEP 4: PROMPTS */}
             {step === 4 && (
               <div>
-                <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#14532D'}}>Your recruiter voice</h2>
+                <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#1E1B4B'}}>Your recruiter voice</h2>
                 <p className="text-sm text-gray-500 mb-1">This is what candidates read to decide if they trust you. Make it count.</p>
                 <p className="text-xs text-green-600 font-semibold mb-5">Pick up to 3 prompts — start with your hiring philosophy.</p>
 
@@ -467,7 +467,7 @@ function RecruiterRegisterInner() {
                     <button key={p.chip}
                       className="px-3 py-1.5 rounded-full text-sm font-medium border transition-all"
                       style={{
-                        background: selectedPrompts.some(sp=>sp.q===p.q||(p.q==='write-own'&&selectedPrompts.some(sp=>sp.id==='own'))) ? '#DCFCE7' : 'white',
+                        background: selectedPrompts.some(sp=>sp.q===p.q||(p.q==='write-own'&&selectedPrompts.some(sp=>sp.id==='own'))) ? '#EEF2FF' : 'white',
                         borderColor: selectedPrompts.some(sp=>sp.q===p.q||(p.q==='write-own'&&selectedPrompts.some(sp=>sp.id==='own'))) ? GREEN : '#E5E7EB',
                         color: selectedPrompts.some(sp=>sp.q===p.q||(p.q==='write-own'&&selectedPrompts.some(sp=>sp.id==='own'))) ? GREEN_DARK : '#374151',
                       }}
@@ -478,11 +478,11 @@ function RecruiterRegisterInner() {
                 </div>
 
                 {selectedPrompts.map((p,i) => (
-                  <div key={i} className="mb-4 p-4 rounded-2xl border" style={{background:'#F0FDF4',borderColor:'#BBF7D0'}}>
+                  <div key={i} className="mb-4 p-4 rounded-2xl border" style={{background:'#F5F3FF',borderColor:'#C7D2FE'}}>
                     {p.id === 'own' ? (
                       <input className="input mb-2" placeholder="Write your own prompt..." value={ownPromptQ} onChange={e=>setOwnPromptQ(e.target.value)}/>
                     ) : (
-                      <p className="text-xs font-bold mb-2" style={{color:'#14532D'}}>{p.q}</p>
+                      <p className="text-xs font-bold mb-2" style={{color:'#1E1B4B'}}>{p.q}</p>
                     )}
                     <textarea className="input" rows={3} placeholder="Your answer..."
                       value={p.a} onChange={e=>updatePromptAnswer(p.id, e.target.value)}/>
@@ -491,7 +491,7 @@ function RecruiterRegisterInner() {
 
                 <div className="flex gap-3">
                   <button className="btn-outline flex-none w-24" onClick={()=>setStep(4)}>← Back</button>
-                  <button className="btn-green" style={{background:GREEN_BG}} onClick={()=>setStep(6)}>Continue →</button>
+                  <button className="btn-primary" style={{background:GREEN_BG}} onClick={()=>setStep(6)}>Continue →</button>
                 </div>
                 <button className="text-center w-full text-sm font-semibold py-3 mt-2" style={{color:GREEN}} onClick={saveAndExit}>Save & come back later</button>
               </div>
@@ -500,17 +500,17 @@ function RecruiterRegisterInner() {
             {/* STEP 5: REVIEW */}
             {step === 5 && (
               <div>
-                <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#14532D'}}>Looking good</h2>
+                <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#1E1B4B'}}>Looking good</h2>
                 <p className="text-sm text-gray-500 mb-5">This is what candidates will see.</p>
 
-                <div className="rounded-3xl overflow-hidden shadow-xl mb-5" style={{border:'1px solid #D1FAE5'}}>
+                <div className="rounded-3xl overflow-hidden shadow-xl mb-5" style={{border:'1px solid #E0E7FF'}}>
                   <div className="relative flex flex-col items-center pt-8 pb-6 px-4 text-center" style={{background:GREEN_BG}}>
                     <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-lg mb-3 flex items-center justify-center text-white font-bold text-xl" style={{background:'rgba(255,255,255,0.2)'}}>
                       {photo ? <img src={photo} className="w-full h-full object-cover" alt={name}/> : <span>{initials}</span>}
                     </div>
                     <p className="text-xl font-bold text-white mb-0.5" style={{fontFamily:'Georgia,serif'}}>{name}</p>
-                    <p className="text-sm font-semibold" style={{color:'#BBF7D0'}}>{title}</p>
-                    <p className="text-xs mt-0.5" style={{color:'#86EFAC'}}>{company}</p>
+                    <p className="text-sm font-semibold" style={{color:'#C7D2FE'}}>{title}</p>
+                    <p className="text-xs mt-0.5" style={{color:'#A5B4FC'}}>{company}</p>
                     {domain && <span className="mt-2 px-3 py-1 rounded-full text-xs font-semibold text-white" style={{background:'rgba(255,255,255,0.2)'}}>{DOMAIN_ICONS[domain]} {domain}</span>}
                   </div>
                   {lookingFor && (
@@ -529,8 +529,8 @@ function RecruiterRegisterInner() {
                     <div className="p-4 bg-white">
                       <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{color:GREEN}}>My recruiter voice</p>
                       {selectedPrompts.filter(p=>p.a).map((p,i)=>(
-                        <div key={i} className="mb-3 p-3 rounded-xl" style={{background:'#F0FDF4',border:'0.5px solid #BBF7D0'}}>
-                          <p className="text-xs font-bold mb-1" style={{color:'#14532D'}}>{p.id==='own'?ownPromptQ:p.q}</p>
+                        <div key={i} className="mb-3 p-3 rounded-xl" style={{background:'#F5F3FF',border:'0.5px solid #C7D2FE'}}>
+                          <p className="text-xs font-bold mb-1" style={{color:'#1E1B4B'}}>{p.id==='own'?ownPromptQ:p.q}</p>
                           <p className="text-sm text-gray-800">{p.a}</p>
                         </div>
                       ))}
@@ -540,7 +540,7 @@ function RecruiterRegisterInner() {
 
                 <div className="flex gap-3">
                   <button className="btn-outline flex-none w-24" onClick={()=>setStep(5)}>← Edit</button>
-                  <button className="btn-green" style={{background:GREEN_BG}} onClick={submit} disabled={loading}>
+                  <button className="btn-primary" style={{background:GREEN_BG}} onClick={submit} disabled={loading}>
                     {loading?(isEditing?'Updating...':'Creating profile...'):(isEditing?'Update Profile':'Go to Dashboard')}
                   </button>
                 </div>
@@ -559,7 +559,7 @@ function RecruiterRegisterInner() {
       )}
 
       {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-3 rounded-full text-white text-sm font-semibold shadow-xl z-50 whitespace-nowrap" style={{background:'#14532D'}}>
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-3 rounded-full text-white text-sm font-semibold shadow-xl z-50 whitespace-nowrap" style={{background:'#1E1B4B'}}>
           {toast}
         </div>
       )}
