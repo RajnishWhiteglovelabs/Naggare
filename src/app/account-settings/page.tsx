@@ -128,7 +128,7 @@ export default function AccountSettings() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: isRecruiter ? 'linear-gradient(135deg,#052e16,#14532d)' : 'linear-gradient(135deg,#1E1B4B,#312e81)' }}>
+    <div className="min-h-screen" style={{ background: isRecruiter ? 'linear-gradient(135deg,#1E1B4B,#312e81)' : 'linear-gradient(135deg,#1E1B4B,#312e81)' }}>
       {/* Header */}
       <div className="bg-white/10 backdrop-blur px-5 h-14 flex items-center gap-3 sticky top-0 z-10">
         <button onClick={() => section === 'main' ? router.push('/home') : setSection('main')}
