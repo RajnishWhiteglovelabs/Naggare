@@ -1,6 +1,7 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase-browser'
 import { supabase } from '@/lib/supabase-browser'
 
 export default function Feedback() {
@@ -9,6 +10,17 @@ export default function Feedback() {
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
+  const [isRecruiter, setIsRecruiter] = useState(false)
+
+  useEffect(() => {
+    async function detectType() {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.user?.email) return
+      const res = await fetch('/api/me', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: session.user.email }) })
+      if (res.ok) { const p = await res.json(); setIsRecruiter(p.type === 'recruiter') }
+    }
+    detectType()
+  }, [])
 
   async function submit() {
     if (!message.trim()) { setError('Please write your feedback before sending'); return }
@@ -32,7 +44,7 @@ export default function Feedback() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg,#1E1B4B,#312e81)' }}>
+    <div className="min-h-screen" style={{ background: isRecruiter ? 'linear-gradient(135deg,#052e16,#14532d)' : 'linear-gradient(135deg,#1E1B4B,#312e81)' }}>
       {/* Header */}
       <div className="bg-white/10 backdrop-blur px-5 h-14 flex items-center gap-3 sticky top-0 z-10">
         <button onClick={() => router.push('/home')} className="text-2xl text-white">‹</button>
