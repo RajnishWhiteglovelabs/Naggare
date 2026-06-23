@@ -491,7 +491,7 @@ function RecruiterRegisterInner() {
 
                 <div className="flex gap-3">
                   <button className="btn-outline flex-none w-24" onClick={()=>setStep(4)}>← Back</button>
-                  <button className="btn-primary" style={{background:GREEN_BG}} onClick={()=>setStep(6)}>Continue →</button>
+                  <button className="btn-primary" style={{background:GREEN_BG}} onClick={()=>setStep(5)}>Continue →</button>
                 </div>
                 <button className="text-center w-full text-sm font-semibold py-3 mt-2" style={{color:GREEN}} onClick={saveAndExit}>Save & come back later</button>
               </div>
