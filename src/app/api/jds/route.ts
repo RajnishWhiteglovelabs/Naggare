@@ -5,11 +5,17 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
     const recruiter_email = searchParams.get('recruiter_email')
-    const status = searchParams.get('status') || 'open'
 
     const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
-    let query = admin.from('jds').select('*').eq('status', status).order('created_at', { ascending: false })
-    if (recruiter_email) query = query.eq('recruiter_email', recruiter_email)
+    let query = admin.from('jds').select('*').order('created_at', { ascending: false })
+
+    if (recruiter_email) {
+      // For recruiter's own JDs — show all except deleted
+      query = query.eq('recruiter_email', recruiter_email).neq('status', 'deleted')
+    } else {
+      // For candidates — show only open JDs
+      query = query.eq('status', 'open')
+    }
 
     const { data, error } = await query
     if (error) throw new Error(error.message)
@@ -21,10 +27,14 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
-    const { id, status } = await req.json()
+    const { id, status, close_reason } = await req.json()
     if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
+
     const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
-    const { error } = await admin.from('jds').update({ status }).eq('id', id)
+    const payload: Record<string, any> = { status }
+    if (close_reason) payload.close_reason = close_reason
+
+    const { error } = await admin.from('jds').update(payload).eq('id', id)
     if (error) throw new Error(error.message)
     return NextResponse.json({ success: true })
   } catch (e: unknown) {
