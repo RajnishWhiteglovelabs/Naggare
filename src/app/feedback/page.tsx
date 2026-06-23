@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
-import { supabase } from '@/lib/supabase-browser'
 
 export default function Feedback() {
   const router = useRouter()
