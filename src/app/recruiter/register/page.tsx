@@ -154,7 +154,7 @@ function RecruiterRegisterInner() {
       if (res.ok) {
         const p = await res.json()
         if (p.type === 'candidate') { router.push('/home'); return }
-        if (edit || p.type === 'recruiter') {
+        if (p.type === 'recruiter') {
           if (p.name) setName(p.name)
           if (p.mobile) setMobile(p.mobile)
           if (p.company) setCompany(p.company)
@@ -170,8 +170,10 @@ function RecruiterRegisterInner() {
             if (p.prompt_3_q) restored.push({q:p.prompt_3_q, a:p.prompt_3_a||'', id:p.prompt_3_q})
             setSelectedPrompts(restored)
           }
-          if (edit) setStep(1)
-          else router.push('/recruiter/home')
+          // Only redirect to home if profile is actually complete
+          const profileComplete = p.status === 'active' && p.title && p.company
+          if (profileComplete && !edit) router.push('/recruiter/home')
+          // Otherwise stay on register to complete profile
         }
       }
     }
