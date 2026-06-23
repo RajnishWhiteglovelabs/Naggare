@@ -176,7 +176,7 @@ export default function RecruiterHome() {
               <h2 className="text-base font-bold">My Profile</h2>
               <button className="ml-auto text-xs font-semibold px-3 py-1.5 rounded-full"
                 style={{background:'#EEF2FF',color:'#4F46E5',border:'0.5px solid #C7D2FE'}}
-                onClick={()=>showToast('Share naggare.com 🔗')}>Share 🔗</button>
+                onClick={()=>showToast('Share naggare.com 🔗', 'pursue')}>Share 🔗</button>
             </div>
 
             <div className="px-4 py-5" style={{maxWidth:'420px',margin:'0 auto'}}>
