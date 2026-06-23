@@ -3,6 +3,16 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
 
+const SKILL_SETS: {cat: string, items: string[]}[] = [
+  {cat:'💻 Technology', items:['Python','JavaScript','TypeScript','Java','Go','React','Node.js','AWS','GCP','Docker','Kubernetes','Machine Learning','LLMs','System Design','Microservices']},
+  {cat:'🎯 Talent & HR', items:['Technical Sourcing','Executive Hiring','Campus Recruiting','Global TA','Employer Branding','TA Strategy','Workforce Planning','HRBP','L&D','Compensation']},
+  {cat:'💰 Finance', items:['FP&A','Financial Modelling','Budgeting','M&A','Investment Banking','Risk Management','Private Equity','Corporate Finance']},
+  {cat:'📣 Marketing', items:['Brand Strategy','Content Marketing','Performance Marketing','SEO/SEM','Growth Marketing','Product Marketing','Email Marketing']},
+  {cat:'🤝 Sales', items:['B2B Sales','Enterprise Sales','Account Management','Business Development','Revenue Operations','CRM','Pre-Sales']},
+  {cat:'⚙️ Operations', items:['Supply Chain','Process Improvement','Project Management','Six Sigma','Data Analysis','Operations Management']},
+  {cat:'📊 Data & Analytics', items:['SQL','Data Analysis','Business Intelligence','Tableau','Power BI','Statistics','Data Science','Analytics']},
+]
+
 function JDBuilderInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -24,6 +34,7 @@ function JDBuilderInner() {
   const [mustInput, setMustInput] = useState('')
   const [goodHave, setGoodHave] = useState<string[]>([])
   const [goodInput, setGoodInput] = useState('')
+  const [skillsTab, setSkillsTab] = useState<'must'|'good'>('must')
   const [tuesday, setTuesday] = useState('')
   const [nonNeg, setNonNeg] = useState('')
   const [interview, setInterview] = useState('')
@@ -194,33 +205,101 @@ function JDBuilderInner() {
                 <input className="input" placeholder="e.g. ₹40–60 LPA" value={salary} onChange={e => setSalary(e.target.value)} />
               </div>
 
+              {/* Skills section with tabs */}
               <div className="mb-4">
-                <label className="label">Must-have skills *</label>
-                <div className="flex flex-wrap gap-2 p-3 border rounded-2xl bg-white min-h-12" style={{ borderColor: '#C7D2FE' }}>
-                  {mustHave.map(s => (
-                    <span key={s} className="tag flex items-center gap-1">{s}
-                      <span className="cursor-pointer opacity-60 hover:opacity-100" onClick={() => removeTag(s, mustHave, setMustHave)}>✕</span>
-                    </span>
-                  ))}
-                  <input className="border-none outline-none text-sm flex-1 min-w-24 bg-transparent"
-                    placeholder="Type and press Enter..."
-                    value={mustInput} onChange={e => setMustInput(e.target.value)}
-                    onKeyDown={e => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(mustInput, mustHave, setMustHave, setMustInput) } }} />
+                <label className="label">Skills</label>
+                {/* Tab switcher */}
+                <div className="flex gap-2 mb-3">
+                  <button className="flex-1 py-2 rounded-full text-sm font-semibold border transition-all"
+                    style={{background: skillsTab==='must'?'linear-gradient(135deg,#4F46E5,#7C3AED)':'white', color: skillsTab==='must'?'white':'#6B7280', borderColor: skillsTab==='must'?'transparent':'#E5E7EB'}}
+                    onClick={()=>setSkillsTab('must')}>
+                    Must-have {mustHave.length > 0 && `(${mustHave.length})`}
+                  </button>
+                  <button className="flex-1 py-2 rounded-full text-sm font-semibold border transition-all"
+                    style={{background: skillsTab==='good'?'linear-gradient(135deg,#4F46E5,#7C3AED)':'white', color: skillsTab==='good'?'white':'#6B7280', borderColor: skillsTab==='good'?'transparent':'#E5E7EB'}}
+                    onClick={()=>setSkillsTab('good')}>
+                    Good to have {goodHave.length > 0 && `(${goodHave.length})`}
+                  </button>
                 </div>
-              </div>
 
-              <div className="mb-4">
-                <label className="label">Good to have</label>
-                <div className="flex flex-wrap gap-2 p-3 border rounded-2xl bg-white min-h-12 border-gray-200">
-                  {goodHave.map(s => (
-                    <span key={s} className="tag flex items-center gap-1" style={{ background: '#F0FDF4', borderColor: '#BBF7D0', color: '#15803D' }}>{s}
-                      <span className="cursor-pointer opacity-60 hover:opacity-100" onClick={() => removeTag(s, goodHave, setGoodHave)}>✕</span>
-                    </span>
-                  ))}
-                  <input className="border-none outline-none text-sm flex-1 min-w-24 bg-transparent"
-                    placeholder="Type and press Enter..."
-                    value={goodInput} onChange={e => setGoodInput(e.target.value)}
-                    onKeyDown={e => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(goodInput, goodHave, setGoodHave, setGoodInput) } }} />
+                {/* Selected chips */}
+                {skillsTab === 'must' && mustHave.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {mustHave.map(s => (
+                      <button key={s} className="px-3 py-1.5 rounded-full text-sm font-semibold border flex items-center gap-1"
+                        style={{background:'#EEF2FF',borderColor:'#4F46E5',color:'#4F46E5'}}
+                        onClick={()=>removeTag(s,mustHave,setMustHave)}>
+                        {s} <span className="opacity-60 text-xs">✕</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {skillsTab === 'good' && goodHave.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {goodHave.map(s => (
+                      <button key={s} className="px-3 py-1.5 rounded-full text-sm font-semibold border flex items-center gap-1"
+                        style={{background:'#F0FDF4',borderColor:'#16A34A',color:'#15803D'}}
+                        onClick={()=>removeTag(s,goodHave,setGoodHave)}>
+                        {s} <span className="opacity-60 text-xs">✕</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Predefined skill chips */}
+                {SKILL_SETS.map(cat => (
+                  <div key={cat.cat} className="mb-3">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">{cat.cat}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {cat.items.map(skill => {
+                        const inMust = mustHave.includes(skill)
+                        const inGood = goodHave.includes(skill)
+                        const isSelected = skillsTab === 'must' ? inMust : inGood
+                        const otherSelected = skillsTab === 'must' ? inGood : inMust
+                        return (
+                          <button key={skill}
+                            className="px-3 py-1.5 rounded-full text-sm border transition-all"
+                            style={{
+                              background: isSelected ? (skillsTab==='must'?'#EEF2FF':'#F0FDF4') : otherSelected ? '#F9FAFB' : 'white',
+                              borderColor: isSelected ? (skillsTab==='must'?'#4F46E5':'#16A34A') : '#E5E7EB',
+                              color: isSelected ? (skillsTab==='must'?'#4F46E5':'#15803D') : otherSelected ? '#9CA3AF' : '#374151',
+                              fontWeight: isSelected ? '600' : '400',
+                              opacity: otherSelected && !isSelected ? 0.5 : 1,
+                            }}
+                            onClick={() => {
+                              if (skillsTab === 'must') {
+                                inMust ? removeTag(skill,mustHave,setMustHave) : addTag(skill,mustHave,setMustHave,()=>{})
+                              } else {
+                                inGood ? removeTag(skill,goodHave,setGoodHave) : addTag(skill,goodHave,setGoodHave,()=>{})
+                              }
+                            }}>
+                            {skill}
+                            {isSelected && ' ✓'}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ))}
+
+                {/* Custom skill input */}
+                <div className="flex gap-2 mt-3">
+                  <input className="input flex-1" placeholder={skillsTab==='must'?'Add custom must-have skill...':'Add custom nice-to-have skill...'}
+                    value={skillsTab==='must'?mustInput:goodInput}
+                    onChange={e => skillsTab==='must'?setMustInput(e.target.value):setGoodInput(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        if (skillsTab==='must') addTag(mustInput,mustHave,setMustHave,setMustInput)
+                        else addTag(goodInput,goodHave,setGoodHave,setGoodInput)
+                      }
+                    }}/>
+                  <button className="px-4 rounded-xl text-white text-sm font-semibold flex-shrink-0"
+                    style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}
+                    onClick={() => {
+                      if (skillsTab==='must') addTag(mustInput,mustHave,setMustHave,setMustInput)
+                      else addTag(goodInput,goodHave,setGoodHave,setGoodInput)
+                    }}>Add</button>
                 </div>
               </div>
 
