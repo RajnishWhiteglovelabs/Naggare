@@ -4,16 +4,12 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
 
-const SAMPLE_JDS = [
-  {id:1,title:'Senior Software Engineer',company:'Zepto',initials:'ZP',color:'#7C3AED',team:'Core Platform',remote:'Remote First',years:'4+',salary:'₹30–45 LPA',mustHave:['Python','Distributed Systems','AWS'],tuesday:'Own services processing 10M orders/day.'},
-  {id:2,title:'Global TA Leader',company:'CRED',initials:'CR',color:'#0284C7',team:'People',remote:'Hybrid',years:'10+',salary:'₹40–60 LPA',mustHave:['Global TA','Executive Hiring','TA Strategy'],tuesday:'Build the talent function from scratch. Own employer brand.'},
-  {id:3,title:'VP Finance',company:'Groww',initials:'GW',color:'#16A34A',team:'Finance',remote:'Onsite',years:'12+',salary:'₹60–90 LPA',mustHave:['FP&A','Financial Modelling','Team Leadership'],tuesday:'Own P&L reporting, investor relations, fundraising support.'},
-  {id:4,title:'ML Engineer',company:'Sarvam AI',initials:'SA',color:'#EA580C',team:'Foundation Models',remote:'Remote First',years:'3+',salary:'₹25–45 LPA',mustHave:['PyTorch','LLMs','Python'],tuesday:'Train and fine-tune models for Indian language understanding.'},
-]
+const jds: any[] = [] // replaced by real JDs from DB
 
 export default function Home() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
+  const [jds, setJds] = useState<any[]>([])
   const [view, setView] = useState<'home'|'browse'|'profile'>('home')
   const [search, setSearch] = useState('')
   const [swipedLeft, setSwipedLeft] = useState<Set<number>>(new Set())
@@ -36,6 +32,13 @@ export default function Home() {
           const profile = await res.json()
           if (profile.type === 'recruiter') { router.push('/recruiter/home'); return }
           setUser(profile)
+
+          // Load real JDs
+          const jdRes = await fetch('/api/jds')
+          if (jdRes.ok) {
+            const jdData = await jdRes.json()
+            setJds(jdData)
+          }
           if (!sessionStorage.getItem('naggare_welcomed')) {
             setWelcomeBanner(true)
             sessionStorage.setItem('naggare_welcomed', '1')
@@ -81,7 +84,7 @@ export default function Home() {
     return parts[0]
   }
 
-  const filteredJDs = SAMPLE_JDS
+  const filteredJDs = jds
     .filter(jd => !swipedLeft.has(jd.id) && !swipedRight.has(jd.id))
     .filter(jd => !search || jd.title.toLowerCase().includes(search.toLowerCase()) ||
       jd.company.toLowerCase().includes(search.toLowerCase()) ||
@@ -171,7 +174,7 @@ export default function Home() {
 
             <div className="px-4 py-5 max-w-2xl mx-auto">
               <div className="grid grid-cols-3 gap-3 mb-6">
-                {[['10', 'JDs live', '#4F46E5'], ['40', 'Candidates', '#16A34A'], ['3', 'Matches', '#7C3AED']].map(([n, l, c]) => (
+                {[[jds.length.toString(), 'JDs live', '#4F46E5'], ['1', 'Candidates', '#16A34A'], ['0', 'Matches', '#7C3AED']].map(([n, l, c]) => (
                   <div key={l} className="bg-white rounded-2xl p-3 text-center shadow-sm border border-gray-100">
                     <div className="text-xl font-bold" style={{ color: c }}>{n}</div>
                     <div className="text-xs text-gray-500 mt-0.5">{l}</div>
@@ -179,29 +182,39 @@ export default function Home() {
                 ))}
               </div>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Featured roles</p>
-              {SAMPLE_JDS.slice(0, 2).map(jd => (
+              {jds.length === 0 && (
+                <div className="bg-white rounded-2xl p-6 text-center border border-gray-100">
+                  <div className="text-3xl mb-2">📋</div>
+                  <p className="text-sm font-semibold text-gray-600">No JDs yet</p>
+                  <p className="text-xs text-gray-400 mt-1">Recruiters are posting roles — check back soon</p>
+                </div>
+              )}
+              {jds.slice(0, 2).map(jd => {
+                const initials = jd.company?.split(' ').map((w:string)=>w[0]).join('').slice(0,2).toUpperCase() || 'CO'
+                return (
                 <div key={jd.id} className="bg-white rounded-2xl mb-3 shadow-sm border border-gray-100 overflow-hidden">
                   <div className="p-4">
                     <div className="flex gap-3 mb-3">
-                      <div className="w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ background: jd.color }}>{jd.initials}</div>
+                      <div className="w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ background: 'linear-gradient(135deg,#4F46E5,#7C3AED)' }}>{initials}</div>
                       <div>
                         <p className="font-bold text-gray-900">{jd.title}</p>
-                        <p className="text-sm font-semibold" style={{ color: jd.color }}>{jd.company}</p>
+                        <p className="text-sm font-semibold text-indigo-600">{jd.company}</p>
                         <p className="text-xs text-gray-500">{jd.team}</p>
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-1">
-                      <span className="tag-green tag">🌏 {jd.remote}</span>
-                      <span className="tag">{jd.years} yrs</span>
-                      <span className="tag" style={{ background: '#F9FAFB', color: '#4B5563', borderColor: '#E5E7EB' }}>{jd.salary}</span>
+                      {jd.work_style && <span className="tag" style={{background:'#EEF2FF',color:'#4F46E5',borderColor:'#C7D2FE'}}>🌏 {jd.work_style}</span>}
+                      {jd.min_years > 0 && <span className="tag">{jd.min_years}+ yrs</span>}
+                      {jd.salary_range && <span className="tag" style={{ background: '#F9FAFB', color: '#4B5563', borderColor: '#E5E7EB' }}>{jd.salary_range}</span>}
                     </div>
                   </div>
                   <div className="flex gap-2 px-4 pb-4">
                     <button className="flex-1 py-2.5 rounded-full border border-gray-200 text-sm font-semibold text-gray-500 hover:border-red-400 hover:text-red-500 transition-all" onClick={() => { setSwipedLeft(prev => new Set([...prev, jd.id])); showToast('Passed') }}>← Not Interested</button>
-                    <button className="flex-1 py-2.5 rounded-full text-white text-sm font-semibold" style={{ background: 'linear-gradient(135deg,#4F46E5,#7C3AED)' }} onClick={() => { setSwipedRight(prev => new Set([...prev, jd.id])); showToast('✓ Interested! Recruiter notified.') }}>Interested →</button>
+                    <button className="flex-1 py-2.5 rounded-full text-white text-sm font-semibold" style={{ background: 'linear-gradient(135deg,#4F46E5,#7C3AED)' }} onClick={() => { setSwipedRight(prev => new Set([...prev, jd.id])); showToast('Interested! Recruiter notified.') }}>Interested →</button>
                   </div>
                 </div>
-              ))}
+                )
+              })}
               <button className="w-full py-3 rounded-xl text-sm font-semibold text-indigo-600 border border-indigo-200 bg-indigo-50" onClick={() => setView('browse')}>View all JDs →</button>
             </div>
           </>
