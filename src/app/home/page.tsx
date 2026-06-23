@@ -88,7 +88,7 @@ export default function Home() {
     .filter(jd => !swipedLeft.has(jd.id) && !swipedRight.has(jd.id))
     .filter(jd => !search || jd.title.toLowerCase().includes(search.toLowerCase()) ||
       jd.company.toLowerCase().includes(search.toLowerCase()) ||
-      jd.mustHave.some(s => s.toLowerCase().includes(search.toLowerCase())))
+      (jd.must_have_skills || []).some((s: string) => s.toLowerCase().includes(search.toLowerCase())))
 
   return (
     <>
