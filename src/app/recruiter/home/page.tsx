@@ -169,51 +169,74 @@ export default function RecruiterHome() {
       {/* CONTENT */}
       <div className="flex-1 overflow-y-auto">
 
-        {/* HOME VIEW */}
+        {/* HOME VIEW - Recruiter's own profile */}
         {view === 'home' && (
           <div>
-            <div className="px-5 py-8 text-center text-white" style={{ background: 'linear-gradient(135deg,#1E1B4B,#312e81)' }}>
-              <p className="text-xs font-semibold tracking-widest mb-2 uppercase" style={{ color: '#A5B4FC' }}>Good to see you, {firstName}</p>
-              <h1 className="text-xl font-bold leading-snug mb-2" style={{ fontFamily: 'Georgia,serif' }}>Find your next great hire.</h1>
-              <p className="text-sm mb-6" style={{ color: '#C7D2FE' }}>Browse candidates, pursue the ones that fit, use your Golden Buzzer wisely.</p>
-              <div className="flex gap-3 justify-center max-w-xs mx-auto">
-                <div className="flex-1 p-3 rounded-2xl cursor-pointer border border-white/20 text-left" style={{ background: 'rgba(255,255,255,0.1)' }}
-                  onClick={() => router.push('/recruiter/register?edit=true')}>
-                  <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center text-white text-sm font-bold mb-1 flex-shrink-0"
-                    style={{ background: 'rgba(255,255,255,0.2)' }}>
-                    {recruiter?.photo_url
-                      ? <img src={recruiter.photo_url} className="w-full h-full object-cover" alt={firstName} />
-                      : <span className="text-xs font-bold">{initials}</span>}
-                  </div>
-                  <div className="text-sm font-bold text-white">My Profile</div>
-                  <div className="text-xs" style={{ color: '#A5B4FC' }}>View & edit</div>
-                </div>
-                <div className="flex-1 p-3 rounded-2xl cursor-pointer border border-white/20 text-left" style={{ background: 'rgba(255,255,255,0.1)' }}
-                  onClick={() => setView('browse')}>
-                  <div className="text-2xl mb-1">👥</div>
-                  <div className="text-sm font-bold text-white">Browse Candidates</div>
-                  <div className="text-xs" style={{ color: '#A5B4FC' }}>Find your match</div>
-                </div>
-              </div>
+            <div className="flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-100 sticky top-14 z-10">
+              <h2 className="text-base font-bold">My Profile</h2>
+              <button className="ml-auto text-xs font-semibold px-3 py-1.5 rounded-full"
+                style={{background:'#EEF2FF',color:'#4F46E5',border:'0.5px solid #C7D2FE'}}
+                onClick={()=>showToast('Share naggare.com 🔗')}>Share 🔗</button>
             </div>
 
-            <div className="px-4 py-5 max-w-2xl mx-auto">
-              <div className="grid grid-cols-3 gap-3 mb-6">
-                {[
-                  [candidates.length.toString(), 'Candidates', '#4F46E5'],
-                  ['0', 'Matches', '#4F46E5'],
-                  ['1', 'Golden Buzzers', '#D97706'],
-                ].map(([n, l, c]) => (
-                  <div key={l} className="bg-white rounded-2xl p-3 text-center shadow-sm border border-gray-100">
-                    <div className="text-xl font-bold" style={{ color: c }}>{n}</div>
-                    <div className="text-xs text-gray-500 mt-0.5">{l}</div>
+            <div className="px-4 py-5" style={{maxWidth:'420px',margin:'0 auto'}}>
+              <div className="rounded-3xl overflow-hidden shadow-xl mb-4" style={{border:'1px solid #E0E7FF'}}>
+
+                {/* Hero */}
+                <div className="flex flex-col items-center pt-8 pb-6 px-4 text-center"
+                  style={{background:'linear-gradient(160deg,#4F46E5,#7C3AED)'}}>
+                  <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg mb-3 flex items-center justify-center text-white font-bold text-2xl"
+                    style={{background:'rgba(255,255,255,0.2)'}}>
+                    {recruiter?.photo_url
+                      ? <img src={recruiter.photo_url} className="w-full h-full object-cover" alt={recruiter.name}/>
+                      : <span>{initials}</span>}
                   </div>
-                ))}
+                  <p className="text-xl font-bold text-white mb-0.5" style={{fontFamily:'Georgia,serif'}}>{recruiter.name}</p>
+                  <p className="text-sm font-semibold" style={{color:'#C7D2FE'}}>{recruiter.title}</p>
+                  <p className="text-xs mt-0.5" style={{color:'#A5B4FC'}}>{recruiter.company}</p>
+                </div>
+
+                {/* Hiring philosophy */}
+                {recruiter.looking_for && (
+                  <div className="p-4 border-b border-gray-100 bg-white">
+                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">My Hiring Philosophy</p>
+                    <p className="text-sm leading-relaxed text-gray-800">{recruiter.looking_for}</p>
+                  </div>
+                )}
+
+                {/* Skills */}
+                {recruiter.skills?.length > 0 && (
+                  <div className="p-4 border-b border-gray-100 bg-white">
+                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Skills I hire for · {recruiter.skills.length}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {recruiter.skills.map((s:string) => <span key={s} className="tag">{s}</span>)}
+                    </div>
+                  </div>
+                )}
+
+                {/* Prompts */}
+                {[recruiter.prompt_1_q, recruiter.prompt_2_q, recruiter.prompt_3_q].filter(Boolean).length > 0 && (
+                  <div className="p-4 bg-white">
+                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">In My Own Words</p>
+                    {[
+                      {q:recruiter.prompt_1_q, a:recruiter.prompt_1_a},
+                      {q:recruiter.prompt_2_q, a:recruiter.prompt_2_a},
+                      {q:recruiter.prompt_3_q, a:recruiter.prompt_3_a},
+                    ].filter(p=>p.q&&p.a).map((p,i)=>(
+                      <div key={i} className="mb-3 p-4 rounded-2xl" style={{background:'#EEF2FF',border:'0.5px solid #C7D2FE'}}>
+                        <p className="text-xs font-bold mb-2" style={{color:'#3730A3'}}>{p.q}</p>
+                        <p className="text-sm leading-relaxed text-gray-800">{p.a}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-              <button className="w-full py-4 rounded-2xl text-white font-semibold text-base shadow-lg"
-                style={{ background: GREEN_BG }}
-                onClick={() => setView('browse')}>
-                👥 Start Browsing Candidates →
+
+              <button className="btn-primary py-3 mb-3" onClick={()=>setView('browse')}>
+                👥 Browse Candidates
+              </button>
+              <button className="btn-outline py-3 text-sm" onClick={()=>router.push('/recruiter/register?edit=true')}>
+                ✏️ Edit profile
               </button>
             </div>
           </div>
