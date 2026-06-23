@@ -397,14 +397,18 @@ function RecruiterRegisterInner() {
             {step === 3 && (
               <div>
                 <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#14532D'}}>What do you hire for?</h2>
-                <p className="text-sm text-gray-500 mb-5">Pick your primary hiring domain.</p>
-                <div className="grid grid-cols-2 gap-2 mb-6">
+                <p className="text-sm text-gray-500 mb-1">Pick the domain you hire in most.</p>
+                <p className="text-xs font-semibold mb-5" style={{color:GREEN}}>This helps candidates know if you're the right recruiter for them.</p>
+                <div className="flex flex-col gap-2 mb-6">
                   {DOMAINS.map(d => (
-                    <button key={d} className="p-3 rounded-2xl text-left border transition-all"
+                    <button key={d} className="p-3 rounded-2xl text-left border transition-all flex items-center gap-3"
                       style={{background:domain===d?'#DCFCE7':'white',borderColor:domain===d?GREEN:'#E5E7EB',borderWidth:domain===d?'2px':'1px'}}
                       onClick={()=>setDomain(d)}>
-                      <span className="text-xl block mb-1">{DOMAIN_ICONS[d]}</span>
-                      <span className="text-xs font-semibold" style={{color:domain===d?GREEN_DARK:'#374151'}}>{d}</span>
+                      <span className="text-xl flex-shrink-0">{DOMAIN_ICONS[d]}</span>
+                      <div>
+                        <p className="text-sm font-semibold" style={{color:domain===d?GREEN_DARK:'#111827'}}>{d}</p>
+                      </div>
+                      {domain===d && <span className="ml-auto text-green-600 text-lg">✓</span>}
                     </button>
                   ))}
                 </div>
