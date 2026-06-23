@@ -8,12 +8,12 @@ export async function POST(req: NextRequest) {
 
     const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
 
-    // Check candidates table first
-    const { data: candidate } = await admin.from('candidates').select('*').ilike('email', email.toLowerCase()).single()
+    // Check candidates table - exclude deleted accounts
+    const { data: candidate } = await admin.from('candidates').select('*').ilike('email', email.toLowerCase()).neq('status', 'deleted').single()
     if (candidate) return NextResponse.json({ type: 'candidate', ...candidate })
 
-    // Check recruiters table
-    const { data: recruiter } = await admin.from('recruiters').select('*').ilike('email', email.toLowerCase()).single()
+    // Check recruiters table - exclude deleted accounts
+    const { data: recruiter } = await admin.from('recruiters').select('*').ilike('email', email.toLowerCase()).neq('status', 'deleted').single()
     if (recruiter) return NextResponse.json({ type: 'recruiter', ...recruiter })
 
     // No profile yet - check auth user metadata for intended type
