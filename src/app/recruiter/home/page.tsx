@@ -11,6 +11,7 @@ export default function RecruiterHome() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [view, setView] = useState<'home'|'browse'|'myjds'>('home')
   const [myJds, setMyJds] = useState<any[]>([])
+  const [expandedJd, setExpandedJd] = useState<string|null>(null)
   const [toast, setToast] = useState('')
   const [toastType, setToastType] = useState<'pass'|'pursue'|'buzzer'>('pursue')
   const [actionDone, setActionDone] = useState(false)
@@ -437,30 +438,72 @@ export default function RecruiterHome() {
             ) : (
               myJds.map(jd => (
                 <div key={jd.id} className="bg-white rounded-2xl mb-3 border border-gray-100 overflow-hidden shadow-sm">
-                  <div className="p-4">
+                  {/* Header - always visible, click to expand */}
+                  <div className="p-4 cursor-pointer" onClick={()=>setExpandedJd(expandedJd===jd.id?null:jd.id)}>
                     <div className="flex items-start justify-between mb-2">
-                      <div>
+                      <div className="flex-1">
                         <p className="font-bold text-gray-900">{jd.title}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">{jd.team}{jd.city ? ` · ${jd.city}` : ''}{jd.salary_range ? ` · ${jd.salary_range}` : ''}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{jd.team}{jd.city ? ' · ' + jd.city : ''}{jd.salary_range ? ' · ' + jd.salary_range : ''}</p>
                       </div>
-                      <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{background: jd.status==='open'?'#DCFCE7':'#F3F4F6', color: jd.status==='open'?'#16A34A':'#6B7280'}}>
-                        {jd.status === 'open' ? 'Live' : 'Closed'}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{background: jd.status==='open'?'#DCFCE7':'#F3F4F6', color: jd.status==='open'?'#16A34A':'#6B7280'}}>
+                          {jd.status === 'open' ? 'Live' : 'Closed'}
+                        </span>
+                        <span className="text-gray-400 text-sm">{expandedJd===jd.id?'▲':'▼'}</span>
+                      </div>
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {jd.work_style && <span className="tag" style={{fontSize:'11px',padding:'2px 8px'}}>🌏 {jd.work_style}</span>}
                       {jd.min_years > 0 && <span className="tag" style={{fontSize:'11px',padding:'2px 8px'}}>{jd.min_years}+ yrs</span>}
                     </div>
                   </div>
-                  <div className="flex gap-2 px-4 pb-4">
-                    <button className="flex-1 py-2 rounded-full text-xs font-semibold border border-gray-200 text-gray-500"
-                      onClick={()=>router.push(`/recruiter/jd-builder?id=${jd.id}`)}>Edit</button>
-                    <button className="flex-1 py-2 rounded-full text-xs font-semibold text-red-500 border border-red-100"
+
+                  {/* Expanded full JD preview */}
+                  {expandedJd === jd.id && (
+                    <div className="border-t border-gray-100">
+                      {jd.must_have_skills?.length > 0 && (
+                        <div className="px-4 py-3 border-b border-gray-100">
+                          <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Must-Have Skills</p>
+                          <div className="flex flex-wrap gap-1">{jd.must_have_skills.map((s:string)=><span key={s} className="tag" style={{fontSize:'11px'}}>{s}</span>)}</div>
+                        </div>
+                      )}
+                      {jd.good_to_have_skills?.length > 0 && (
+                        <div className="px-4 py-3 border-b border-gray-100">
+                          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Good to Have</p>
+                          <div className="flex flex-wrap gap-1">{jd.good_to_have_skills.map((s:string)=><span key={s} className="tag" style={{fontSize:'11px',background:'#F0FDF4',borderColor:'#BBF7D0',color:'#15803D'}}>{s}</span>)}</div>
+                        </div>
+                      )}
+                      {jd.non_negotiables && (
+                        <div className="px-4 py-3 border-b border-gray-100">
+                          <p className="text-xs font-bold text-red-600 uppercase tracking-wider mb-2">🚫 Non-Negotiables</p>
+                          <div className="p-3 rounded-xl text-sm leading-relaxed" style={{background:'#FFF1F2',border:'0.5px solid #FECDD3'}}>{jd.non_negotiables}</div>
+                        </div>
+                      )}
+                      {jd.real_tuesday && (
+                        <div className="px-4 py-3 border-b border-gray-100">
+                          <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">📅 What a Real Tuesday Looks Like</p>
+                          <p className="text-sm text-gray-800 leading-relaxed">{jd.real_tuesday}</p>
+                        </div>
+                      )}
+                      {jd.interview_process && (
+                        <div className="px-4 py-3 border-b border-gray-100">
+                          <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">🎯 Interview Process</p>
+                          <p className="text-sm text-gray-800 leading-relaxed">{jd.interview_process}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Action buttons */}
+                  <div className="flex gap-2 px-4 py-3 border-t border-gray-100">
+                    <button className="flex-1 py-2 rounded-full text-xs font-semibold border border-gray-200 text-gray-500 hover:border-indigo-400 hover:text-indigo-600"
+                      onClick={()=>router.push(`/recruiter/jd-builder?id=${jd.id}`)}>✏️ Edit</button>
+                    <button className="flex-1 py-2 rounded-full text-xs font-semibold text-red-500 border border-red-100 hover:bg-red-50"
                       onClick={async()=>{
-                        if(!confirm('Close this JD?')) return
+                        if(!confirm('Close this JD? Candidates will no longer see it.')) return
                         await fetch('/api/jds', {method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id:jd.id, status:'closed'})})
                         setMyJds(myJds.map(j=>j.id===jd.id?{...j,status:'closed'}:j))
-                      }}>Close</button>
+                      }}>🔒 Close</button>
                   </div>
                 </div>
               ))
