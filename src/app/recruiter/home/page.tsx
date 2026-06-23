@@ -9,7 +9,8 @@ export default function RecruiterHome() {
   const [candidates, setCandidates] = useState<any[]>([])
   const [currentIdx, setCurrentIdx] = useState(0)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [view, setView] = useState<'home'|'browse'>('home')
+  const [view, setView] = useState<'home'|'browse'|'myjds'>('home')
+  const [myJds, setMyJds] = useState<any[]>([])
   const [toast, setToast] = useState('')
   const [toastType, setToastType] = useState<'pass'|'pursue'|'buzzer'>('pursue')
   const [actionDone, setActionDone] = useState(false)
@@ -32,6 +33,10 @@ export default function RecruiterHome() {
         router.push('/recruiter/register'); return
       }
       setRecruiter(profile)
+
+      // Load recruiter's own JDs
+      const jdRes = await fetch(`/api/jds?recruiter_email=${encodeURIComponent(profile.email)}`)
+      if (jdRes.ok) setMyJds(await jdRes.json())
 
       // Load active candidates
       const { createClient } = await import('@supabase/supabase-js')
@@ -235,6 +240,13 @@ export default function RecruiterHome() {
               <button className="btn-primary py-3 mb-3" onClick={()=>setView('browse')}>
                 👥 Browse Candidates
               </button>
+              <button className="btn-primary py-3 mb-3" onClick={()=>router.push('/recruiter/jd-builder')}
+                style={{background:'linear-gradient(135deg,#7C3AED,#4F46E5)'}}>
+                📋 Post a JD
+              </button>
+              <button className="btn-outline py-3 mb-3 text-sm" onClick={()=>setView('myjds')}>
+                📁 My JDs
+              </button>
               <button className="btn-outline py-3 text-sm" onClick={()=>router.push('/recruiter/register?edit=true')}>
                 ✏️ Edit profile
               </button>
@@ -403,6 +415,58 @@ export default function RecruiterHome() {
         )}
           </div>
         )}
+
+        {/* MY JDS VIEW */}
+        {view === 'myjds' && (
+          <div className="px-4 py-4 max-w-lg mx-auto">
+            <div className="flex items-center gap-3 mb-4">
+              <button className="text-2xl text-indigo-600" onClick={()=>setView('home')}>‹</button>
+              <h2 className="text-lg font-bold">My JDs</h2>
+              <button className="ml-auto text-xs font-semibold px-3 py-1.5 rounded-full text-white"
+                style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}
+                onClick={()=>router.push('/recruiter/jd-builder')}>+ Post new</button>
+            </div>
+            {myJds.length === 0 ? (
+              <div className="bg-white rounded-2xl p-8 text-center border border-gray-100">
+                <div className="text-4xl mb-3">📋</div>
+                <p className="font-semibold text-gray-700 mb-1">No JDs yet</p>
+                <p className="text-sm text-gray-400 mb-4">Post your first role and start finding candidates</p>
+                <button className="btn-primary py-3 text-sm" onClick={()=>router.push('/recruiter/jd-builder')}>Post a JD →</button>
+              </div>
+            ) : (
+              myJds.map(jd => (
+                <div key={jd.id} className="bg-white rounded-2xl mb-3 border border-gray-100 overflow-hidden shadow-sm">
+                  <div className="p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <p className="font-bold text-gray-900">{jd.title}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{jd.team}{jd.city ? ` · ${jd.city}` : ''}{jd.salary_range ? ` · ${jd.salary_range}` : ''}</p>
+                      </div>
+                      <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{background: jd.status==='open'?'#DCFCE7':'#F3F4F6', color: jd.status==='open'?'#16A34A':'#6B7280'}}>
+                        {jd.status === 'open' ? 'Live' : 'Closed'}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {jd.work_style && <span className="tag" style={{fontSize:'11px',padding:'2px 8px'}}>🌏 {jd.work_style}</span>}
+                      {jd.min_years > 0 && <span className="tag" style={{fontSize:'11px',padding:'2px 8px'}}>{jd.min_years}+ yrs</span>}
+                    </div>
+                  </div>
+                  <div className="flex gap-2 px-4 pb-4">
+                    <button className="flex-1 py-2 rounded-full text-xs font-semibold border border-gray-200 text-gray-500"
+                      onClick={()=>router.push(`/recruiter/jd-builder?id=${jd.id}`)}>Edit</button>
+                    <button className="flex-1 py-2 rounded-full text-xs font-semibold text-red-500 border border-red-100"
+                      onClick={async()=>{
+                        if(!confirm('Close this JD?')) return
+                        await fetch('/api/jds', {method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id:jd.id, status:'closed'})})
+                        setMyJds(myJds.map(j=>j.id===jd.id?{...j,status:'closed'}:j))
+                      }}>Close</button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
       </div>
 
       {/* Toast */}
