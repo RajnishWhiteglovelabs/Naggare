@@ -8,11 +8,20 @@ export async function POST(req: NextRequest) {
 
     const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
 
+    // Check candidates table first
     const { data: candidate } = await admin.from('candidates').select('*').ilike('email', email.toLowerCase()).single()
     if (candidate) return NextResponse.json({ type: 'candidate', ...candidate })
 
+    // Check recruiters table
     const { data: recruiter } = await admin.from('recruiters').select('*').ilike('email', email.toLowerCase()).single()
     if (recruiter) return NextResponse.json({ type: 'recruiter', ...recruiter })
+
+    // No profile yet - check auth user metadata for intended type
+    const { data: { users } } = await admin.auth.admin.listUsers()
+    const authUser = users?.find(u => u.email?.toLowerCase() === email.toLowerCase())
+    if (authUser?.user_metadata?.type) {
+      return NextResponse.json({ error: 'No profile found', intended_type: authUser.user_metadata.type }, { status: 404 })
+    }
 
     return NextResponse.json({ error: 'No profile found' }, { status: 404 })
   } catch (e: unknown) {
