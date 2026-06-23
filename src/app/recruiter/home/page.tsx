@@ -12,6 +12,7 @@ export default function RecruiterHome() {
   const [view, setView] = useState<'home'|'browse'|'myjds'>('home')
   const [myJds, setMyJds] = useState<any[]>([])
   const [expandedJd, setExpandedJd] = useState<string|null>(null)
+  const [closingJd, setClosingJd] = useState<any|null>(null)
   const [toast, setToast] = useState('')
   const [toastType, setToastType] = useState<'pass'|'pursue'|'buzzer'>('pursue')
   const [actionDone, setActionDone] = useState(false)
@@ -499,11 +500,7 @@ export default function RecruiterHome() {
                     <button className="flex-1 py-2 rounded-full text-xs font-semibold border border-gray-200 text-gray-500 hover:border-indigo-400 hover:text-indigo-600"
                       onClick={()=>router.push(`/recruiter/jd-builder?id=${jd.id}`)}>✏️ Edit</button>
                     <button className="flex-1 py-2 rounded-full text-xs font-semibold text-red-500 border border-red-100 hover:bg-red-50"
-                      onClick={async()=>{
-                        if(!confirm('Close this JD? Candidates will no longer see it.')) return
-                        await fetch('/api/jds', {method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id:jd.id, status:'closed'})})
-                        setMyJds(myJds.map(j=>j.id===jd.id?{...j,status:'closed'}:j))
-                      }}>🔒 Close</button>
+                      onClick={()=>setClosingJd(jd)}>🔒 Close</button>
                   </div>
                 </div>
               ))
@@ -512,6 +509,39 @@ export default function RecruiterHome() {
         )}
 
       </div>
+
+      {/* Close JD Modal */}
+      {closingJd && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4" style={{background:'rgba(0,0,0,0.5)'}}>
+          <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl">
+            <h3 className="text-lg font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#1E1B4B'}}>Why are you closing this?</h3>
+            <p className="text-sm text-gray-500 mb-5">Helps us improve Naggare for everyone.</p>
+            {[
+              {reason:'hired_naggare', label:'✅ Hired via Naggare', sub:'Great! We made a match.'},
+              {reason:'hired_other', label:'🔄 Hired from another source', sub:'Good to know.'},
+              {reason:'not_hiring', label:'❌ No longer hiring for this role', sub:'Role has been cancelled or paused.'},
+            ].map(opt => (
+              <button key={opt.reason}
+                className="w-full text-left p-4 rounded-2xl mb-2 border border-gray-100 hover:border-indigo-300 hover:bg-indigo-50 transition-all"
+                onClick={async() => {
+                  // Delete the JD from DB
+                  await fetch('/api/jds', {
+                    method: 'PATCH',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({id: closingJd.id, status: 'deleted', close_reason: opt.reason})
+                  })
+                  setMyJds(myJds.filter(j => j.id !== closingJd.id))
+                  setClosingJd(null)
+                  showToast(opt.reason === 'hired_naggare' ? 'Congratulations on the hire! 🎉' : 'JD removed.', 'pursue')
+                }}>
+                <p className="font-semibold text-gray-900 text-sm">{opt.label}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{opt.sub}</p>
+              </button>
+            ))}
+            <button className="w-full py-3 text-sm text-gray-400 mt-1" onClick={()=>setClosingJd(null)}>Cancel</button>
+          </div>
+        </div>
+      )}
 
       {/* Toast */}
       {toast && (
