@@ -128,7 +128,7 @@ function JDBuilderInner() {
       fetch('/api/email/jd-published', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: recruiter?.email, name: recruiter?.name, jobTitle: title, company: recruiter?.company }),
+        body: JSON.stringify({ email: recruiter?.email, name: recruiter?.name, role: title, company: recruiter?.company, location: city }),
       })
 
       showToast(jdId ? 'JD updated!' : 'JD published! Candidates can see it now.')
