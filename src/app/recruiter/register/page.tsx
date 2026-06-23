@@ -105,7 +105,7 @@ const DOMAIN_ICONS: Record<string,string> = {
   'Marketing':'📣','Sales':'🤝','HR & L&D':'🌱','BPO & Customer Service':'📞','Operations':'⚙️','Other':'✨'
 }
 
-const STEPS = ['Your details','Photo','Domain','Skills','In your words','Review']
+const STEPS = ['Your details','Photo','Skills','In your words','Review']
 const GREEN = '#16A34A'
 const GREEN_DARK = '#15803D'
 const GREEN_BG = 'linear-gradient(135deg,#16A34A,#15803D)'
@@ -132,8 +132,8 @@ function RecruiterRegisterInner() {
   const [toast, setToast] = useState('')
   const [saveToast, setSaveToast] = useState(false)
 
-  const domainSkills = DOMAIN_SKILLS[domain] || DOMAIN_SKILLS['Other']
-  const domainPrompts = DOMAIN_PROMPTS[domain] || DOMAIN_PROMPTS['Other']
+  const domainSkills = DOMAIN_SKILLS['Talent Acquisition'] // Recruiters see TA skills + can add custom
+  const domainPrompts = DOMAIN_PROMPTS['Talent Acquisition']
   const progress = ((step) / STEPS.length) * 100
 
   useEffect(() => {
@@ -393,35 +393,8 @@ function RecruiterRegisterInner() {
               </div>
             )}
 
-            {/* STEP 3: DOMAIN */}
+            {/* STEP 3: SKILLS */}
             {step === 3 && (
-              <div>
-                <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#14532D'}}>What do you hire for?</h2>
-                <p className="text-sm text-gray-500 mb-1">Pick the domain you hire in most.</p>
-                <p className="text-xs font-semibold mb-5" style={{color:GREEN}}>This helps candidates know if you're the right recruiter for them.</p>
-                <div className="flex flex-col gap-2 mb-6">
-                  {DOMAINS.map(d => (
-                    <button key={d} className="p-3 rounded-2xl text-left border transition-all flex items-center gap-3"
-                      style={{background:domain===d?'#DCFCE7':'white',borderColor:domain===d?GREEN:'#E5E7EB',borderWidth:domain===d?'2px':'1px'}}
-                      onClick={()=>setDomain(d)}>
-                      <span className="text-xl flex-shrink-0">{DOMAIN_ICONS[d]}</span>
-                      <div>
-                        <p className="text-sm font-semibold" style={{color:domain===d?GREEN_DARK:'#111827'}}>{d}</p>
-                      </div>
-                      {domain===d && <span className="ml-auto text-green-600 text-lg">✓</span>}
-                    </button>
-                  ))}
-                </div>
-                <div className="flex gap-3">
-                  <button className="btn-outline flex-none w-24" onClick={()=>setStep(2)}>← Back</button>
-                  <button className="btn-green" style={{background:GREEN_BG}} onClick={()=>{if(!domain){showToast('Please select a domain');return}setStep(4)}}>Continue →</button>
-                </div>
-                <button className="text-center w-full text-sm font-semibold py-3 mt-2" style={{color:GREEN}} onClick={saveAndExit}>Save & come back later</button>
-              </div>
-            )}
-
-            {/* STEP 4: SKILLS */}
-            {step === 4 && (
               <div>
                 <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#14532D'}}>Skills you hire for</h2>
                 <p className="text-sm text-gray-500 mb-1">Pick skills relevant to your hiring domain.</p>
@@ -473,15 +446,15 @@ function RecruiterRegisterInner() {
                 </div>
 
                 <div className="flex gap-3">
-                  <button className="btn-outline flex-none w-24" onClick={()=>setStep(3)}>← Back</button>
-                  <button className="btn-green" style={{background:GREEN_BG}} onClick={()=>{if(selectedSkills.size===0){showToast('Pick at least 1 skill');return}setStep(5)}}>Continue →</button>
+                  <button className="btn-outline flex-none w-24" onClick={()=>setStep(2)}>← Back</button>
+                  <button className="btn-green" style={{background:GREEN_BG}} onClick={()=>{if(selectedSkills.size===0){showToast('Pick at least 1 skill');return}setStep(4)}}>Continue →</button>
                 </div>
                 <button className="text-center w-full text-sm font-semibold py-3 mt-2" style={{color:GREEN}} onClick={saveAndExit}>Save & come back later</button>
               </div>
             )}
 
-            {/* STEP 5: PROMPTS */}
-            {step === 5 && (
+            {/* STEP 4: PROMPTS */}
+            {step === 4 && (
               <div>
                 <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#14532D'}}>Your recruiter voice</h2>
                 <p className="text-sm text-gray-500 mb-1">This is what candidates read to decide if they trust you. Make it count.</p>
@@ -522,8 +495,8 @@ function RecruiterRegisterInner() {
               </div>
             )}
 
-            {/* STEP 6: REVIEW */}
-            {step === 6 && (
+            {/* STEP 5: REVIEW */}
+            {step === 5 && (
               <div>
                 <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#14532D'}}>Looking good</h2>
                 <p className="text-sm text-gray-500 mb-5">This is what candidates will see.</p>
