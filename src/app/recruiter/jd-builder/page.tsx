@@ -527,8 +527,7 @@ function JDBuilderInner() {
                 {interview && (
                   <div className="p-4 border-b border-gray-100">
                     <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">Interview Process — No Surprises</p>
-                    {interview.split('
-').filter((l: string) => l.trim()).map((line: string, i: number) => {
+                    {interview.split(/\n/).filter((l: string) => l.trim()).map((line: string, i: number) => {
                       const colors = ['#4F46E5','#7C3AED','#2563EB','#D97706','#111827']
                       return (
                         <div key={i} className="flex gap-3 mb-3 last:mb-0">
