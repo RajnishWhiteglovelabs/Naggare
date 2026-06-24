@@ -3,11 +3,11 @@ import { useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase-browser'
 
 const IDLE_TIMEOUT = 15 * 60 * 1000 // 15 minutes
-const WARNING_BEFORE = 60 * 1000     // warn 1 minute before
+const WARNING_BEFORE = 30 * 1000     // warn 30 seconds before
 
 export default function IdleTimer() {
   const [showWarning, setShowWarning] = useState(false)
-  const [countdown, setCountdown] = useState(60)
+  const [countdown, setCountdown] = useState(30)
   const idleTimer = useRef<NodeJS.Timeout|null>(null)
   const warningTimer = useRef<NodeJS.Timeout|null>(null)
   const countdownInterval = useRef<NodeJS.Timeout|null>(null)
@@ -28,12 +28,12 @@ export default function IdleTimer() {
   function resetTimer() {
     clearAllTimers()
     setShowWarning(false)
-    setCountdown(60)
+    setCountdown(30)
 
     // Show warning 1 min before timeout
     warningTimer.current = setTimeout(() => {
       setShowWarning(true)
-      setCountdown(60)
+      setCountdown(30)
       countdownInterval.current = setInterval(() => {
         setCountdown(prev => {
           if (prev <= 1) {
