@@ -218,6 +218,11 @@ function JDBuilderInner() {
         recruiter_email: recruiter?.email || '',
         recruiter_name: recruiter?.name || '',
         status: 'open',
+        ic_track: icTrack,
+        ic_current: icCurrent,
+        mgmt_track: mgmtTrack,
+        mgmt_current: mgmtCurrent,
+        show_tracks: showTracks,
       }
 
       if (jdId) {
