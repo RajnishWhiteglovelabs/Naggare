@@ -44,6 +44,7 @@ function JDBuilderInner() {
   const [tuesday, setTuesday] = useState('')
   const [nonNeg, setNonNeg] = useState('')
   const [interview, setInterview] = useState('')
+  const [hiringFor, setHiringFor] = useState('')
 
   // Autosave whenever any field changes
   useEffect(() => {
@@ -87,6 +88,7 @@ function JDBuilderInner() {
           setMaxYears(draft.max_years?.toString() || '')
           setEducation(draft.education || '')
           setSalary(draft.salary_range || '')
+          setHiringFor(draft.company || '')
           setMustHave(draft.must_have_skills || [])
           setGoodHave(draft.good_to_have_skills || [])
           setTuesday(draft.real_tuesday || '')
@@ -109,6 +111,7 @@ function JDBuilderInner() {
           setMaxYears(data.max_years?.toString() || '')
           setEducation(data.education || '')
           setSalary(data.salary_range || '')
+          setHiringFor(data.company || '')
           setMustHave(data.must_have_skills || [])
           setGoodHave(data.good_to_have_skills || [])
           setTuesday(data.real_tuesday || '')
@@ -151,7 +154,7 @@ function JDBuilderInner() {
           real_tuesday: tuesday,
           non_negotiables: nonNeg,
           interview_process: interview,
-          company: recruiter?.company || '',
+          company: hiringFor || recruiter?.company || '',
           recruiter_email: recruiter?.email || '',
           recruiter_name: recruiter?.name || '',
           status: 'draft',
@@ -225,7 +228,7 @@ function JDBuilderInner() {
     }
   }
 
-  const company = recruiter?.company || 'Your Company'
+  const company = hiringFor || recruiter?.company || 'Your Company'
   const companyInitials = company.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase()
 
   if (!recruiter) return null
@@ -265,6 +268,13 @@ function JDBuilderInner() {
               <div className="mb-4">
                 <label className="label">Team / Function</label>
                 <input className="input" placeholder="e.g. Payments Infra" value={team} onChange={e => setTeam(e.target.value)} />
+              </div>
+
+              <div className="mb-4">
+                <label className="label">Hiring for *</label>
+                <input className="input" placeholder="e.g. Razorpay" value={hiringFor}
+                  onChange={e => setHiringFor(e.target.value)} />
+                <p className="text-xs text-gray-400 mt-1">Your company name, or your client's name if you're an agency recruiter.</p>
               </div>
 
               <div className="grid grid-cols-2 gap-3 mb-4">
