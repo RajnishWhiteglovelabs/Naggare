@@ -22,7 +22,20 @@ export default function SignIn() {
         email: email.toLowerCase(),
         password,
       })
-      if (signInError) { setError('Incorrect email or password'); setLoading(false); return }
+      if (signInError) {
+        const msg = signInError.message?.toLowerCase() || ''
+        if (msg.includes('invalid login') || msg.includes('invalid credentials')) {
+          // Check if account exists at all
+          setError('Incorrect password. Forgot it? Use the link below.')
+        } else if (msg.includes('email not confirmed')) {
+          setError('Please verify your email first — check your inbox for the Naggare confirmation link.')
+        } else if (msg.includes('user not found') || msg.includes('no user')) {
+          setError('No account found with this email. Please sign up first.')
+        } else {
+          setError(signInError.message || 'Something went wrong')
+        }
+        setLoading(false); return
+      }
       if (!data.session) { setError('Could not create session'); setLoading(false); return }
 
       // Step 2: Send OTP as second factor
