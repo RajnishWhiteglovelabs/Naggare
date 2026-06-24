@@ -8,6 +8,14 @@ export default function Landing() {
   const [checking, setChecking] = useState(true)
 
   useEffect(() => {
+    // If Supabase redirected here with a password reset code, forward to reset-password
+    const params = new URLSearchParams(window.location.search)
+    const code = params.get('code')
+    if (code) {
+      router.replace('/reset-password?code=' + code)
+      return
+    }
+
     // Always show landing page after 1.5s max — never loop
     const timeout = setTimeout(() => setChecking(false), 1500)
 
