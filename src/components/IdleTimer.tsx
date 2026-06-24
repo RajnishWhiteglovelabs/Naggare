@@ -53,7 +53,7 @@ export default function IdleTimer() {
 
   useEffect(() => {
     // Only run if user is logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: any } }) => {
       if (!session) return
 
       const events = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click']
