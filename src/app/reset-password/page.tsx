@@ -27,7 +27,7 @@ export default function ResetPassword() {
       supabase.auth.setSession({
         access_token: accessToken,
         refresh_token: refreshToken || '',
-      }).then(({ error }) => {
+      }).then(({ error }: { error: { message: string } | null }) => {
         if (error) {
           setInvalid(true)
         } else {
