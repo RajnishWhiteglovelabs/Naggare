@@ -20,7 +20,7 @@ function ResetPasswordInner() {
 
     if (code) {
       // PKCE flow — exchange code for session
-      supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
+      supabase.auth.exchangeCodeForSession(code).then(({ error }: { error: { message: string } | null }) => {
         if (error) {
           setInvalid(true)
         } else {
@@ -39,7 +39,7 @@ function ResetPasswordInner() {
         supabase.auth.setSession({
           access_token: accessToken,
           refresh_token: refreshToken || '',
-        }).then(({ error }) => {
+        }).then(({ error }: { error: { message: string } | null }) => {
           if (error) setInvalid(true)
           else setReady(true)
         })
