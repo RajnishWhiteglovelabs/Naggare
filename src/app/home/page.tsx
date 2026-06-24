@@ -190,27 +190,111 @@ export default function Home() {
                 </div>
               )}
               {jds.slice(0, 2).map(jd => {
-                const initials = jd.company?.split(' ').map((w:string)=>w[0]).join('').slice(0,2).toUpperCase() || 'CO'
+                const co = jd.company || 'Company'
+                const ini = co.split(' ').map((w:string)=>w[0]).join('').slice(0,2).toUpperCase()
                 return (
-                <div key={jd.id} className="bg-white rounded-2xl mb-3 shadow-sm border border-gray-100 overflow-hidden">
-                  <div className="p-4">
+                <div key={jd.id} className="bg-white rounded-3xl mb-4 shadow-lg border border-gray-100 overflow-hidden">
+                  <div className="p-4" style={{background:'#EEF2FF',borderBottom:'0.5px solid #C7D2FE'}}>
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      <span className="px-2 py-1 rounded-full text-xs font-semibold" style={{background:'#4F46E5',color:'white'}}>Technology</span>
+                      {jd.work_style && <span className="px-2 py-1 rounded-full text-xs font-semibold" style={{background:'#ECFDF5',color:'#065F46',border:'1px solid #6EE7B7'}}>{jd.work_style}</span>}
+                    </div>
                     <div className="flex gap-3 mb-3">
-                      <div className="w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ background: 'linear-gradient(135deg,#4F46E5,#7C3AED)' }}>{initials}</div>
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>{ini}</div>
                       <div>
-                        <p className="font-bold text-gray-900">{jd.title}</p>
-                        <p className="text-sm font-semibold text-indigo-600">{jd.company}</p>
+                        <p className="font-bold text-lg" style={{color:'#1E1B4B'}}>{jd.title}</p>
+                        <p className="text-sm font-semibold text-indigo-600">{co}</p>
                         <p className="text-xs text-gray-500">{jd.team}</p>
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-1">
-                      {jd.work_style && <span className="tag" style={{background:'#EEF2FF',color:'#4F46E5',borderColor:'#C7D2FE'}}>🌏 {jd.work_style}</span>}
-                      {jd.min_years > 0 && <span className="tag">{jd.min_years}+ yrs</span>}
-                      {jd.salary_range && <span className="tag" style={{ background: '#F9FAFB', color: '#4B5563', borderColor: '#E5E7EB' }}>{jd.salary_range}</span>}
+                      {jd.min_years > 0 && <span className="tag">{jd.min_years}{jd.max_years > 0 ? `–${jd.max_years}` : '+'} yrs</span>}
+                      {(jd.must_have_skills||[]).slice(0,2).length > 0 && <span className="tag">{(jd.must_have_skills||[]).slice(0,2).join(' · ')}{(jd.must_have_skills||[]).length > 2 ? ` +${(jd.must_have_skills||[]).length-2}` : ''}</span>}
+                      {jd.city && <span className="tag">{jd.city}</span>}
+                      {jd.salary_range && <span className="tag" style={{background:'#F9FAFB',color:'#374151',borderColor:'#E5E7EB'}}>{jd.salary_range}</span>}
                     </div>
                   </div>
-                  <div className="flex gap-2 px-4 pb-4">
-                    <button className="flex-1 py-2.5 rounded-full border border-gray-200 text-sm font-semibold text-gray-500 hover:border-red-400 hover:text-red-500 transition-all" onClick={() => { setSwipedLeft(prev => new Set([...prev, jd.id])); showToast('Passed') }}>← Not Interested</button>
-                    <button className="flex-1 py-2.5 rounded-full text-white text-sm font-semibold" style={{ background: 'linear-gradient(135deg,#4F46E5,#7C3AED)' }} onClick={() => { setSwipedRight(prev => new Set([...prev, jd.id])); showToast('Interested! Recruiter notified.') }}>Interested →</button>
+                  {jd.show_tracks !== false && (jd.ic_track||[]).length > 0 && (
+                    <div className="p-4 border-b border-gray-100">
+                      <p className="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4">Where This Role Takes You</p>
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">⚡ IC Track</p>
+                      <div className="overflow-x-auto pb-2 mb-4">
+                        <div className="flex items-start relative" style={{minWidth:'max-content'}}>
+                          <div className="absolute top-2 left-2 right-2 h-px bg-gray-200" />
+                          {(jd.ic_track||[]).map((role:string,i:number)=>(
+                            <div key={i} className="flex flex-col items-center" style={{minWidth:'80px',zIndex:1}}>
+                              <div className="w-4 h-4 rounded-full border-2 mb-1" style={{background:i<=(jd.ic_current||1)?'#4F46E5':'white',borderColor:i<=(jd.ic_current||1)?'#4F46E5':'#D1D5DB'}} />
+                              <p className="text-xs font-semibold text-center px-1 leading-tight" style={{color:i===(jd.ic_current||1)?'#4F46E5':'#6B7280'}}>
+                                {role}{i===(jd.ic_current||1)&&<span className="block text-indigo-400 font-normal">← Here</span>}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      {(jd.mgmt_track||[]).length > 0 && (<>
+                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">👥 Management Track</p>
+                        <div className="overflow-x-auto pb-2">
+                          <div className="flex items-start relative" style={{minWidth:'max-content'}}>
+                            <div className="absolute top-2 left-2 right-2 h-px bg-gray-200" />
+                            {(jd.mgmt_track||[]).map((role:string,i:number)=>(
+                              <div key={i} className="flex flex-col items-center" style={{minWidth:'80px',zIndex:1}}>
+                                <div className="w-4 h-4 rounded-full border-2 mb-1" style={{background:i<=(jd.mgmt_current||0)?'#7C3AED':'white',borderColor:i<=(jd.mgmt_current||0)?'#7C3AED':'#D1D5DB'}} />
+                                <p className="text-xs font-semibold text-center px-1 leading-tight" style={{color:i===(jd.mgmt_current||0)?'#7C3AED':'#6B7280'}}>
+                                  {role}{i===(jd.mgmt_current||0)&&<span className="block text-purple-400 font-normal">← Start</span>}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </>)}
+                    </div>
+                  )}
+                  {((jd.must_have_skills||[]).length > 0 || (jd.good_to_have_skills||[]).length > 0) && (
+                    <div className="p-4 border-b border-gray-100">
+                      <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Skills &amp; Tech Stack</p>
+                      <div className="flex flex-wrap gap-1">
+                        {(jd.must_have_skills||[]).map((s:string)=><span key={s} className="tag" style={{background:'#EEF2FF',color:'#4338CA',borderColor:'#C7D2FE'}}>{s}</span>)}
+                        {(jd.good_to_have_skills||[]).map((s:string)=><span key={s} className="tag" style={{background:'#F9FAFB',color:'#6B7280',borderColor:'#E5E7EB'}}>{s}</span>)}
+                      </div>
+                    </div>
+                  )}
+                  {jd.non_negotiables && (
+                    <div className="p-4 border-b border-gray-100">
+                      <p className="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">What We Won’t Compromise On</p>
+                      <div className="p-3 rounded-xl" style={{background:'#FFF1F2',border:'0.5px solid #FECDD3'}}>
+                        <p className="text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Non Negotiables</p>
+                        {jd.non_negotiables.split('\n').filter((l:string)=>l.trim()).map((line:string,i:number)=>(
+                          <p key={i} className="text-sm text-gray-900 flex gap-2 mb-1"><span className="text-red-500">●</span>{line.trim()}</p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {jd.real_tuesday && (
+                    <div className="p-4 border-b border-gray-100">
+                      <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">What a Real Tuesday Looks Like</p>
+                      <p className="text-sm text-gray-900 leading-relaxed">{jd.real_tuesday}</p>
+                    </div>
+                  )}
+                  {(jd.interview_steps||[]).some((s:any)=>s.title) && (
+                    <div className="p-4 border-b border-gray-100">
+                      <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">Interview Process — No Surprises</p>
+                      {(jd.interview_steps||[]).filter((s:any)=>s.title).map((step:any,i:number)=>{
+                        const cols=['#4F46E5','#7C3AED','#2563EB','#D97706','#111827']
+                        return (
+                          <div key={i} className="mb-3 last:mb-0">
+                            <div className="flex gap-3 items-start mb-1">
+                              <div className="w-5 h-5 rounded-full flex-shrink-0 mt-0.5 flex items-center justify-center text-white text-xs font-bold" style={{background:cols[i%5]}}>{i+1}</div>
+                              <div><span className="text-sm font-bold text-gray-900">{step.title}</span>{step.duration&&<span className="text-xs text-gray-400 ml-2">· {step.duration}</span>}</div>
+                            </div>
+                            {step.competencies&&<div className="ml-8 flex flex-wrap gap-1 mt-1">{step.competencies.split('·').map((c:string)=>c.trim()).filter((c:string)=>c).map((comp:string,j:number)=><span key={j} className="px-2 py-0.5 rounded-full text-xs border border-gray-200 text-gray-500 bg-gray-50">{comp}</span>)}</div>}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                  <div className="flex gap-2 p-4">
+                    <button className="flex-1 py-3 rounded-full border border-gray-200 text-sm font-semibold text-gray-500" onClick={()=>{setSwipedLeft(prev=>new Set([...prev,jd.id]));showToast('Passed')}}>Not Interested</button>
+                    <button className="flex-1 py-3 rounded-full text-white text-sm font-semibold" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}} onClick={()=>{setSwipedRight(prev=>new Set([...prev,jd.id]));showToast('✓ Interested! Recruiter notified.')}}>Interested</button>
                   </div>
                 </div>
                 )
@@ -239,31 +323,116 @@ export default function Home() {
                 <p className="text-sm text-gray-500 mt-1">Try a different search</p>
               </div>
             )}
-            {filteredJDs.map(jd => (
-              <div key={jd.id} className="bg-white rounded-2xl mb-4 shadow-sm border border-gray-100 overflow-hidden">
-                <div className="p-4">
-                  <div className="flex gap-3 mb-3">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold flex-shrink-0" style={{ background: jd.color }}>{jd.initials}</div>
-                    <div className="flex-1">
-                      <p className="font-bold text-gray-900 text-base">{jd.title}</p>
-                      <p className="text-sm font-semibold" style={{ color: jd.color }}>{jd.company}</p>
-                      <p className="text-xs text-gray-500">{jd.team}</p>
+            filteredJDs.map(jd => {
+                const co = jd.company || 'Company'
+                const ini = co.split(' ').map((w:string)=>w[0]).join('').slice(0,2).toUpperCase()
+                return (
+                <div key={jd.id} className="bg-white rounded-3xl mb-4 shadow-lg border border-gray-100 overflow-hidden">
+                  <div className="p-4" style={{background:'#EEF2FF',borderBottom:'0.5px solid #C7D2FE'}}>
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      <span className="px-2 py-1 rounded-full text-xs font-semibold" style={{background:'#4F46E5',color:'white'}}>Technology</span>
+                      {jd.work_style && <span className="px-2 py-1 rounded-full text-xs font-semibold" style={{background:'#ECFDF5',color:'#065F46',border:'1px solid #6EE7B7'}}>{jd.work_style}</span>}
+                    </div>
+                    <div className="flex gap-3 mb-3">
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>{ini}</div>
+                      <div>
+                        <p className="font-bold text-lg" style={{color:'#1E1B4B'}}>{jd.title}</p>
+                        <p className="text-sm font-semibold text-indigo-600">{co}</p>
+                        <p className="text-xs text-gray-500">{jd.team}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {jd.min_years > 0 && <span className="tag">{jd.min_years}{jd.max_years > 0 ? `–${jd.max_years}` : '+'} yrs</span>}
+                      {(jd.must_have_skills||[]).slice(0,2).length > 0 && <span className="tag">{(jd.must_have_skills||[]).slice(0,2).join(' · ')}{(jd.must_have_skills||[]).length > 2 ? ` +${(jd.must_have_skills||[]).length-2}` : ''}</span>}
+                      {jd.city && <span className="tag">{jd.city}</span>}
+                      {jd.salary_range && <span className="tag" style={{background:'#F9FAFB',color:'#374151',borderColor:'#E5E7EB'}}>{jd.salary_range}</span>}
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    <span className="tag-green tag">🌏 {jd.remote}</span>
-                    <span className="tag">{jd.years} yrs</span>
-                    <span className="tag" style={{ background: '#F9FAFB', color: '#4B5563', borderColor: '#E5E7EB' }}>{jd.salary}</span>
+                  {jd.show_tracks !== false && (jd.ic_track||[]).length > 0 && (
+                    <div className="p-4 border-b border-gray-100">
+                      <p className="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4">Where This Role Takes You</p>
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">⚡ IC Track</p>
+                      <div className="overflow-x-auto pb-2 mb-4">
+                        <div className="flex items-start relative" style={{minWidth:'max-content'}}>
+                          <div className="absolute top-2 left-2 right-2 h-px bg-gray-200" />
+                          {(jd.ic_track||[]).map((role:string,i:number)=>(
+                            <div key={i} className="flex flex-col items-center" style={{minWidth:'80px',zIndex:1}}>
+                              <div className="w-4 h-4 rounded-full border-2 mb-1" style={{background:i<=(jd.ic_current||1)?'#4F46E5':'white',borderColor:i<=(jd.ic_current||1)?'#4F46E5':'#D1D5DB'}} />
+                              <p className="text-xs font-semibold text-center px-1 leading-tight" style={{color:i===(jd.ic_current||1)?'#4F46E5':'#6B7280'}}>
+                                {role}{i===(jd.ic_current||1)&&<span className="block text-indigo-400 font-normal">← Here</span>}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      {(jd.mgmt_track||[]).length > 0 && (<>
+                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">👥 Management Track</p>
+                        <div className="overflow-x-auto pb-2">
+                          <div className="flex items-start relative" style={{minWidth:'max-content'}}>
+                            <div className="absolute top-2 left-2 right-2 h-px bg-gray-200" />
+                            {(jd.mgmt_track||[]).map((role:string,i:number)=>(
+                              <div key={i} className="flex flex-col items-center" style={{minWidth:'80px',zIndex:1}}>
+                                <div className="w-4 h-4 rounded-full border-2 mb-1" style={{background:i<=(jd.mgmt_current||0)?'#7C3AED':'white',borderColor:i<=(jd.mgmt_current||0)?'#7C3AED':'#D1D5DB'}} />
+                                <p className="text-xs font-semibold text-center px-1 leading-tight" style={{color:i===(jd.mgmt_current||0)?'#7C3AED':'#6B7280'}}>
+                                  {role}{i===(jd.mgmt_current||0)&&<span className="block text-purple-400 font-normal">← Start</span>}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </>)}
+                    </div>
+                  )}
+                  {((jd.must_have_skills||[]).length > 0 || (jd.good_to_have_skills||[]).length > 0) && (
+                    <div className="p-4 border-b border-gray-100">
+                      <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Skills &amp; Tech Stack</p>
+                      <div className="flex flex-wrap gap-1">
+                        {(jd.must_have_skills||[]).map((s:string)=><span key={s} className="tag" style={{background:'#EEF2FF',color:'#4338CA',borderColor:'#C7D2FE'}}>{s}</span>)}
+                        {(jd.good_to_have_skills||[]).map((s:string)=><span key={s} className="tag" style={{background:'#F9FAFB',color:'#6B7280',borderColor:'#E5E7EB'}}>{s}</span>)}
+                      </div>
+                    </div>
+                  )}
+                  {jd.non_negotiables && (
+                    <div className="p-4 border-b border-gray-100">
+                      <p className="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">What We Won’t Compromise On</p>
+                      <div className="p-3 rounded-xl" style={{background:'#FFF1F2',border:'0.5px solid #FECDD3'}}>
+                        <p className="text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Non Negotiables</p>
+                        {jd.non_negotiables.split('\n').filter((l:string)=>l.trim()).map((line:string,i:number)=>(
+                          <p key={i} className="text-sm text-gray-900 flex gap-2 mb-1"><span className="text-red-500">●</span>{line.trim()}</p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {jd.real_tuesday && (
+                    <div className="p-4 border-b border-gray-100">
+                      <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">What a Real Tuesday Looks Like</p>
+                      <p className="text-sm text-gray-900 leading-relaxed">{jd.real_tuesday}</p>
+                    </div>
+                  )}
+                  {(jd.interview_steps||[]).some((s:any)=>s.title) && (
+                    <div className="p-4 border-b border-gray-100">
+                      <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">Interview Process — No Surprises</p>
+                      {(jd.interview_steps||[]).filter((s:any)=>s.title).map((step:any,i:number)=>{
+                        const cols=['#4F46E5','#7C3AED','#2563EB','#D97706','#111827']
+                        return (
+                          <div key={i} className="mb-3 last:mb-0">
+                            <div className="flex gap-3 items-start mb-1">
+                              <div className="w-5 h-5 rounded-full flex-shrink-0 mt-0.5 flex items-center justify-center text-white text-xs font-bold" style={{background:cols[i%5]}}>{i+1}</div>
+                              <div><span className="text-sm font-bold text-gray-900">{step.title}</span>{step.duration&&<span className="text-xs text-gray-400 ml-2">· {step.duration}</span>}</div>
+                            </div>
+                            {step.competencies&&<div className="ml-8 flex flex-wrap gap-1 mt-1">{step.competencies.split('·').map((c:string)=>c.trim()).filter((c:string)=>c).map((comp:string,j:number)=><span key={j} className="px-2 py-0.5 rounded-full text-xs border border-gray-200 text-gray-500 bg-gray-50">{comp}</span>)}</div>}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                  <div className="flex gap-2 p-4">
+                    <button className="flex-1 py-3 rounded-full border border-gray-200 text-sm font-semibold text-gray-500" onClick={()=>{setSwipedLeft(prev=>new Set([...prev,jd.id]));showToast('Passed')}}>Not Interested</button>
+                    <button className="flex-1 py-3 rounded-full text-white text-sm font-semibold" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}} onClick={()=>{setSwipedRight(prev=>new Set([...prev,jd.id]));showToast('✓ Interested! Recruiter notified.')}}>Interested</button>
                   </div>
-                  <div className="flex flex-wrap gap-1 mb-3">{(jd.must_have_skills || []).map((s: string) => <span key={s} className="tag">{s}</span>)}</div>
-                  {jd.tuesday && <div className="text-xs text-gray-600 bg-gray-50 rounded-lg p-2"><strong>📅 Real Tuesday:</strong> {jd.tuesday}</div>}
                 </div>
-                <div className="flex gap-2 px-4 pb-4">
-                  <button className="flex-1 py-3 rounded-full border border-gray-200 text-sm font-semibold text-gray-500 hover:border-red-400 hover:text-red-500 transition-all" onClick={() => { setSwipedLeft(prev => new Set([...prev, jd.id])); showToast('Passed') }}>← Not Interested</button>
-                  <button className="flex-1 py-3 rounded-full text-white text-sm font-semibold" style={{ background: 'linear-gradient(135deg,#4F46E5,#7C3AED)' }} onClick={() => { setSwipedRight(prev => new Set([...prev, jd.id])); showToast('✓ Interested! Recruiter notified.') }}>Interested →</button>
-                </div>
-              </div>
-            ))}
+                )
+              })
           </div>
         )}
 
