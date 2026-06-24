@@ -706,7 +706,7 @@ function JDBuilderInner() {
                 </div>
 
                 {/* Where this role takes you */}
-                {showTracks && (
+                {showTracks && icTrack.length > 0 && (
                   <div className="p-4 border-b border-gray-100">
                     <p className="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4">Where This Role Takes You</p>
 
