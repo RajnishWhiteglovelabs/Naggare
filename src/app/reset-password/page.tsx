@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
 import { Suspense } from 'react'
+import type { Session } from '@supabase/supabase-js'
 
 function ResetPasswordInner() {
   const router = useRouter()
@@ -17,8 +18,8 @@ function ResetPasswordInner() {
   useEffect(() => {
     // Supabase PKCE exchanges the code server-side before redirecting here.
     // The session is already in cookies — just check for it.
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
+    supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
+      if (data.session) {
         setReady(true)
       } else {
         setInvalid(true)
