@@ -385,7 +385,7 @@ function CandidateRegisterInner() {
       if (domain) payload.domain = domain
       if (photo) payload.photo_url = photo
       if (lookingFor) payload.looking_for = lookingFor
-      if (selectedSkills.length > 0) payload.skills = selectedSkills
+      if (selectedSkills.size > 0) payload.skills = Array.from(selectedSkills)
       await fetch('/api/candidate/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
