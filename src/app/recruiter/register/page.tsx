@@ -172,6 +172,8 @@ function RecruiterRegisterInner() {
             if (p.prompt_3_q) restored.push({q:p.prompt_3_q, a:p.prompt_3_a||'', id:p.prompt_3_q})
             setSelectedPrompts(restored)
           }
+          // If they have data, they are editing
+          if (p.name && p.company && p.title) setIsEditing(true)
           // Only redirect to home if profile is actually complete
           const profileComplete = (p.status === 'active' || (p.name && p.company && p.title))
           if (profileComplete && !edit) router.push('/recruiter/home')
@@ -187,7 +189,7 @@ function RecruiterRegisterInner() {
     if (!email) return
     if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current)
     autoSaveTimer.current = setTimeout(async () => {
-      const payload: Record<string,any> = { email, status: 'incomplete' }
+      const payload: Record<string,any> = { email, status: (name && company && title) ? 'active' : 'incomplete' }
       if (name) payload.name = name
       if (mobile) payload.mobile = mobile
       if (company) payload.company = company
