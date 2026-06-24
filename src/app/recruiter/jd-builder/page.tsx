@@ -49,7 +49,7 @@ function JDBuilderInner() {
   // Autosave whenever any field changes
   useEffect(() => {
     autoSave()
-  }, [title, team, workStyle, city, minYears, maxYears, education, salary, mustHave, goodHave, tuesday, nonNeg, interview])
+  }, [title, team, workStyle, city, minYears, maxYears, education, salary, mustHave, goodHave, tuesday, nonNeg, interview, hiringFor])
 
   useEffect(() => {
     async function load() {
@@ -195,7 +195,7 @@ function JDBuilderInner() {
         real_tuesday: tuesday,
         non_negotiables: nonNeg,
         interview_process: interview,
-        company: recruiter?.company || '',
+        company: hiringFor || recruiter?.company || '',
         recruiter_email: recruiter?.email || '',
         recruiter_name: recruiter?.name || '',
         status: 'open',
