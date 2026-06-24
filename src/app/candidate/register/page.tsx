@@ -381,7 +381,7 @@ function CandidateRegisterInner() {
       if (title) payload.title = title
       if (company) payload.company = company
       if (city) payload.city = city
-      if (yearsExp) payload.years_exp = yearsExp
+      if (years) payload.years_exp = years
       if (domain) payload.domain = domain
       if (photo) payload.photo_url = photo
       if (lookingFor) payload.looking_for = lookingFor
