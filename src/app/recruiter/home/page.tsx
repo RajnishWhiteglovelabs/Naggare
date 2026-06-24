@@ -30,8 +30,8 @@ export default function RecruiterHome() {
       if (!res.ok) { router.push('/recruiter/register'); return }
       const profile = await res.json()
       if (profile.type !== 'recruiter') { router.push('/home'); return }
-      // If profile incomplete, send to register to complete it
-      if (profile.status !== 'active' || !profile.title || !profile.company) {
+      // If profile missing critical fields, send to register to complete it
+      if (!profile.name || !profile.company || !profile.title) {
         router.push('/recruiter/register'); return
       }
       setRecruiter(profile)
