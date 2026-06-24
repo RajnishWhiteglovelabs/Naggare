@@ -2,15 +2,16 @@
 import { useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase-browser'
 
-const IDLE_TIMEOUT = 15 * 60 * 1000 // 15 minutes
-const WARNING_BEFORE = 30 * 1000     // warn 30 seconds before
+const IDLE_TIMEOUT = 15 * 60 * 1000
+const WARNING_BEFORE = 30 * 1000
 
 export default function IdleTimer() {
   const [showWarning, setShowWarning] = useState(false)
   const [countdown, setCountdown] = useState(30)
-  const idleTimer = useRef<NodeJS.Timeout|null>(null)
-  const warningTimer = useRef<NodeJS.Timeout|null>(null)
-  const countdownInterval = useRef<NodeJS.Timeout|null>(null)
+  const idleTimer = useRef<ReturnType<typeof setTimeout>|null>(null)
+  const warningTimer = useRef<ReturnType<typeof setTimeout>|null>(null)
+  const countdownInterval = useRef<ReturnType<typeof setInterval>|null>(null)
+  const isLoggedIn = useRef(false)
 
   function clearAllTimers() {
     if (idleTimer.current) clearTimeout(idleTimer.current)
@@ -26,11 +27,11 @@ export default function IdleTimer() {
   }
 
   function resetTimer() {
+    if (!isLoggedIn.current) return
     clearAllTimers()
     setShowWarning(false)
     setCountdown(30)
 
-    // Show warning 1 min before timeout
     warningTimer.current = setTimeout(() => {
       setShowWarning(true)
       setCountdown(30)
@@ -45,26 +46,28 @@ export default function IdleTimer() {
       }, 1000)
     }, IDLE_TIMEOUT - WARNING_BEFORE)
 
-    // Sign out after timeout
     idleTimer.current = setTimeout(() => {
       signOut()
     }, IDLE_TIMEOUT)
   }
 
   useEffect(() => {
-    // Only run if user is logged in
-    supabase.auth.getSession().then(({ data: { session } }: { data: { session: any } }) => {
+    async function init() {
+      const { data: { session } } = await supabase.auth.getSession()
       if (!session) return
 
+      isLoggedIn.current = true
       const events = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click']
       events.forEach(e => window.addEventListener(e, resetTimer, { passive: true }))
       resetTimer()
+    }
 
-      return () => {
-        clearAllTimers()
-        events.forEach(e => window.removeEventListener(e, resetTimer))
-      }
-    })
+    init()
+
+    return () => {
+      clearAllTimers()
+      isLoggedIn.current = false
+    }
   }, [])
 
   if (!showWarning) return null
@@ -78,19 +81,15 @@ export default function IdleTimer() {
           Still there?
         </h3>
         <p className="text-sm text-gray-500 mb-2">
-          You've been inactive for a while.
+          You have been inactive for a while.
         </p>
         <p className="text-2xl font-bold mb-5" style={{ color: '#4F46E5' }}>
           Signing out in {countdown}s
         </p>
-        <button
-          className="btn-primary py-3 mb-3"
-          onClick={resetTimer}>
+        <button className="btn-primary py-3 mb-3" onClick={resetTimer}>
           Keep me signed in
         </button>
-        <button
-          className="w-full py-2 text-sm text-gray-400"
-          onClick={signOut}>
+        <button className="w-full py-2 text-sm text-gray-400" onClick={signOut}>
           Sign out now
         </button>
       </div>
