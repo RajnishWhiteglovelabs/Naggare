@@ -1,14 +1,14 @@
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
+import { createServerClient } from "@supabase/ssr"
+import { NextResponse, type NextRequest } from "next/server"
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl
 
-  // If Supabase sends a PKCE recovery code to the homepage, redirect to reset-password
-  // before any client code can consume the code
-  if (pathname === '/' && searchParams.get('code')) {
+  // Supabase PKCE password reset sends ?code= to Site URL (homepage)
+  // Intercept it here before any client code runs and forward to reset-password
+  if (pathname === "/" && searchParams.get("code")) {
     const url = request.nextUrl.clone()
-    url.pathname = '/reset-password'
+    url.pathname = "/reset-password"
     return NextResponse.redirect(url)
   }
 
@@ -36,5 +36,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
 }
