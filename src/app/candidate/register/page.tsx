@@ -394,7 +394,7 @@ function CandidateRegisterInner() {
       setAutoSaved(true)
       setTimeout(() => setAutoSaved(false), 2000)
     }, 3000)
-  }, [name, mobile, title, company, city, yearsExp, domain, photo, lookingFor, selectedSkills])
+  }, [name, mobile, title, company, city, years, domain, photo, lookingFor, selectedSkills])
 
   async function saveAndExit() {
     // Get email from session if not set in state
