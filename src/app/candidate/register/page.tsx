@@ -365,6 +365,37 @@ function CandidateRegisterInner() {
     }
   }
 
+  // Autosave ref
+  const autoSaveTimer = useRef<ReturnType<typeof setTimeout>|null>(null)
+  const [autoSaved, setAutoSaved] = useState(false)
+
+  // Autosave on field changes
+  useEffect(() => {
+    if (!email) return
+    if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current)
+    autoSaveTimer.current = setTimeout(async () => {
+      // Reuse saveAndExit logic silently
+      const payload: Record<string,any> = { email }
+      if (name) payload.name = name
+      if (mobile) payload.mobile = mobile
+      if (title) payload.title = title
+      if (company) payload.company = company
+      if (city) payload.city = city
+      if (yearsExp) payload.years_exp = yearsExp
+      if (domain) payload.domain = domain
+      if (photo) payload.photo_url = photo
+      if (lookingFor) payload.looking_for = lookingFor
+      if (selectedSkills.length > 0) payload.skills = selectedSkills
+      await fetch('/api/candidate/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      setAutoSaved(true)
+      setTimeout(() => setAutoSaved(false), 2000)
+    }, 3000)
+  }, [name, mobile, title, company, city, yearsExp, domain, photo, lookingFor, selectedSkills])
+
   async function saveAndExit() {
     // Get email from session if not set in state
     let saveEmail = email
