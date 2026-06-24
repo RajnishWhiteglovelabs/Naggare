@@ -32,6 +32,8 @@ function JDBuilderInner() {
   const [workStyle, setWorkStyle] = useState('Remote First')
   const [city, setCity] = useState('')
   const [minYears, setMinYears] = useState('')
+  const [maxYears, setMaxYears] = useState('')
+  const [education, setEducation] = useState('')
   const [salary, setSalary] = useState('')
   const [mustHave, setMustHave] = useState<string[]>([])
   const [mustInput, setMustInput] = useState('')
@@ -45,7 +47,7 @@ function JDBuilderInner() {
   // Autosave whenever any field changes
   useEffect(() => {
     autoSave()
-  }, [title, team, workStyle, city, minYears, salary, mustHave, goodHave, tuesday, nonNeg, interview])
+  }, [title, team, workStyle, city, minYears, maxYears, education, salary, mustHave, goodHave, tuesday, nonNeg, interview])
 
   useEffect(() => {
     async function load() {
@@ -101,6 +103,8 @@ function JDBuilderInner() {
           setWorkStyle(data.work_style || 'Remote First')
           setCity(data.city || '')
           setMinYears(data.min_years?.toString() || '')
+          setMaxYears(data.max_years?.toString() || '')
+          setEducation(data.education || '')
           setSalary(data.salary_range || '')
           setMustHave(data.must_have_skills || [])
           setGoodHave(data.good_to_have_skills || [])
@@ -136,6 +140,8 @@ function JDBuilderInner() {
         const payload = {
           title, team, work_style: workStyle, city,
           min_years: parseInt(minYears) || 0,
+          max_years: parseInt(maxYears) || 0,
+          education,
           salary_range: salary,
           must_have_skills: mustHave,
           good_to_have_skills: goodHave,
@@ -253,10 +259,15 @@ function JDBuilderInner() {
                 <input className="input" placeholder="e.g. Senior Software Engineer" value={title} onChange={e => setTitle(e.target.value)} />
               </div>
 
+              <div className="mb-4">
+                <label className="label">Team / Function</label>
+                <input className="input" placeholder="e.g. Payments Infra" value={team} onChange={e => setTeam(e.target.value)} />
+              </div>
+
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <div>
-                  <label className="label">Team / Function</label>
-                  <input className="input" placeholder="e.g. Payments Infra" value={team} onChange={e => setTeam(e.target.value)} />
+                  <label className="label">City</label>
+                  <input className="input" placeholder="e.g. Bengaluru" value={city} onChange={e => setCity(e.target.value)} />
                 </div>
                 <div>
                   <label className="label">Work style</label>
@@ -270,13 +281,28 @@ function JDBuilderInner() {
 
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <div>
-                  <label className="label">City</label>
-                  <input className="input" placeholder="e.g. Bengaluru" value={city} onChange={e => setCity(e.target.value)} />
-                </div>
-                <div>
                   <label className="label">Min years exp</label>
                   <input className="input" type="number" placeholder="e.g. 5" value={minYears} onChange={e => setMinYears(e.target.value)} />
                 </div>
+                <div>
+                  <label className="label">Max years exp</label>
+                  <input className="input" type="number" placeholder="e.g. 10" value={maxYears} onChange={e => setMaxYears(e.target.value)} />
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label className="label">Minimum education</label>
+                <select className="input" value={education} onChange={e => setEducation(e.target.value)}>
+                  <option value="">No preference</option>
+                  <option>High School / 12th</option>
+                  <option>Diploma</option>
+                  <option>Bachelor's degree</option>
+                  <option>Master's degree</option>
+                  <option>MBA</option>
+                  <option>PhD</option>
+                  <option>CA / CPA</option>
+                  <option>Any graduate</option>
+                </select>
               </div>
 
               <div className="mb-4">
@@ -432,7 +458,8 @@ function JDBuilderInner() {
                   <div className="flex flex-wrap gap-1">
                     <span className="tag" style={{ background: '#EEF2FF', color: '#4F46E5', borderColor: '#C7D2FE' }}>🌏 {workStyle}</span>
                     {city && <span className="tag">📍 {city}</span>}
-                    {minYears && <span className="tag">{minYears}+ yrs</span>}
+                    {(minYears || maxYears) && <span className="tag">⏱ {minYears}{maxYears ? `–${maxYears}` : '+'} yrs</span>}
+                    {education && education !== '' && <span className="tag">🎓 {education}</span>}
                     {salary && <span className="tag" style={{ background: '#F9FAFB', color: '#374151', borderColor: '#E5E7EB' }}>{salary}</span>}
                   </div>
                 </div>
