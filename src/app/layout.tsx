@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import IdleTimer from '@/components/IdleTimer'
+import AuthRedirect from '@/components/AuthRedirect'
 
 export const metadata: Metadata = {
   title: 'Naggare — Hiring, Humanised.',
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-screen bg-gray-50">
         {children}
+        <AuthRedirect />
         <IdleTimer />
       </body>
     </html>
