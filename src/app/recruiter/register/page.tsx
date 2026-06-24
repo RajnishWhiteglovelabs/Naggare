@@ -173,7 +173,7 @@ function RecruiterRegisterInner() {
             setSelectedPrompts(restored)
           }
           // Only redirect to home if profile is actually complete
-          const profileComplete = p.status === 'active' && p.title && p.company
+          const profileComplete = (p.status === 'active' || (p.name && p.company && p.title))
           if (profileComplete && !edit) router.push('/recruiter/home')
           // Otherwise stay on register to complete profile
         }
@@ -275,7 +275,7 @@ function RecruiterRegisterInner() {
     const exitPayload: Record<string,any> = {
       email: saveEmail,
       personal_email: saveEmail,
-      status: 'incomplete',
+      status: (name && company && title) ? 'active' : 'incomplete',
     }
     if (name) exitPayload.name = name
     if (mobile) exitPayload.mobile = mobile
