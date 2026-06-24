@@ -462,6 +462,41 @@ export default function RecruiterHome() {
                   {/* Expanded full JD preview */}
                   {expandedJd === jd.id && (
                     <div className="border-t border-gray-100">
+                      {jd.show_tracks !== false && (jd.ic_track||[]).length > 0 && (
+                        <div className="px-4 py-3 border-b border-gray-100">
+                          <p className="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">Where This Role Takes You</p>
+                          <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">⚡ IC Track</p>
+                          <div className="overflow-x-auto pb-2 mb-3">
+                            <div className="flex items-start relative" style={{minWidth:'max-content'}}>
+                              <div className="absolute top-2 left-0 right-0 h-px bg-gray-200" />
+                              {(jd.ic_track||[]).map((role:string,i:number)=>(
+                                <div key={i} className="flex flex-col items-center" style={{minWidth:'72px',zIndex:1}}>
+                                  <div className="w-3.5 h-3.5 rounded-full border-2 mb-1" style={{background:i<=(jd.ic_current||1)?'#4F46E5':'white',borderColor:i<=(jd.ic_current||1)?'#4F46E5':'#D1D5DB'}} />
+                                  <p className="text-xs text-center px-1 leading-tight" style={{color:i===(jd.ic_current||1)?'#4F46E5':'#6B7280',fontWeight:i===(jd.ic_current||1)?600:400}}>
+                                    {role}{i===(jd.ic_current||1)&&<span className="block text-indigo-400 font-normal">← Here</span>}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          {(jd.mgmt_track||[]).length > 0 && (<>
+                            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">👥 Management Track</p>
+                            <div className="overflow-x-auto pb-2">
+                              <div className="flex items-start relative" style={{minWidth:'max-content'}}>
+                                <div className="absolute top-2 left-0 right-0 h-px bg-gray-200" />
+                                {(jd.mgmt_track||[]).map((role:string,i:number)=>(
+                                  <div key={i} className="flex flex-col items-center" style={{minWidth:'72px',zIndex:1}}>
+                                    <div className="w-3.5 h-3.5 rounded-full border-2 mb-1" style={{background:i<=(jd.mgmt_current||0)?'#7C3AED':'white',borderColor:i<=(jd.mgmt_current||0)?'#7C3AED':'#D1D5DB'}} />
+                                    <p className="text-xs text-center px-1 leading-tight" style={{color:i===(jd.mgmt_current||0)?'#7C3AED':'#6B7280',fontWeight:i===(jd.mgmt_current||0)?600:400}}>
+                                      {role}{i===(jd.mgmt_current||0)&&<span className="block text-purple-400 font-normal">← Start</span>}
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </>)}
+                        </div>
+                      )}
                       {jd.must_have_skills?.length > 0 && (
                         <div className="px-4 py-3 border-b border-gray-100">
                           <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Must-Have Skills</p>
@@ -508,41 +543,6 @@ export default function RecruiterHome() {
                               </div>
                             )
                           })}
-                        </div>
-                      )}
-                      {jd.show_tracks !== false && (jd.ic_track||[]).length > 0 && (
-                        <div className="px-4 py-3 border-b border-gray-100">
-                          <p className="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">Where This Role Takes You</p>
-                          <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">⚡ IC Track</p>
-                          <div className="overflow-x-auto pb-2 mb-3">
-                            <div className="flex items-start relative" style={{minWidth:'max-content'}}>
-                              <div className="absolute top-2 left-0 right-0 h-px bg-gray-200" />
-                              {(jd.ic_track||[]).map((role:string,i:number)=>(
-                                <div key={i} className="flex flex-col items-center" style={{minWidth:'72px',zIndex:1}}>
-                                  <div className="w-3.5 h-3.5 rounded-full border-2 mb-1" style={{background:i<=(jd.ic_current||1)?'#4F46E5':'white',borderColor:i<=(jd.ic_current||1)?'#4F46E5':'#D1D5DB'}} />
-                                  <p className="text-xs text-center px-1 leading-tight" style={{color:i===(jd.ic_current||1)?'#4F46E5':'#6B7280',fontWeight:i===(jd.ic_current||1)?600:400}}>
-                                    {role}{i===(jd.ic_current||1)&&<span className="block text-indigo-400 font-normal">← Here</span>}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                          {(jd.mgmt_track||[]).length > 0 && (<>
-                            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">👥 Management Track</p>
-                            <div className="overflow-x-auto pb-2">
-                              <div className="flex items-start relative" style={{minWidth:'max-content'}}>
-                                <div className="absolute top-2 left-0 right-0 h-px bg-gray-200" />
-                                {(jd.mgmt_track||[]).map((role:string,i:number)=>(
-                                  <div key={i} className="flex flex-col items-center" style={{minWidth:'72px',zIndex:1}}>
-                                    <div className="w-3.5 h-3.5 rounded-full border-2 mb-1" style={{background:i<=(jd.mgmt_current||0)?'#7C3AED':'white',borderColor:i<=(jd.mgmt_current||0)?'#7C3AED':'#D1D5DB'}} />
-                                    <p className="text-xs text-center px-1 leading-tight" style={{color:i===(jd.mgmt_current||0)?'#7C3AED':'#6B7280',fontWeight:i===(jd.mgmt_current||0)?600:400}}>
-                                      {role}{i===(jd.mgmt_current||0)&&<span className="block text-purple-400 font-normal">← Start</span>}
-                                    </p>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </>)}
                         </div>
                       )}
                     </div>
