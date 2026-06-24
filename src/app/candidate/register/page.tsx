@@ -600,60 +600,255 @@ function CandidateRegisterInner() {
                     <div>
                       <label className="label">Start date</label>
                       <div className="flex gap-1">
-                        <select className="input text-sm py-2 flex-1"
-                          value={stop.from ? stop.from.split("-")[1] : ""}
-                          onChange={e => {
-                            const yr = stop.from ? stop.from.split("-")[0] : String(new Date().getFullYear())
-                            const mo = e.target.value
-                            setCareer(career.map((c,j) => j===i ? {...c, from: mo ? yr+"-"+mo : ""} : c))
-                          }}>
+                        <select className="input text-sm py-2 flex-1" value={stop.from ? stop.from.split("-")[1] : ""} onChange={e => { const yr = stop.from ? stop.from.split("-")[0] : String(new Date().getFullYear()); const mo = e.target.value; setCareer(career.map((c,j) => j===i ? {...c, from: mo ? yr+"-"+mo : ""} : c)) }}>
                           <option value="">Month</option>
-                          {["01","02","03","04","05","06","07","08","09","10","11","12"].map((m,idx) =>
-                            <option key={m} value={m}>{["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][idx]}</option>
-                          )}
+                          {["01","02","03","04","05","06","07","08","09","10","11","12"].map((m,idx) => <option key={m} value={m}>{["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][idx]}</option>)}
                         </select>
-                        <select className="input text-sm py-2 flex-1"
-                          value={stop.from ? stop.from.split("-")[0] : ""}
-                          onChange={e => {
-                            const mo = stop.from ? stop.from.split("-")[1] : "01"
-                            const yr = e.target.value
-                            setCareer(career.map((c,j) => j===i ? {...c, from: yr ? yr+"-"+mo : ""} : c))
-                          }}>
+                        <select className="input text-sm py-2 flex-1" value={stop.from ? stop.from.split("-")[0] : ""} onChange={e => { const mo = stop.from ? stop.from.split("-")[1] : "01"; const yr = e.target.value; setCareer(career.map((c,j) => j===i ? {...c, from: yr ? yr+"-"+mo : ""} : c)) }}>
                           <option value="">Year</option>
-                          {Array.from({length:30},(_,k) => new Date().getFullYear()-k).map(y =>
-                            <option key={y} value={String(y)}>{y}</option>
-                          )}
+                          {Array.from({length:30},(_,k) => new Date().getFullYear()-k).map(y => <option key={y} value={String(y)}>{y}</option>)}
                         </select>
                       </div>
                     </div>
                     <div>
                       <label className="label">End (blank=now)</label>
                       <div className="flex gap-1">
-                        <select className="input text-sm py-2 flex-1"
-                          value={stop.to ? stop.to.split("-")[1] : ""}
-                          onChange={e => {
-                            const yr = stop.to ? stop.to.split("-")[0] : String(new Date().getFullYear())
-                            const mo = e.target.value
-                            setCareer(career.map((c,j) => j===i ? {...c, to: mo ? yr+"-"+mo : ""} : c))
-                          }}>
+                        <select className="input text-sm py-2 flex-1" value={stop.to ? stop.to.split("-")[1] : ""} onChange={e => { const yr = stop.to ? stop.to.split("-")[0] : String(new Date().getFullYear()); const mo = e.target.value; setCareer(career.map((c,j) => j===i ? {...c, to: mo ? yr+"-"+mo : ""} : c)) }}>
                           <option value="">Month</option>
-                          {["01","02","03","04","05","06","07","08","09","10","11","12"].map((m,idx) =>
-                            <option key={m} value={m}>{["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][idx]}</option>
-                          )}
+                          {["01","02","03","04","05","06","07","08","09","10","11","12"].map((m,idx) => <option key={m} value={m}>{["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][idx]}</option>)}
                         </select>
-                        <select className="input text-sm py-2 flex-1"
-                          value={stop.to ? stop.to.split("-")[0] : ""}
-                          onChange={e => {
-                            const mo = stop.to ? stop.to.split("-")[1] : "01"
-                            const yr = e.target.value
-                            setCareer(career.map((c,j) => j===i ? {...c, to: yr ? yr+"-"+mo : ""} : c))
-                          }}>
+                        <select className="input text-sm py-2 flex-1" value={stop.to ? stop.to.split("-")[0] : ""} onChange={e => { const mo = stop.to ? stop.to.split("-")[1] : "01"; const yr = e.target.value; setCareer(career.map((c,j) => j===i ? {...c, to: yr ? yr+"-"+mo : ""} : c)) }}>
                           <option value="">Year</option>
-                          {Array.from({length:30},(_,k) => new Date().getFullYear()-k).map(y =>
-                            <option key={y} value={String(y)}>{y}</option>
-                          )}
+                          {Array.from({length:30},(_,k) => new Date().getFullYear()-k).map(y => <option key={y} value={String(y)}>{y}</option>)}
                         </select>
                       </div>
                     </div>
                   </div>
-                   <div className="mb-3 mt-3">
+                </div>
+              ))}
+              <button className="w-full py-3 mb-4 rounded-xl border-2 border-dashed border-gray-200 text-sm text-gray-500 font-medium hover:border-indigo-400 hover:text-indigo-600 transition-all"
+                onClick={() => setCareer([...career, {org:'',role:'',from:'',to:''}])}>+ Add previous role</button>
+              <div className="flex gap-3">
+                <button className="btn-outline flex-none w-20 py-3" onClick={()=>setStep(4)}>← Back</button>
+                <button className="btn-primary py-3" onClick={() => { if(!career[0].org){setError('Add at least one role');return}; setError(''); setStep(6) }}>Continue →</button>
+              </div>
+              <button className="text-sm font-semibold text-indigo-600 w-full py-3 text-center mt-1" onClick={saveAndExit}>Save & come back later</button>
+            </div>
+          )}
+
+          {/* STEP 6: PROMPTS */}
+          {step === 6 && (
+            <div>
+              <h2 className="text-2xl font-bold mb-2" style={{fontFamily:'Georgia,serif',color:'#1E1B4B'}}>In your own words</h2>
+              <p className="text-sm text-gray-500 mb-4">This is what recruiters actually read. Be specific, honest, human.</p>
+              
+              <div className="mb-5">
+                <label className="label">What are you looking for? <span className="text-red-500">*</span></label>
+                <p className="text-xs text-gray-400 mb-2">In 100 words or less. Role type, culture, stage, what matters to you.</p>
+                <div className="relative">
+                  <textarea className="input" rows={4} placeholder="e.g. I'm looking for a senior TA leadership role where I can build strategy, work with C-suite and shape culture at scale."
+                    value={lookingFor} onChange={e=>setLookingFor(e.target.value)}/>
+                  <span className="absolute bottom-2 right-3 text-xs text-gray-400">{lookingFor.trim().split(/\s+/).filter(Boolean).length} / 100</span>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <p className="text-base font-bold text-gray-900 mb-1">Choose your prompts</p>
+                <p className="text-sm text-gray-500 mb-3">Pick up to 3 — or write your own.</p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {domainPrompts.map(p => {
+                    const selected = p.q==='write-own' ? selectedPrompts.some(sp=>sp.id==='own') : selectedPrompts.some(sp=>sp.q===p.q)
+                    return (
+                      <button key={p.q} className={`skill-chip ${selected?'selected':''}`}
+                        onClick={() => togglePrompt(p.q, p.q)}>
+                        {p.chip}
+                      </button>
+                    )
+                  })}
+                </div>
+                {selectedPrompts.map((p, i) => (
+                  <div key={p.id} className="mb-3 p-4 rounded-xl" style={{background:'#EEF2FF',border:'0.5px solid #C7D2FE'}}>
+                    {p.id === 'own' ? (
+                      <>
+                        <input className="input mb-2 text-sm bg-white" placeholder="Type your prompt question..."
+                          value={ownPromptQ} onChange={e=>{setOwnPromptQ(e.target.value); updatePromptAnswer('own', p.a)}}/>
+                        <textarea className="input text-sm bg-white" rows={3} placeholder="Your answer..."
+                          value={p.a} onChange={e=>updatePromptAnswer('own', e.target.value)}/>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm font-semibold text-indigo-800 mb-2">{p.q}</p>
+                        <textarea className="input text-sm bg-white" rows={3} placeholder="Be specific. What was the impact?"
+                          value={p.a} onChange={e=>updatePromptAnswer(p.id, e.target.value)}/>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex gap-3 mb-2">
+                <button className="btn-outline flex-none w-20 py-3" onClick={()=>setStep(5)}>← Back</button>
+                <button className="btn-primary py-3" onClick={() => { if(!lookingFor.trim()){setError('Tell us what you\'re looking for');return}; setError(''); setStep(7) }}>Continue →</button>
+              </div>
+              <button className="text-sm font-semibold text-indigo-600 w-full py-3 text-center" onClick={saveAndExit}>Save & come back later</button>
+            </div>
+          )}
+
+          {/* STEP 7: SKILLS */}
+          {step === 7 && (
+            <div>
+              <h2 className="text-2xl font-bold mb-2" style={{fontFamily:'Georgia,serif',color:'#1E1B4B'}}>What do you bring?</h2>
+              <p className="text-sm text-gray-500 mb-4">Tap to select. These power your matches.</p>
+              <div className="p-3 rounded-xl mb-5 text-sm text-indigo-800" style={{background:'#EEF2FF',border:'0.5px solid #C7D2FE'}}>
+                ✨ Select at least 3 skills. The more specific, the better your matches.
+              </div>
+              {domainSkills.map(cat => (
+                <div key={cat.cat} className="mb-5">
+                  <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{cat.cat}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {cat.items.map(skill => (
+                      <button key={skill} className={`skill-chip ${selectedSkills.has(skill)?'selected':''}`} onClick={() => toggleSkill(skill)}>{skill}</button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <div className="mb-4">
+                <p className="text-sm font-semibold text-gray-700 mb-2">Add your own</p>
+                <div className="flex gap-2 mb-3">
+                  <input className="input flex-1" placeholder="e.g. Kafka, Temporal..." value={customSkill}
+                    onChange={e=>setCustomSkill(e.target.value)} onKeyDown={e=>e.key==='Enter'&&addCustomSkill()}/>
+                  <button className="px-4 rounded-xl text-white text-sm font-semibold" style={{background:'#4F46E5'}} onClick={addCustomSkill}>Add</button>
+                </div>
+                {/* Show custom skills (not in domain list) as removable chips */}
+                {(() => {
+                  const allDomainItems = new Set(domainSkills.flatMap(c => c.items))
+                  const customSkills = [...selectedSkills].filter(s => !allDomainItems.has(s))
+                  return customSkills.length > 0 ? (
+                    <div>
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Your added skills</p>
+                      <div className="flex flex-wrap gap-2">
+                        {customSkills.map(s => (
+                          <button key={s} className="skill-chip selected flex items-center gap-1"
+                            onClick={() => toggleSkill(s)}>
+                            {s} <span className="text-xs opacity-60">✕</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null
+                })()}
+              </div>
+              <p className="text-xs mb-4" style={{color: selectedSkills.size>=3?'#16A34A':selectedSkills.size>0?'#D97706':'#9CA3AF'}}>
+                {selectedSkills.size} skill{selectedSkills.size!==1?'s':''} selected{selectedSkills.size>=3?' ✓':''}
+              </p>
+              <div className="flex gap-3 mb-2">
+                <button className="btn-outline flex-none w-20 py-3" onClick={()=>setStep(6)}>← Back</button>
+                <button className="btn-primary py-3" onClick={() => { if(selectedSkills.size<1){setError('Select at least one skill');return}; setError(''); setStep(8) }}>Continue →</button>
+              </div>
+              <button className="text-sm font-semibold text-indigo-600 w-full py-3 text-center" onClick={saveAndExit}>Save & come back later</button>
+            </div>
+          )}
+
+                    {/* STEP 8: REVIEW */}
+          {step === 8 && (
+            <div>
+              <h2 className="text-2xl font-bold mb-1" style={{fontFamily:'Georgia,serif',color:'#1E1B4B'}}>Looking good 👀</h2>
+              <p className="text-sm text-gray-500 mb-4">This is what recruiters will see.</p>
+
+              {/* Bumble-style profile card */}
+              <div className="rounded-3xl overflow-hidden shadow-xl mb-5 border border-gray-100">
+
+                {/* Hero: photo + name */}
+                <div className="relative" style={{background:'linear-gradient(160deg,#4F46E5,#7C3AED)', minHeight:'180px'}}>
+                  <div className="flex flex-col items-center pt-8 pb-6 px-4 text-center">
+                    {photo
+                      ? <img src={photo} className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg mb-3"/>
+                      : <div className="w-24 h-24 rounded-full flex items-center justify-center text-white font-bold text-2xl border-4 border-white shadow-lg mb-3" style={{background:'rgba(255,255,255,0.2)'}}>{name.split(' ').map((w:any)=>w[0]).join('').slice(0,2).toUpperCase()}</div>
+                    }
+                    <p className="text-xl font-bold text-white" style={{fontFamily:'Georgia,serif'}}>{name}</p>
+                    <p className="text-sm font-semibold text-indigo-200">{title}</p>
+                    <p className="text-xs text-indigo-300 mt-0.5">{company}{city ? ` · ${city}` : ''}</p>
+                    <span className="mt-2 px-3 py-1 rounded-full text-xs font-semibold" style={{background:'rgba(255,255,255,0.2)',color:'white'}}>{DOMAIN_ICONS[domain]} {domain}</span>
+                  </div>
+                </div>
+
+                {/* Career journey */}
+                {career[0].org && (
+                  <div className="p-4 border-b border-gray-100 bg-white">
+                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">Career Journey</p>
+                    <div className="flex gap-4 overflow-x-auto pb-1">
+                      {career.filter((c:any)=>c.org).map((c:any,i:number) => (
+                        <div key={i} className="flex flex-col items-center min-w-[60px]">
+                          <div className={`rounded-full mb-1 ${i===0?'w-3 h-3':'w-2 h-2'}`} style={{background:'#4F46E5',boxShadow:i===0?'0 0 0 3px rgba(79,70,229,0.2)':''}}></div>
+                          <p className="text-xs font-bold text-center leading-tight" style={{color:i===0?'#4F46E5':'#111827'}}>{c.org}</p>
+                          <p className="text-xs text-gray-400 text-center leading-tight">{c.role}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* What I'm looking for */}
+                {lookingFor && (
+                  <div className="p-4 border-b border-gray-100 bg-white">
+                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">What I'm Looking For</p>
+                    <p className="text-sm text-gray-800 leading-relaxed">{lookingFor}</p>
+                  </div>
+                )}
+
+                {/* Prompts */}
+                {selectedPrompts.length > 0 && (
+                  <div className="bg-white border-b border-gray-100">
+                    <div className="p-4">
+                      <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">In My Own Words</p>
+                    </div>
+                    {selectedPrompts.map((p,i) => (
+                      <div key={i} className="mx-4 mb-4 p-4 rounded-2xl" style={{background:'#EEF2FF',border:'0.5px solid #C7D2FE'}}>
+                        <p className="text-xs font-bold text-indigo-700 mb-2">{p.id==='own'?ownPromptQ:p.q}</p>
+                        <p className="text-sm text-gray-800 leading-relaxed">{p.a || <span className="text-gray-400 italic">No answer yet</span>}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Skills */}
+                {selectedSkills.size > 0 && (
+                  <div className="p-4 bg-white">
+                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Skills · {selectedSkills.size}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[...selectedSkills].map(s => <span key={s} className="tag">{s}</span>)}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-3 mb-2">
+                <button className="btn-outline flex-none w-24 py-3" onClick={()=>setStep(7)}>← Edit</button>
+                <button className="btn-primary py-3" onClick={submit} disabled={loading}>
+                  {loading ? (isEditing ? 'Updating...' : 'Creating profile...') : (isEditing ? 'Update Profile ✅' : 'Submit & Create Profile 🚀')}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+        </div>
+      </div>
+
+      {/* Save toast */}
+      {saveToast && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-5 py-3 rounded-full text-white text-sm font-semibold shadow-xl"
+          style={{background:'#16A34A'}}>
+          ✓ Profile saved! Taking you home...
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default function CandidateRegister() {
+  return (
+    <Suspense>
+      <CandidateRegisterInner />
+    </Suspense>
+  )
+}
