@@ -1,10 +1,12 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
+import { Suspense } from 'react'
 
-export default function ResetPassword() {
+function ResetPasswordInner() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [loading, setLoading] = useState(false)
@@ -14,20 +16,11 @@ export default function ResetPassword() {
   const [invalid, setInvalid] = useState(false)
 
   useEffect(() => {
-    // Parse the hash fragment from the URL
-    // Supabase puts: #access_token=...&type=recovery
-    const hash = window.location.hash.substring(1)
-    const params = new URLSearchParams(hash)
-    const accessToken = params.get('access_token')
-    const refreshToken = params.get('refresh_token')
-    const type = params.get('type')
+    const code = searchParams.get('code')
 
-    if (type === 'recovery' && accessToken) {
-      // Set the session from the tokens in the URL
-      supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken || '',
-      }).then(({ error }: { error: { message: string } | null }) => {
+    if (code) {
+      // PKCE flow — exchange code for session
+      supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
         if (error) {
           setInvalid(true)
         } else {
@@ -35,16 +28,26 @@ export default function ResetPassword() {
         }
       })
     } else {
-      // No hash — check if already in a valid recovery session
-      supabase.auth.getSession().then(({ data }: { data: { session: unknown } }) => {
-        if (data.session) {
-          setReady(true)
-        } else {
-          setInvalid(true)
-        }
-      })
+      // Check hash for legacy implicit flow
+      const hash = window.location.hash.substring(1)
+      const params = new URLSearchParams(hash)
+      const accessToken = params.get('access_token')
+      const refreshToken = params.get('refresh_token')
+      const type = params.get('type')
+
+      if (type === 'recovery' && accessToken) {
+        supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken || '',
+        }).then(({ error }) => {
+          if (error) setInvalid(true)
+          else setReady(true)
+        })
+      } else {
+        setInvalid(true)
+      }
     }
-  }, [])
+  }, [searchParams])
 
   async function handleUpdate() {
     setError('')
@@ -90,38 +93,32 @@ export default function ResetPassword() {
             <>
               <div className="text-4xl mb-4 text-center">❌</div>
               <h2 className="text-2xl font-bold mb-2 text-center" style={{ color: '#1E1B4B', fontFamily: 'Raleway,sans-serif' }}>Link expired</h2>
-              <p className="text-gray-500 text-sm text-center mb-6">This reset link has expired or already been used. Request a new one.</p>
-              <button className="btn-primary" onClick={() => router.push('/forgot-password')}>
-                Request new link →
-              </button>
+              <p className="text-gray-500 text-sm text-center mb-6">This reset link has expired or already been used.</p>
+              <button className="btn-primary" onClick={() => router.push('/forgot-password')}>Request new link →</button>
             </>
           ) : !ready ? (
             <>
               <div className="text-4xl mb-4 text-center">🔐</div>
-              <h2 className="text-2xl font-bold mb-2 text-center" style={{ color: '#1E1B4B', fontFamily: 'Raleway,sans-serif' }}>Verifying link...</h2>
+              <h2 className="text-2xl font-bold mb-2 text-center" style={{ color: '#1E1B4B', fontFamily: 'Raleway,sans-serif' }}>Verifying...</h2>
               <p className="text-gray-500 text-sm text-center">Please wait a moment.</p>
             </>
           ) : (
             <>
               <h2 className="text-2xl font-bold mb-1" style={{ color: '#1E1B4B', fontFamily: 'Raleway,sans-serif' }}>Set new password</h2>
-              <p className="text-sm text-gray-500 mb-6">Choose something strong. Min 8 characters.</p>
-
+              <p className="text-sm text-gray-500 mb-6">Min 8 characters.</p>
               <div className="mb-4">
                 <label className="label">New password</label>
                 <input className="input" type="password" placeholder="Min 8 characters"
                   value={password} onChange={e => setPassword(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleUpdate()} />
               </div>
-
               <div className="mb-5">
                 <label className="label">Confirm password</label>
                 <input className="input" type="password" placeholder="Same again"
                   value={confirm} onChange={e => setConfirm(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleUpdate()} />
               </div>
-
               {error && <div className="mb-4 p-3 rounded-xl text-sm text-red-600 bg-red-50 border border-red-100">{error}</div>}
-
               <button className="btn-primary mb-3" onClick={handleUpdate} disabled={loading}>
                 {loading ? 'Updating...' : 'Update password →'}
               </button>
@@ -134,4 +131,8 @@ export default function ResetPassword() {
       </div>
     </div>
   )
+}
+
+export default function ResetPassword() {
+  return <Suspense><ResetPasswordInner /></Suspense>
 }
