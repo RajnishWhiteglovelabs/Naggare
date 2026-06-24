@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
 
@@ -23,6 +23,9 @@ function JDBuilderInner() {
   const [toast, setToast] = useState('')
   const [error, setError] = useState('')
   const [recruiter, setRecruiter] = useState<any>(null)
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle'|'saving'|'saved'>('idle')
+  const [draftId, setDraftId] = useState<string|null>(null)
+  const autoSaveTimer = useRef<ReturnType<typeof setTimeout>|null>(null)
 
   const [title, setTitle] = useState('')
   const [team, setTeam] = useState('')
@@ -39,6 +42,11 @@ function JDBuilderInner() {
   const [nonNeg, setNonNeg] = useState('')
   const [interview, setInterview] = useState('')
 
+  // Autosave whenever any field changes
+  useEffect(() => {
+    autoSave()
+  }, [title, team, workStyle, city, minYears, salary, mustHave, goodHave, tuesday, nonNeg, interview])
+
   useEffect(() => {
     async function load() {
       const { data: { session } } = await supabase.auth.getSession()
@@ -53,6 +61,33 @@ function JDBuilderInner() {
         const p = await res.json()
         if (p.type !== 'recruiter') { router.push('/home'); return }
         setRecruiter(p)
+      }
+
+      // Check for existing draft if not editing
+      if (!jdId) {
+        const { createClient } = await import('@supabase/supabase-js')
+        const client = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+        const { data: draft } = await client.from('jds')
+          .select('*')
+          .eq('recruiter_email', session.user.email)
+          .eq('status', 'draft')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single()
+        if (draft) {
+          setDraftId(draft.id)
+          setTitle(draft.title || '')
+          setTeam(draft.team || '')
+          setWorkStyle(draft.work_style || 'Remote First')
+          setCity(draft.city || '')
+          setMinYears(draft.min_years?.toString() || '')
+          setSalary(draft.salary_range || '')
+          setMustHave(draft.must_have_skills || [])
+          setGoodHave(draft.good_to_have_skills || [])
+          setTuesday(draft.real_tuesday || '')
+          setNonNeg(draft.non_negotiables || '')
+          setInterview(draft.interview_process || '')
+        }
       }
 
       // If editing existing JD
@@ -88,6 +123,42 @@ function JDBuilderInner() {
 
   function removeTag(val: string, arr: string[], setArr: (a: string[]) => void) {
     setArr(arr.filter(s => s !== val))
+  }
+
+  async function autoSave() {
+    if (!recruiter || !title) return // don't save empty JDs
+    if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current)
+    autoSaveTimer.current = setTimeout(async () => {
+      setAutoSaveStatus('saving')
+      try {
+        const { createClient } = await import('@supabase/supabase-js')
+        const client = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+        const payload = {
+          title, team, work_style: workStyle, city,
+          min_years: parseInt(minYears) || 0,
+          salary_range: salary,
+          must_have_skills: mustHave,
+          good_to_have_skills: goodHave,
+          real_tuesday: tuesday,
+          non_negotiables: nonNeg,
+          interview_process: interview,
+          company: recruiter?.company || '',
+          recruiter_email: recruiter?.email || '',
+          recruiter_name: recruiter?.name || '',
+          status: 'draft',
+        }
+        if (draftId || jdId) {
+          await client.from('jds').update(payload).eq('id', draftId || jdId)
+        } else {
+          const { data } = await client.from('jds').insert(payload).select().single()
+          if (data?.id) setDraftId(data.id)
+        }
+        setAutoSaveStatus('saved')
+        setTimeout(() => setAutoSaveStatus('idle'), 2000)
+      } catch {
+        setAutoSaveStatus('idle')
+      }
+    }, 2000) // 2 second debounce
   }
 
   async function publish() {
@@ -131,6 +202,12 @@ function JDBuilderInner() {
         body: JSON.stringify({ email: recruiter?.email, name: recruiter?.name, role: title, company: recruiter?.company, location: city }),
       })
 
+      // Delete draft after publishing
+      if (draftId && !jdId) {
+        const { createClient: cc } = await import('@supabase/supabase-js')
+        const cl = cc(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+        await cl.from('jds').delete().eq('id', draftId)
+      }
       showToast(jdId ? 'JD updated!' : 'JD published! Candidates can see it now.')
       setTimeout(() => router.push('/recruiter/home'), 2000)
     } catch (e: any) {
@@ -150,6 +227,8 @@ function JDBuilderInner() {
       <div className="bg-white border-b border-gray-100 px-4 h-14 flex items-center gap-3 sticky top-0 z-10 shadow-sm">
         <button onClick={() => router.back()} className="text-2xl text-indigo-600">‹</button>
         <span className="font-bold text-gray-900">{jdId ? 'Edit JD' : 'Create JD'}</span>
+        {autoSaveStatus === 'saving' && <span className="text-xs text-gray-400 ml-2">Saving...</span>}
+        {autoSaveStatus === 'saved' && <span className="text-xs text-green-500 ml-2">✓ Saved</span>}
         {preview && (
           <button className="ml-auto btn-primary py-2 px-5 text-sm w-auto rounded-full"
             onClick={publish} disabled={loading}>
