@@ -1,12 +1,11 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
 import { Suspense } from 'react'
 
 function ResetPasswordInner() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [loading, setLoading] = useState(false)
@@ -16,38 +15,16 @@ function ResetPasswordInner() {
   const [invalid, setInvalid] = useState(false)
 
   useEffect(() => {
-    const code = searchParams.get('code')
-
-    if (code) {
-      // PKCE flow — exchange code for session
-      supabase.auth.exchangeCodeForSession(code).then(({ error }: { error: { message: string } | null }) => {
-        if (error) {
-          setInvalid(true)
-        } else {
-          setReady(true)
-        }
-      })
-    } else {
-      // Check hash for legacy implicit flow
-      const hash = window.location.hash.substring(1)
-      const params = new URLSearchParams(hash)
-      const accessToken = params.get('access_token')
-      const refreshToken = params.get('refresh_token')
-      const type = params.get('type')
-
-      if (type === 'recovery' && accessToken) {
-        supabase.auth.setSession({
-          access_token: accessToken,
-          refresh_token: refreshToken || '',
-        }).then(({ error }: { error: { message: string } | null }) => {
-          if (error) setInvalid(true)
-          else setReady(true)
-        })
+    // Supabase PKCE exchanges the code server-side before redirecting here.
+    // The session is already in cookies — just check for it.
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setReady(true)
       } else {
         setInvalid(true)
       }
-    }
-  }, [searchParams])
+    })
+  }, [])
 
   async function handleUpdate() {
     setError('')
@@ -64,6 +41,7 @@ function ResetPasswordInner() {
       const { error } = await supabase.auth.updateUser({ password })
       if (error) throw error
       setDone(true)
+      await supabase.auth.signOut()
       setTimeout(() => router.push('/signin'), 2500)
     } catch (e: unknown) {
       setError((e as Error).message || 'Something went wrong')
