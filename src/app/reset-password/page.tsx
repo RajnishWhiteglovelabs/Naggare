@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
-import type { AuthChangeEvent } from '@supabase/supabase-js'
 
 export default function ResetPassword() {
   const router = useRouter()
@@ -12,17 +11,39 @@ export default function ResetPassword() {
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
   const [ready, setReady] = useState(false)
+  const [invalid, setInvalid] = useState(false)
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        setReady(true)
-      }
-    })
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) setReady(true)
-    })
-    return () => subscription.unsubscribe()
+    // Parse the hash fragment from the URL
+    // Supabase puts: #access_token=...&type=recovery
+    const hash = window.location.hash.substring(1)
+    const params = new URLSearchParams(hash)
+    const accessToken = params.get('access_token')
+    const refreshToken = params.get('refresh_token')
+    const type = params.get('type')
+
+    if (type === 'recovery' && accessToken) {
+      // Set the session from the tokens in the URL
+      supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken || '',
+      }).then(({ error }) => {
+        if (error) {
+          setInvalid(true)
+        } else {
+          setReady(true)
+        }
+      })
+    } else {
+      // No hash — check if already in a valid recovery session
+      supabase.auth.getSession().then(({ data }) => {
+        if (data.session) {
+          setReady(true)
+        } else {
+          setInvalid(true)
+        }
+      })
+    }
   }, [])
 
   async function handleUpdate() {
@@ -65,11 +86,20 @@ export default function ResetPassword() {
               <h2 className="text-2xl font-bold mb-2 text-center" style={{ color: '#1E1B4B', fontFamily: 'Raleway,sans-serif' }}>Password updated</h2>
               <p className="text-gray-500 text-sm text-center">Taking you to sign in...</p>
             </>
+          ) : invalid ? (
+            <>
+              <div className="text-4xl mb-4 text-center">❌</div>
+              <h2 className="text-2xl font-bold mb-2 text-center" style={{ color: '#1E1B4B', fontFamily: 'Raleway,sans-serif' }}>Link expired</h2>
+              <p className="text-gray-500 text-sm text-center mb-6">This reset link has expired or already been used. Request a new one.</p>
+              <button className="btn-primary" onClick={() => router.push('/forgot-password')}>
+                Request new link →
+              </button>
+            </>
           ) : !ready ? (
             <>
               <div className="text-4xl mb-4 text-center">🔐</div>
               <h2 className="text-2xl font-bold mb-2 text-center" style={{ color: '#1E1B4B', fontFamily: 'Raleway,sans-serif' }}>Verifying link...</h2>
-              <p className="text-gray-500 text-sm text-center">Please wait while we validate your reset link.</p>
+              <p className="text-gray-500 text-sm text-center">Please wait a moment.</p>
             </>
           ) : (
             <>
