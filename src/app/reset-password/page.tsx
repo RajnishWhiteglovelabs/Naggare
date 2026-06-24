@@ -36,7 +36,7 @@ export default function ResetPassword() {
       })
     } else {
       // No hash — check if already in a valid recovery session
-      supabase.auth.getSession().then(({ data }) => {
+      supabase.auth.getSession().then(({ data }: { data: { session: unknown } }) => {
         if (data.session) {
           setReady(true)
         } else {
