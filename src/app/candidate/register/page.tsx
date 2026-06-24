@@ -646,7 +646,14 @@ function CandidateRegisterInner() {
                 <label className="label">What are you looking for? <span className="text-red-500">*</span></label>
                 <p className="text-xs text-gray-400 mb-2">In 100 words or less. Role type, culture, stage, what matters to you.</p>
                 <div className="relative">
-                  <textarea className="input" rows={4} placeholder="e.g. I'm looking for a senior TA leadership role where I can build strategy, work with C-suite and shape culture at scale."
+                  <textarea className="input" rows={4} placeholder={
+                      domain === 'Technology & Product' ? "e.g. I want to work on hard distributed systems problems at a product company — Series B+, async culture, real ownership from day one." :
+                      domain === 'Talent Acquisition' ? "e.g. I'm looking for a senior TA leadership role where I can build strategy, work with C-suite and shape culture at scale." :
+                      domain === 'Finance & Banking' ? "e.g. Looking for an FP&A or investment role at a high-growth startup where I can own financial strategy end to end." :
+                      domain === 'Marketing' ? "e.g. Looking for a growth or brand role where I can own the full funnel, not just execute someone else's playbook." :
+                      domain === 'Sales' ? "e.g. I want a hunter role at a B2B SaaS company where I can build territory from scratch and own the revenue number." :
+                      "e.g. Be specific about the role, culture, and stage you want. The more honest, the better the match."
+                    }
                     value={lookingFor} onChange={e=>setLookingFor(e.target.value)}/>
                   <span className="absolute bottom-2 right-3 text-xs text-gray-400">{lookingFor.trim().split(/\s+/).filter(Boolean).length} / 100</span>
                 </div>
