@@ -83,6 +83,8 @@ function JDBuilderInner() {
           setWorkStyle(draft.work_style || 'Remote First')
           setCity(draft.city || '')
           setMinYears(draft.min_years?.toString() || '')
+          setMaxYears(draft.max_years?.toString() || '')
+          setEducation(draft.education || '')
           setSalary(draft.salary_range || '')
           setMustHave(draft.must_have_skills || [])
           setGoodHave(draft.good_to_have_skills || [])
