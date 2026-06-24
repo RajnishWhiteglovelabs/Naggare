@@ -13,6 +13,45 @@ const SKILL_SETS: {cat: string, items: string[]}[] = [
   {cat:'📊 Data & Analytics', items:['SQL','Data Analysis','Business Intelligence','Tableau','Power BI','Statistics','Data Science','Analytics']},
 ]
 
+const TRACK_PRESETS: Record<string, {ic:string[], icIdx:number, mgmt:string[], mgmtIdx:number}> = {
+  'Technology & Product': {
+    ic: ['Engineer','Senior Engineer','Staff Engineer','Principal Eng','Distinguished Eng'],
+    icIdx: 1,
+    mgmt: ['Senior Eng','Eng Manager','Director Eng','VP Eng','SVP Eng'],
+    mgmtIdx: 0
+  },
+  'Talent Acquisition': {
+    ic: ['Recruiter','Senior Recruiter','Lead Recruiter','TA Manager','Head of TA'],
+    icIdx: 1,
+    mgmt: ['TA Manager','Sr TA Manager','Director TA','VP Talent','CPO'],
+    mgmtIdx: 0
+  },
+  'Finance & Banking': {
+    ic: ['Analyst','Senior Analyst','Manager','Senior Manager','Director'],
+    icIdx: 1,
+    mgmt: ['Manager','Senior Manager','Director','VP Finance','CFO'],
+    mgmtIdx: 0
+  },
+  'Sales': {
+    ic: ['SDR','AE','Senior AE','Account Director','Regional Director'],
+    icIdx: 1,
+    mgmt: ['Team Lead','Sales Manager','Regional Manager','VP Sales','CRO'],
+    mgmtIdx: 0
+  },
+  'Marketing': {
+    ic: ['Coordinator','Specialist','Manager','Senior Manager','Director'],
+    icIdx: 1,
+    mgmt: ['Manager','Senior Manager','Director','VP Marketing','CMO'],
+    mgmtIdx: 0
+  },
+  'HR & L&D': {
+    ic: ['HR Executive','Senior HR','HRBP','HR Manager','HR Director'],
+    icIdx: 1,
+    mgmt: ['HR Manager','Senior HR Manager','HR Director','VP HR','CHRO'],
+    mgmtIdx: 0
+  },
+}
+
 function JDBuilderInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -54,6 +93,8 @@ function JDBuilderInner() {
   const [mgmtTrack, setMgmtTrack] = useState(['Senior Engineer','Eng Manager','Director Eng','VP Eng','SVP Eng'])
   const [mgmtCurrent, setMgmtCurrent] = useState(0)
   const [showTracks, setShowTracks] = useState(true)
+  const [icInput, setIcInput] = useState('')
+  const [mgmtInput, setMgmtInput] = useState('')
 
   // Autosave whenever any field changes
   useEffect(() => {
@@ -504,54 +545,126 @@ function JDBuilderInner() {
 
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-3">
-                  <label className="label mb-0">Career progression tracks</label>
+                  <label className="label mb-0">Career progression</label>
                   <button type="button" className="text-xs text-indigo-600 font-semibold"
                     onClick={() => setShowTracks(!showTracks)}>
                     {showTracks ? 'Hide' : 'Show'}
                   </button>
                 </div>
                 {showTracks && (
-                  <div className="space-y-4 p-4 rounded-2xl border border-gray-100 bg-gray-50">
+                  <div className="p-4 rounded-2xl border border-gray-100 bg-gray-50 space-y-5">
+
+                    {/* Domain presets */}
                     <div>
-                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">IC Track — mark where this role sits</p>
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {icTrack.map((role, i) => (
-                          <button key={i} type="button"
-                            className="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all"
-                            style={{
-                              background: i === icCurrent ? 'linear-gradient(135deg,#4F46E5,#7C3AED)' : 'white',
-                              color: i === icCurrent ? 'white' : '#374151',
-                              borderColor: i === icCurrent ? 'transparent' : '#E5E7EB'
-                            }}
-                            onClick={() => setIcCurrent(i)}>
-                            {role}{i === icCurrent ? ' ← Here' : ''}
+                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Load a template</p>
+                      <div className="flex flex-wrap gap-2">
+                        {Object.keys(TRACK_PRESETS).map(domain => (
+                          <button key={domain} type="button"
+                            className="px-3 py-1.5 rounded-full text-xs font-semibold border border-gray-200 bg-white text-gray-600 hover:border-indigo-400 hover:text-indigo-600 transition-all"
+                            onClick={() => {
+                              const p = TRACK_PRESETS[domain]
+                              setIcTrack(p.ic)
+                              setIcCurrent(p.icIdx)
+                              setMgmtTrack(p.mgmt)
+                              setMgmtCurrent(p.mgmtIdx)
+                            }}>
+                            {domain}
                           </button>
                         ))}
+                        <button type="button"
+                          className="px-3 py-1.5 rounded-full text-xs font-semibold border border-gray-200 bg-white text-gray-400 hover:border-red-300 hover:text-red-500 transition-all"
+                          onClick={() => { setIcTrack([]); setIcCurrent(-1); setMgmtTrack([]); setMgmtCurrent(-1) }}>
+                          Clear
+                        </button>
                       </div>
-                      <input className="input text-xs" placeholder="Edit IC track roles (comma separated)"
-                        defaultValue={icTrack.join(', ')}
-                        onBlur={e => setIcTrack(e.target.value.split(',').map((r: string) => r.trim()).filter((r: string) => r))} />
                     </div>
+
+                    {/* IC Track */}
                     <div>
-                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Management Track — mark where this role sits</p>
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {mgmtTrack.map((role, i) => (
-                          <button key={i} type="button"
-                            className="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all"
-                            style={{
-                              background: i === mgmtCurrent ? 'linear-gradient(135deg,#4F46E5,#7C3AED)' : 'white',
-                              color: i === mgmtCurrent ? 'white' : '#374151',
-                              borderColor: i === mgmtCurrent ? 'transparent' : '#E5E7EB'
-                            }}
-                            onClick={() => setMgmtCurrent(i)}>
-                            {role}{i === mgmtCurrent ? ' ← Start' : ''}
-                          </button>
-                        ))}
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">IC track — tap a level to mark where this role sits</p>
+                      {icTrack.length > 0 && (
+                        <div className="flex items-start overflow-x-auto pb-2 mb-3 relative">
+                          <div className="absolute top-2 left-0 right-0 h-px bg-gray-200" style={{zIndex:0}} />
+                          {icTrack.map((role: string, i: number) => (
+                            <div key={i} className="flex flex-col items-center flex-shrink-0" style={{minWidth:'72px', zIndex:1}}>
+                              <button type="button"
+                                className="w-4 h-4 rounded-full border-2 mb-1.5 transition-all"
+                                style={{
+                                  background: i === icCurrent ? '#4F46E5' : i < icCurrent ? 'rgba(79,70,229,0.25)' : 'white',
+                                  borderColor: i <= icCurrent ? '#4F46E5' : '#D1D5DB'
+                                }}
+                                onClick={() => setIcCurrent(i)} />
+                              <span className="text-xs text-center leading-tight px-1"
+                                style={{color: i === icCurrent ? '#4F46E5' : '#6B7280', fontWeight: i === icCurrent ? 600 : 400}}>
+                                {role}
+                              </span>
+                              {i === icCurrent && <span className="text-xs text-indigo-400 mt-0.5">← Here</span>}
+                              <button type="button" className="text-gray-300 hover:text-red-400 text-xs mt-1"
+                                onClick={() => {
+                                  const t = icTrack.filter((_: string, j: number) => j !== i)
+                                  setIcTrack(t)
+                                  if (icCurrent >= t.length) setIcCurrent(t.length - 1)
+                                }}>×</button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <div className="flex gap-2">
+                        <input className="input flex-1 text-sm py-2" placeholder="Add level e.g. Staff Engineer"
+                          value={icInput} onChange={e => setIcInput(e.target.value)}
+                          onKeyDown={e => { if (e.key === 'Enter' && icInput.trim()) { setIcTrack([...icTrack, icInput.trim()]); setIcInput('') }}} />
+                        <button type="button"
+                          className="px-4 rounded-xl text-white text-sm font-semibold flex-shrink-0"
+                          style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}
+                          onClick={() => { if (icInput.trim()) { setIcTrack([...icTrack, icInput.trim()]); setIcInput('') }}}>
+                          + Add
+                        </button>
                       </div>
-                      <input className="input text-xs" placeholder="Edit management track roles (comma separated)"
-                        defaultValue={mgmtTrack.join(', ')}
-                        onBlur={e => setMgmtTrack(e.target.value.split(',').map((r: string) => r.trim()).filter((r: string) => r))} />
                     </div>
+
+                    {/* Management Track */}
+                    <div>
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Management track — tap a level to mark entry point</p>
+                      {mgmtTrack.length > 0 && (
+                        <div className="flex items-start overflow-x-auto pb-2 mb-3 relative">
+                          <div className="absolute top-2 left-0 right-0 h-px bg-gray-200" style={{zIndex:0}} />
+                          {mgmtTrack.map((role: string, i: number) => (
+                            <div key={i} className="flex flex-col items-center flex-shrink-0" style={{minWidth:'72px', zIndex:1}}>
+                              <button type="button"
+                                className="w-4 h-4 rounded-full border-2 mb-1.5 transition-all"
+                                style={{
+                                  background: i === mgmtCurrent ? '#7C3AED' : i < mgmtCurrent ? 'rgba(124,58,237,0.25)' : 'white',
+                                  borderColor: i <= mgmtCurrent ? '#7C3AED' : '#D1D5DB'
+                                }}
+                                onClick={() => setMgmtCurrent(i)} />
+                              <span className="text-xs text-center leading-tight px-1"
+                                style={{color: i === mgmtCurrent ? '#7C3AED' : '#6B7280', fontWeight: i === mgmtCurrent ? 600 : 400}}>
+                                {role}
+                              </span>
+                              {i === mgmtCurrent && <span className="text-xs text-purple-400 mt-0.5">← Start</span>}
+                              <button type="button" className="text-gray-300 hover:text-red-400 text-xs mt-1"
+                                onClick={() => {
+                                  const t = mgmtTrack.filter((_: string, j: number) => j !== i)
+                                  setMgmtTrack(t)
+                                  if (mgmtCurrent >= t.length) setMgmtCurrent(t.length - 1)
+                                }}>×</button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <div className="flex gap-2">
+                        <input className="input flex-1 text-sm py-2" placeholder="Add level e.g. Eng Manager"
+                          value={mgmtInput} onChange={e => setMgmtInput(e.target.value)}
+                          onKeyDown={e => { if (e.key === 'Enter' && mgmtInput.trim()) { setMgmtTrack([...mgmtTrack, mgmtInput.trim()]); setMgmtInput('') }}} />
+                        <button type="button"
+                          className="px-4 rounded-xl text-white text-sm font-semibold flex-shrink-0"
+                          style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}
+                          onClick={() => { if (mgmtInput.trim()) { setMgmtTrack([...mgmtTrack, mgmtInput.trim()]); setMgmtInput('') }}}>
+                          + Add
+                        </button>
+                      </div>
+                    </div>
+
                   </div>
                 )}
               </div>
