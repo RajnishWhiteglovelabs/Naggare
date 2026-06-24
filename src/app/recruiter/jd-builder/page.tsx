@@ -499,8 +499,7 @@ function JDBuilderInner() {
                     {nonNeg && (
                       <div className="p-3 rounded-xl mb-3" style={{ background: '#FFF1F2', border: '0.5px solid #FECDD3' }}>
                         <p className="text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Non Negotiables</p>
-                        {nonNeg.split('
-').filter((l: string) => l.trim()).map((line: string, i: number) => (
+                        {nonNeg.split(/\n/).filter((l: string) => l.trim()).map((line: string, i: number) => (
                           <p key={i} className="text-sm text-gray-900 flex gap-2 mb-1"><span className="text-red-500 flex-shrink-0">●</span>{line.replace(/^[·\-\*]\s*/, '').trim()}</p>
                         ))}
                       </div>
