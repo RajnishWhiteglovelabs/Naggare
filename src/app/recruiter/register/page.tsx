@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
 
@@ -131,6 +131,8 @@ function RecruiterRegisterInner() {
   const [isEditing, setIsEditing] = useState(false)
   const [toast, setToast] = useState('')
   const [saveToast, setSaveToast] = useState(false)
+  const [autoSaved, setAutoSaved] = useState(false)
+  const autoSaveTimer = useRef<ReturnType<typeof setTimeout>|null>(null)
 
   const domainSkills = DOMAIN_SKILLS['Talent Acquisition'] // Recruiters see TA skills + can add custom
   const domainPrompts = DOMAIN_PROMPTS['Talent Acquisition']
@@ -179,6 +181,37 @@ function RecruiterRegisterInner() {
     }
     load()
   }, [])
+
+  // Autosave every 30 seconds when fields change
+  useEffect(() => {
+    if (!email) return
+    if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current)
+    autoSaveTimer.current = setTimeout(async () => {
+      const payload: Record<string,any> = { email, status: 'incomplete' }
+      if (name) payload.name = name
+      if (mobile) payload.mobile = mobile
+      if (company) payload.company = company
+      if (title) payload.title = title
+      if (photo) payload.photo_url = photo
+      if (lookingFor) payload.looking_for = lookingFor
+      if (selectedSkills.size > 0) payload.skills = [...selectedSkills]
+      if (selectedPrompts.length > 0) {
+        payload.prompt_1_q = selectedPrompts[0]?.q || ''
+        payload.prompt_1_a = selectedPrompts[0]?.a || ''
+        payload.prompt_2_q = selectedPrompts[1]?.q || ''
+        payload.prompt_2_a = selectedPrompts[1]?.a || ''
+        payload.prompt_3_q = selectedPrompts[2]?.q || ''
+        payload.prompt_3_a = selectedPrompts[2]?.a || ''
+      }
+      await fetch('/api/recruiter/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      setAutoSaved(true)
+      setTimeout(() => setAutoSaved(false), 2000)
+    }, 3000) // 3 second debounce
+  }, [name, mobile, company, title, photo, lookingFor, selectedSkills, selectedPrompts])
 
   function showToast(msg: string) { setToast(msg); setTimeout(() => setToast(''), 3000) }
 
