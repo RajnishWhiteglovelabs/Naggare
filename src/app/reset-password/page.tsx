@@ -24,7 +24,7 @@ function ResetPasswordInner() {
       }
     )
     // Also check immediately for an existing session
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
       if (data.session) {
         setSession(data.session)
       }
