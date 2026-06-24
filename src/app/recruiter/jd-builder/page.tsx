@@ -98,6 +98,11 @@ function JDBuilderInner() {
           setTuesday(draft.real_tuesday || '')
           setNonNeg(draft.non_negotiables || '')
           setInterview(draft.interview_process || '')
+          if (draft.ic_track?.length) setIcTrack(draft.ic_track)
+          if (draft.ic_current != null) setIcCurrent(draft.ic_current)
+          if (draft.mgmt_track?.length) setMgmtTrack(draft.mgmt_track)
+          if (draft.mgmt_current != null) setMgmtCurrent(draft.mgmt_current)
+          if (draft.show_tracks != null) setShowTracks(draft.show_tracks)
         }
       }
 
@@ -121,6 +126,11 @@ function JDBuilderInner() {
           setTuesday(data.real_tuesday || '')
           setNonNeg(data.non_negotiables || '')
           setInterview(data.interview_process || '')
+          if (data.ic_track?.length) setIcTrack(data.ic_track)
+          if (data.ic_current != null) setIcCurrent(data.ic_current)
+          if (data.mgmt_track?.length) setMgmtTrack(data.mgmt_track)
+          if (data.mgmt_current != null) setMgmtCurrent(data.mgmt_current)
+          if (data.show_tracks != null) setShowTracks(data.show_tracks)
         }
       }
     }
@@ -162,6 +172,11 @@ function JDBuilderInner() {
           recruiter_email: recruiter?.email || '',
           recruiter_name: recruiter?.name || '',
           status: 'draft',
+          ic_track: icTrack,
+          ic_current: icCurrent,
+          mgmt_track: mgmtTrack,
+          mgmt_current: mgmtCurrent,
+          show_tracks: showTracks,
         }
         if (draftId || jdId) {
           await client.from('jds').update(payload).eq('id', draftId || jdId)
