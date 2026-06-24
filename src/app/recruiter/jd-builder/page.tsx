@@ -1,3 +1,4 @@
+SHA: ae997c95280900491abac359649f4fc321d1defb
 'use client'
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -446,8 +447,13 @@ function JDBuilderInner() {
             <>
               <p className="text-xs text-gray-400 text-center mb-4">This is exactly what candidates will see</p>
               <div className="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 mb-4">
+
                 {/* Header */}
                 <div className="p-4" style={{ background: '#EEF2FF', borderBottom: '0.5px solid #C7D2FE' }}>
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    <span className="px-2 py-1 rounded-full text-xs font-semibold" style={{ background: '#4F46E5', color: 'white' }}>Technology</span>
+                    {workStyle && <span className="px-2 py-1 rounded-full text-xs font-semibold" style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #6EE7B7' }}>{workStyle}</span>}
+                  </div>
                   <div className="flex gap-3 mb-3">
                     <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
                       style={{ background: 'linear-gradient(135deg,#4F46E5,#7C3AED)' }}>{companyInitials}</div>
@@ -458,42 +464,52 @@ function JDBuilderInner() {
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-1">
-                    <span className="tag" style={{ background: '#EEF2FF', color: '#4F46E5', borderColor: '#C7D2FE' }}>🌏 {workStyle}</span>
-                    {city && <span className="tag">📍 {city}</span>}
-                    {(minYears || maxYears) && <span className="tag">⏱ {minYears}{maxYears ? `–${maxYears}` : '+'} yrs</span>}
-                    {education && education !== '' && <span className="tag">🎓 {education}</span>}
+                    {(minYears || maxYears) && <span className="tag">{minYears || '0'}{maxYears ? `–${maxYears}` : '+'} yrs</span>}
+                    {mustHave.length > 0 && <span className="tag">{mustHave.slice(0,2).join(' · ')}{mustHave.length > 2 ? ` +${mustHave.length - 2}` : ''}</span>}
+                    {city && <span className="tag">{city}</span>}
                     {salary && <span className="tag" style={{ background: '#F9FAFB', color: '#374151', borderColor: '#E5E7EB' }}>{salary}</span>}
                   </div>
                 </div>
 
-                {/* Must-have skills */}
-                {mustHave.length > 0 && (
+                {/* Skills & Tech Stack */}
+                {(mustHave.length > 0 || goodHave.length > 0) && (
                   <div className="p-4 border-b border-gray-100">
-                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Must-Have Skills</p>
-                    <div className="flex flex-wrap gap-1">{mustHave.map(s => <span key={s} className="tag">{s}</span>)}</div>
+                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">Skills &amp; Tech Stack</p>
+                    <div className="flex flex-wrap gap-1">
+                      {mustHave.map((s: string) => <span key={s} className="tag" style={{ background: '#EEF2FF', color: '#4338CA', borderColor: '#C7D2FE' }}>{s}</span>)}
+                      {goodHave.map((s: string) => <span key={s} className="tag" style={{ background: '#F9FAFB', color: '#6B7280', borderColor: '#E5E7EB' }}>{s}</span>)}
+                    </div>
                   </div>
                 )}
 
-                {/* Good to have */}
-                {goodHave.length > 0 && (
+                {/* What we won't compromise on */}
+                {(nonNeg || goodHave.length > 0) && (
                   <div className="p-4 border-b border-gray-100">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Good to Have</p>
-                    <div className="flex flex-wrap gap-1">{goodHave.map(s => <span key={s} className="tag" style={{ background: '#F0FDF4', borderColor: '#BBF7D0', color: '#15803D' }}>{s}</span>)}</div>
-                  </div>
-                )}
-
-                {/* Non-negotiables */}
-                {nonNeg && (
-                  <div className="p-4 border-b border-gray-100">
-                    <p className="text-xs font-bold text-red-600 uppercase tracking-wider mb-2">🚫 Non-Negotiables</p>
-                    <div className="p-3 rounded-xl text-sm text-gray-900 leading-relaxed" style={{ background: '#FFF1F2', border: '0.5px solid #FECDD3' }}>{nonNeg}</div>
+                    <p className="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">What We Won't Compromise On</p>
+                    {nonNeg && (
+                      <div className="p-3 rounded-xl mb-3" style={{ background: '#FFF1F2', border: '0.5px solid #FECDD3' }}>
+                        <p className="text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Non Negotiables</p>
+                        {nonNeg.split('
+').filter((l: string) => l.trim()).map((line: string, i: number) => (
+                          <p key={i} className="text-sm text-gray-900 flex gap-2 mb-1"><span className="text-red-500 flex-shrink-0">●</span>{line.replace(/^[·\-\*]\s*/, '').trim()}</p>
+                        ))}
+                      </div>
+                    )}
+                    {goodHave.length > 0 && (
+                      <div className="p-3 rounded-xl" style={{ background: '#F0FDF4', border: '0.5px solid #BBF7D0' }}>
+                        <p className="text-xs font-bold text-green-700 uppercase tracking-wider mb-2">Good to Have</p>
+                        {goodHave.map((s: string, i: number) => (
+                          <p key={i} className="text-sm text-gray-900 flex gap-2 mb-1"><span className="text-green-500 flex-shrink-0">●</span>{s}</p>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
 
                 {/* Real Tuesday */}
                 {tuesday && (
                   <div className="p-4 border-b border-gray-100">
-                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">📅 What a Real Tuesday Looks Like</p>
+                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">What a Real Tuesday Looks Like</p>
                     <p className="text-sm text-gray-900 leading-relaxed">{tuesday}</p>
                   </div>
                 )}
@@ -501,18 +517,44 @@ function JDBuilderInner() {
                 {/* Interview process */}
                 {interview && (
                   <div className="p-4 border-b border-gray-100">
-                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">🎯 Interview Process</p>
-                    <p className="text-sm text-gray-900 leading-relaxed">{interview}</p>
+                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">Interview Process — No Surprises</p>
+                    {interview.split('
+').filter((l: string) => l.trim()).map((line: string, i: number) => {
+                      const colors = ['#4F46E5','#7C3AED','#2563EB','#D97706','#111827']
+                      return (
+                        <div key={i} className="flex gap-3 mb-3 last:mb-0">
+                          <div className="w-5 h-5 rounded-full flex-shrink-0 mt-0.5" style={{ background: colors[i % colors.length] }} />
+                          <p className="text-sm text-gray-900">{line.replace(/^\d+[\.\)]\s*/, '').trim()}</p>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+
+                {/* Hiring for this role */}
+                {recruiter && (
+                  <div className="p-4 border-b border-gray-100">
+                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">Hiring for This Role</p>
+                    <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: '#F9FAFB', border: '0.5px solid #E5E7EB' }}>
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+                        style={{ background: 'linear-gradient(135deg,#4F46E5,#7C3AED)' }}>
+                        {recruiter.name?.split(' ').map((n: string) => n[0]).join('').slice(0,2).toUpperCase()}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-bold text-gray-900">{recruiter.name}</p>
+                        <p className="text-xs text-gray-500">{recruiter.title} · {recruiter.company}</p>
+                      </div>
+                      <span className="text-indigo-400 text-lg">›</span>
+                    </div>
                   </div>
                 )}
 
                 {/* Actions */}
                 <div className="flex gap-2 p-4">
-                  <div className="flex-1 py-3 rounded-full border border-gray-200 text-sm font-semibold text-gray-500 text-center">← Not Interested</div>
-                  <div className="flex-1 py-3 rounded-full text-white text-sm font-semibold text-center" style={{ background: 'linear-gradient(135deg,#4F46E5,#7C3AED)' }}>Interested →</div>
+                  <div className="flex-1 py-3 rounded-full border border-gray-200 text-sm font-semibold text-gray-500 text-center">Not Interested</div>
+                  <div className="flex-1 py-3 rounded-full text-white text-sm font-semibold text-center" style={{ background: 'linear-gradient(135deg,#4F46E5,#7C3AED)' }}>Interested</div>
                 </div>
               </div>
-
               <div className="flex gap-3">
                 <button className="btn-outline flex-none w-24 py-3 text-sm" onClick={() => setPreview(false)}>← Edit</button>
                 <button className="btn-primary py-3" onClick={publish} disabled={loading}>
@@ -535,3 +577,4 @@ function JDBuilderInner() {
 export default function JDBuilder() {
   return <Suspense><JDBuilderInner /></Suspense>
 }
+
