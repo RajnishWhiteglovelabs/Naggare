@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
+import type { AuthChangeEvent } from '@supabase/supabase-js'
 
 export default function ResetPassword() {
   const router = useRouter()
@@ -13,16 +14,13 @@ export default function ResetPassword() {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    // Supabase puts the recovery token in the URL hash — we need to let
-    // the client SDK pick it up via onAuthStateChange before we render the form
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
       if (event === 'PASSWORD_RECOVERY') {
         setReady(true)
       }
     })
-    // Also check if already in a valid session (token already exchanged)
-    supabase.auth.getSession().then(({ data: { session } }: { data: { session: any } }) => {
-      if (session) setReady(true)
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) setReady(true)
     })
     return () => subscription.unsubscribe()
   }, [])
@@ -43,8 +41,8 @@ export default function ResetPassword() {
       if (error) throw error
       setDone(true)
       setTimeout(() => router.push('/signin'), 2500)
-    } catch (e: any) {
-      setError(e.message || 'Something went wrong')
+    } catch (e: unknown) {
+      setError((e as Error).message || 'Something went wrong')
     } finally {
       setLoading(false)
     }
