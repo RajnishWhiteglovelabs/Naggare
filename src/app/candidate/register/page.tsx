@@ -597,8 +597,32 @@ function CandidateRegisterInner() {
                   <div className="mb-3"><label className="label">Organisation</label><input className="input text-sm py-2" placeholder="Razorpay" value={stop.org} onChange={e=>setCareer(career.map((c,j)=>j===i?{...c,org:e.target.value}:c))} style={i===0?{background:'#F1EFE8'}:{}}/></div>
                   <div className="mb-3"><label className="label">Role / Title</label><input className="input text-sm py-2" placeholder="Senior Engineer" value={stop.role} onChange={e=>setCareer(career.map((c,j)=>j===i?{...c,role:e.target.value}:c))} style={i===0?{background:'#F1EFE8'}:{}}/></div>
                   <div className="grid grid-cols-2 gap-2">
-                    <div><label className="label">Start date</label><input className="input text-sm py-2" type="month" value={stop.from} onChange={e=>setCareer(career.map((c,j)=>j===i?{...c,from:e.target.value}:c))}/></div>
-                    <div><label className="label">End (blank=now)</label><input className="input text-sm py-2" type="month" value={stop.to} onChange={e=>setCareer(career.map((c,j)=>j===i?{...c,to:e.target.value}:c))}/></div>
+                    <div>
+                      <label className="label">Start date</label>
+                      <div className="flex gap-1">
+                        <select className="input text-sm py-2 flex-1" value={stop.from ? stop.from.split('-')[1] : ''} onChange={e=>{const yr=stop.from?stop.from.split('-')[0]:new Date().getFullYear().toString();setCareer(career.map((c,j)=>j===i?{...c,from:e.target.value?:''}:c))}}>
+                          <option value="">Month</option>
+                          {['01','02','03','04','05','06','07','08','09','10','11','12'].map((m,idx)=><option key={m} value={m}>{['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][idx]}</option>)}
+                        </select>
+                        <select className="input text-sm py-2 flex-1" value={stop.from ? stop.from.split('-')[0] : ''} onChange={e=>{const mo=stop.from?stop.from.split('-')[1]:'01';setCareer(career.map((c,j)=>j===i?{...c,from:e.target.value?:''}:c))}}>
+                          <option value="">Year</option>
+                          {Array.from({length:30},(_,k)=>new Date().getFullYear()-k).map(y=><option key={y} value={y}>{y}</option>)}
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="label">End (blank=now)</label>
+                      <div className="flex gap-1">
+                        <select className="input text-sm py-2 flex-1" value={stop.to ? stop.to.split('-')[1] : ''} onChange={e=>{const yr=stop.to?stop.to.split('-')[0]:new Date().getFullYear().toString();setCareer(career.map((c,j)=>j===i?{...c,to:e.target.value?:''}:c))}}>
+                          <option value="">Month</option>
+                          {['01','02','03','04','05','06','07','08','09','10','11','12'].map((m,idx)=><option key={m} value={m}>{['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][idx]}</option>)}
+                        </select>
+                        <select className="input text-sm py-2 flex-1" value={stop.to ? stop.to.split('-')[0] : ''} onChange={e=>{const mo=stop.to?stop.to.split('-')[1]:'01';setCareer(career.map((c,j)=>j===i?{...c,to:e.target.value?:''}:c))}}>
+                          <option value="">Year</option>
+                          {Array.from({length:30},(_,k)=>new Date().getFullYear()-k).map(y=><option key={y} value={y}>{y}</option>)}
+                        </select>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
