@@ -15,7 +15,7 @@ export default function ResetPassword() {
   useEffect(() => {
     // Supabase puts the recovery token in the URL hash — we need to let
     // the client SDK pick it up via onAuthStateChange before we render the form
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string) => {
       if (event === 'PASSWORD_RECOVERY') {
         setReady(true)
       }
