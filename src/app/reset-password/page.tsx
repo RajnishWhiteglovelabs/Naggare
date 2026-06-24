@@ -21,7 +21,7 @@ export default function ResetPassword() {
       }
     })
     // Also check if already in a valid session (token already exchanged)
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: any } }) => {
       if (session) setReady(true)
     })
     return () => subscription.unsubscribe()
