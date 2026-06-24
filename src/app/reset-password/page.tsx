@@ -12,19 +12,25 @@ function ResetPasswordInner() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
-  const [ready, setReady] = useState(false)
-  const [invalid, setInvalid] = useState(false)
+  const [session, setSession] = useState<Session | null>(null)
+  const [checked, setChecked] = useState(false)
 
   useEffect(() => {
-    // Supabase PKCE exchanges the code server-side before redirecting here.
-    // The session is already in cookies — just check for it.
-    supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
-      if (data.session) {
-        setReady(true)
-      } else {
-        setInvalid(true)
+    // Listen for auth state — catches PASSWORD_RECOVERY event from PKCE exchange
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, currentSession) => {
+        setSession(currentSession)
+        setChecked(true)
       }
+    )
+    // Also check immediately for an existing session
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        setSession(data.session)
+      }
+      setChecked(true)
     })
+    return () => subscription.unsubscribe()
   }, [])
 
   async function handleUpdate() {
@@ -50,6 +56,9 @@ function ResetPasswordInner() {
       setLoading(false)
     }
   }
+
+  const ready = checked && !!session
+  const invalid = checked && !session
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 bg-white">
