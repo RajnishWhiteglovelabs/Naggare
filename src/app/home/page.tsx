@@ -323,7 +323,7 @@ export default function Home() {
                 <p className="text-sm text-gray-500 mt-1">Try a different search</p>
               </div>
             )}
-            filteredJDs.map(jd => {
+            {filteredJDs.map(jd => {
                 const co = jd.company || 'Company'
                 const ini = co.split(' ').map((w:string)=>w[0]).join('').slice(0,2).toUpperCase()
                 return (
