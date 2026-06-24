@@ -43,6 +43,11 @@ function JDBuilderInner() {
   const [tuesday, setTuesday] = useState('')
   const [nonNeg, setNonNeg] = useState('')
   const [interview, setInterview] = useState('')
+  const [interviewSteps, setInterviewSteps] = useState<{title:string,duration:string,competencies:string}[]>([
+    {title:'Recruiter Screen', duration:'30 min', competencies:'Career story · Expectations'},
+    {title:'Technical Assessment', duration:'90 min async', competencies:''},
+    {title:'HM Interview', duration:'45 min', competencies:''},
+  ])
   const [hiringFor, setHiringFor] = useState('')
   const [icTrack, setIcTrack] = useState(['Engineer','Senior Engineer','Staff Engineer','Principal Engineer','Distinguished Engineer'])
   const [icCurrent, setIcCurrent] = useState(1)
@@ -53,7 +58,7 @@ function JDBuilderInner() {
   // Autosave whenever any field changes
   useEffect(() => {
     autoSave()
-  }, [title, team, workStyle, city, minYears, maxYears, education, salary, mustHave, goodHave, tuesday, nonNeg, interview, hiringFor, icTrack, icCurrent, mgmtTrack, mgmtCurrent, showTracks])
+  }, [title, team, workStyle, city, minYears, maxYears, education, salary, mustHave, goodHave, tuesday, nonNeg, interview, hiringFor, icTrack, icCurrent, mgmtTrack, mgmtCurrent, showTracks, interviewSteps])
 
   useEffect(() => {
     async function load() {
@@ -98,6 +103,7 @@ function JDBuilderInner() {
           setTuesday(draft.real_tuesday || '')
           setNonNeg(draft.non_negotiables || '')
           setInterview(draft.interview_process || '')
+          if (draft.interview_steps?.length) setInterviewSteps(draft.interview_steps)
           if (draft.ic_track?.length) setIcTrack(draft.ic_track)
           if (draft.ic_current != null) setIcCurrent(draft.ic_current)
           if (draft.mgmt_track?.length) setMgmtTrack(draft.mgmt_track)
@@ -126,6 +132,7 @@ function JDBuilderInner() {
           setTuesday(data.real_tuesday || '')
           setNonNeg(data.non_negotiables || '')
           setInterview(data.interview_process || '')
+          if (data.interview_steps?.length) setInterviewSteps(data.interview_steps)
           if (data.ic_track?.length) setIcTrack(data.ic_track)
           if (data.ic_current != null) setIcCurrent(data.ic_current)
           if (data.mgmt_track?.length) setMgmtTrack(data.mgmt_track)
@@ -168,6 +175,7 @@ function JDBuilderInner() {
           real_tuesday: tuesday,
           non_negotiables: nonNeg,
           interview_process: interview,
+          interview_steps: interviewSteps,
           company: hiringFor || recruiter?.company || '',
           recruiter_email: recruiter?.email || '',
           recruiter_name: recruiter?.name || '',
@@ -214,6 +222,7 @@ function JDBuilderInner() {
         real_tuesday: tuesday,
         non_negotiables: nonNeg,
         interview_process: interview,
+        interview_steps: interviewSteps,
         company: hiringFor || recruiter?.company || '',
         recruiter_email: recruiter?.email || '',
         recruiter_name: recruiter?.name || '',
@@ -295,10 +304,10 @@ function JDBuilderInner() {
               </div>
 
               <div className="mb-4">
-                <label className="label">Hiring for *</label>
+                <label className="label">Company name *</label>
                 <input className="input" placeholder="e.g. Razorpay" value={hiringFor}
                   onChange={e => setHiringFor(e.target.value)} />
-                <p className="text-xs text-gray-400 mt-1">Your company name, or your client's name if you're an agency recruiter.</p>
+                <p className="text-xs text-gray-400 mt-1">Your company, or your client's name if you're an agency recruiter.</p>
               </div>
 
               <div className="grid grid-cols-2 gap-3 mb-4">
@@ -463,10 +472,34 @@ function JDBuilderInner() {
 
               <div className="mb-6">
                 <label className="label">Interview process</label>
-                <p className="text-xs text-gray-400 mb-1">Help candidates know what to expect.</p>
-                <textarea className="input" rows={3}
-                  placeholder="e.g. 1. Recruiter screen 30 min · 2. Coding 90 min async · 3. System design 60 min · 4. HM interview 45 min · Decision within 5 days"
-                  value={interview} onChange={e => setInterview(e.target.value)} />
+                <p className="text-xs text-gray-400 mb-2">Each round candidates will go through. Competencies are optional but help candidates prepare.</p>
+                {interviewSteps.map((step, i) => (
+                  <div key={i} className="mb-3 p-3 rounded-2xl border border-gray-100 bg-gray-50">
+                    <div className="flex gap-2 mb-2">
+                      <div className="w-5 h-5 rounded-full flex-shrink-0 mt-2 text-white flex items-center justify-center text-xs font-bold"
+                        style={{background: ['#4F46E5','#7C3AED','#2563EB','#D97706','#111827'][i % 5]}}>
+                        {i + 1}
+                      </div>
+                      <input className="input flex-1 text-sm py-2" placeholder="Round name e.g. Recruiter Screen"
+                        value={step.title}
+                        onChange={e => setInterviewSteps(interviewSteps.map((s,j) => j===i ? {...s, title: e.target.value} : s))} />
+                      <input className="input w-28 text-sm py-2" placeholder="e.g. 30 min"
+                        value={step.duration}
+                        onChange={e => setInterviewSteps(interviewSteps.map((s,j) => j===i ? {...s, duration: e.target.value} : s))} />
+                      {interviewSteps.length > 1 && (
+                        <button type="button" className="text-gray-300 hover:text-red-400 text-lg px-1"
+                          onClick={() => setInterviewSteps(interviewSteps.filter((_,j) => j !== i))}>✕</button>
+                      )}
+                    </div>
+                    <input className="input text-sm py-2" placeholder="Competencies assessed (optional) e.g. Career story · Expectations · Culture fit"
+                      value={step.competencies}
+                      onChange={e => setInterviewSteps(interviewSteps.map((s,j) => j===i ? {...s, competencies: e.target.value} : s))} />
+                  </div>
+                ))}
+                <button type="button" className="w-full py-2 rounded-xl border border-dashed border-gray-300 text-sm text-gray-400 hover:border-indigo-400 hover:text-indigo-600 transition-all"
+                  onClick={() => setInterviewSteps([...interviewSteps, {title:'', duration:'', competencies:''}])}>
+                  + Add round
+                </button>
               </div>
 
               <div className="mb-6">
@@ -658,15 +691,28 @@ function JDBuilderInner() {
                 )}
 
                 {/* Interview process */}
-                {interview && (
+                {interviewSteps.some((s: {title:string,duration:string,competencies:string}) => s.title) && (
                   <div className="p-4 border-b border-gray-100">
                     <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">Interview Process — No Surprises</p>
-                    {interview.split(/\n/).filter((l: string) => l.trim()).map((line: string, i: number) => {
+                    {interviewSteps.filter((s: {title:string,duration:string,competencies:string}) => s.title).map((step: {title:string,duration:string,competencies:string}, i: number) => {
                       const colors = ['#4F46E5','#7C3AED','#2563EB','#D97706','#111827']
                       return (
-                        <div key={i} className="flex gap-3 mb-3 last:mb-0">
-                          <div className="w-5 h-5 rounded-full flex-shrink-0 mt-0.5" style={{ background: colors[i % colors.length] }} />
-                          <p className="text-sm text-gray-900">{line.replace(/^\d+[\.\)]\s*/, '').trim()}</p>
+                        <div key={i} className="mb-4 last:mb-0">
+                          <div className="flex gap-3 items-start mb-1">
+                            <div className="w-5 h-5 rounded-full flex-shrink-0 mt-0.5 flex items-center justify-center text-white text-xs font-bold"
+                              style={{ background: colors[i % colors.length] }}>{i+1}</div>
+                            <div>
+                              <span className="text-sm font-bold text-gray-900">{step.title}</span>
+                              {step.duration && <span className="text-xs text-gray-400 ml-2">· {step.duration}</span>}
+                            </div>
+                          </div>
+                          {step.competencies && (
+                            <div className="ml-8 flex flex-wrap gap-1 mt-1">
+                              {step.competencies.split('·').map((c: string) => c.trim()).filter((c: string) => c).map((comp: string, j: number) => (
+                                <span key={j} className="px-2 py-0.5 rounded-full text-xs border border-gray-200 text-gray-500 bg-gray-50">{comp}</span>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       )
                     })}
