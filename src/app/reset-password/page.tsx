@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
 import { Suspense } from 'react'
-import type { Session } from '@supabase/supabase-js'
+import type { Session, AuthChangeEvent } from '@supabase/supabase-js'
 
 function ResetPasswordInner() {
   const router = useRouter()
@@ -18,7 +18,7 @@ function ResetPasswordInner() {
   useEffect(() => {
     // Listen for auth state — catches PASSWORD_RECOVERY event from PKCE exchange
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, currentSession) => {
+      (_event: AuthChangeEvent, currentSession: Session | null) => {
         setSession(currentSession)
         setChecked(true)
       }
