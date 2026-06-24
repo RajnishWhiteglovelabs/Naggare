@@ -1,3 +1,4 @@
+Lines: 587
 'use client'
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -44,11 +45,16 @@ function JDBuilderInner() {
   const [nonNeg, setNonNeg] = useState('')
   const [interview, setInterview] = useState('')
   const [hiringFor, setHiringFor] = useState('')
+  const [icTrack, setIcTrack] = useState(['Engineer','Senior Engineer','Staff Engineer','Principal Engineer','Distinguished Engineer'])
+  const [icCurrent, setIcCurrent] = useState(1)
+  const [mgmtTrack, setMgmtTrack] = useState(['Senior Engineer','Eng Manager','Director Eng','VP Eng','SVP Eng'])
+  const [mgmtCurrent, setMgmtCurrent] = useState(0)
+  const [showTracks, setShowTracks] = useState(true)
 
   // Autosave whenever any field changes
   useEffect(() => {
     autoSave()
-  }, [title, team, workStyle, city, minYears, maxYears, education, salary, mustHave, goodHave, tuesday, nonNeg, interview, hiringFor])
+  }, [title, team, workStyle, city, minYears, maxYears, education, salary, mustHave, goodHave, tuesday, nonNeg, interview, hiringFor, icTrack, icCurrent, mgmtTrack, mgmtCurrent, showTracks])
 
   useEffect(() => {
     async function load() {
@@ -444,6 +450,60 @@ function JDBuilderInner() {
                   value={interview} onChange={e => setInterview(e.target.value)} />
               </div>
 
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-3">
+                  <label className="label mb-0">Career progression tracks</label>
+                  <button type="button" className="text-xs text-indigo-600 font-semibold"
+                    onClick={() => setShowTracks(!showTracks)}>
+                    {showTracks ? 'Hide' : 'Show'}
+                  </button>
+                </div>
+                {showTracks && (
+                  <div className="space-y-4 p-4 rounded-2xl border border-gray-100 bg-gray-50">
+                    <div>
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">IC Track — mark where this role sits</p>
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {icTrack.map((role, i) => (
+                          <button key={i} type="button"
+                            className="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all"
+                            style={{
+                              background: i === icCurrent ? 'linear-gradient(135deg,#4F46E5,#7C3AED)' : 'white',
+                              color: i === icCurrent ? 'white' : '#374151',
+                              borderColor: i === icCurrent ? 'transparent' : '#E5E7EB'
+                            }}
+                            onClick={() => setIcCurrent(i)}>
+                            {role}{i === icCurrent ? ' ← Here' : ''}
+                          </button>
+                        ))}
+                      </div>
+                      <input className="input text-xs" placeholder="Edit IC track roles (comma separated)"
+                        defaultValue={icTrack.join(', ')}
+                        onBlur={e => setIcTrack(e.target.value.split(',').map((r: string) => r.trim()).filter((r: string) => r))} />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Management Track — mark where this role sits</p>
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {mgmtTrack.map((role, i) => (
+                          <button key={i} type="button"
+                            className="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all"
+                            style={{
+                              background: i === mgmtCurrent ? 'linear-gradient(135deg,#4F46E5,#7C3AED)' : 'white',
+                              color: i === mgmtCurrent ? 'white' : '#374151',
+                              borderColor: i === mgmtCurrent ? 'transparent' : '#E5E7EB'
+                            }}
+                            onClick={() => setMgmtCurrent(i)}>
+                            {role}{i === mgmtCurrent ? ' ← Start' : ''}
+                          </button>
+                        ))}
+                      </div>
+                      <input className="input text-xs" placeholder="Edit management track roles (comma separated)"
+                        defaultValue={mgmtTrack.join(', ')}
+                        onBlur={e => setMgmtTrack(e.target.value.split(',').map((r: string) => r.trim()).filter((r: string) => r))} />
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <button className="btn-outline py-3 mb-3 text-sm"
                 onClick={() => { if (!title) { setError('Add a role title first'); return }; setError(''); setPreview(true) }}>
                 Preview JD →
@@ -479,6 +539,62 @@ function JDBuilderInner() {
                     {salary && <span className="tag" style={{ background: '#F9FAFB', color: '#374151', borderColor: '#E5E7EB' }}>{salary}</span>}
                   </div>
                 </div>
+
+                {/* Where this role takes you */}
+                {showTracks && (
+                  <div className="p-4 border-b border-gray-100">
+                    <p className="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4">Where This Role Takes You</p>
+
+                    {/* IC Track */}
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1">
+                      <span>⚡</span> IC Track
+                    </p>
+                    <div className="overflow-x-auto pb-2 mb-4">
+                      <div className="flex items-start gap-0 min-w-max relative">
+                        {/* connecting line */}
+                        <div className="absolute top-2 left-2 right-2 h-px bg-gray-200" style={{zIndex:0}} />
+                        {icTrack.map((role, i) => (
+                          <div key={i} className="flex flex-col items-center" style={{minWidth: '90px', zIndex:1}}>
+                            <div className="w-4 h-4 rounded-full border-2 flex-shrink-0 mb-2"
+                              style={{
+                                background: i <= icCurrent ? '#4F46E5' : 'white',
+                                borderColor: i <= icCurrent ? '#4F46E5' : '#D1D5DB'
+                              }} />
+                            <p className="text-xs font-bold text-center px-1 leading-tight"
+                              style={{color: i === icCurrent ? '#4F46E5' : '#6B7280'}}>
+                              {role}
+                              {i === icCurrent && <span className="block text-indigo-400 font-normal">← Here</span>}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Management Track */}
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1">
+                      <span>👥</span> Management Track
+                    </p>
+                    <div className="overflow-x-auto pb-2">
+                      <div className="flex items-start gap-0 min-w-max relative">
+                        <div className="absolute top-2 left-2 right-2 h-px bg-gray-200" style={{zIndex:0}} />
+                        {mgmtTrack.map((role, i) => (
+                          <div key={i} className="flex flex-col items-center" style={{minWidth: '90px', zIndex:1}}>
+                            <div className="w-4 h-4 rounded-full border-2 flex-shrink-0 mb-2"
+                              style={{
+                                background: i <= mgmtCurrent ? '#7C3AED' : 'white',
+                                borderColor: i <= mgmtCurrent ? '#7C3AED' : '#D1D5DB'
+                              }} />
+                            <p className="text-xs font-bold text-center px-1 leading-tight"
+                              style={{color: i === mgmtCurrent ? '#7C3AED' : '#6B7280'}}>
+                              {role}
+                              {i === mgmtCurrent && <span className="block text-purple-400 font-normal">← Start</span>}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Skills & Tech Stack */}
                 {(mustHave.length > 0 || goodHave.length > 0) && (
@@ -584,4 +700,5 @@ function JDBuilderInner() {
 export default function JDBuilder() {
   return <Suspense><JDBuilderInner /></Suspense>
 }
+
 
