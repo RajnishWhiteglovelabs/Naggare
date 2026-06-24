@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase-browser'
 
-const IDLE_TIMEOUT = 15 * 60 * 1000 // 15 minutes
+const IDLE_TIMEOUT = 30 * 1000 // 30 seconds (TESTING)
 const WARNING_BEFORE = 30 * 1000     // warn 30 seconds before
 
 export default function IdleTimer() {
