@@ -77,7 +77,7 @@ export default function Landing() {
               <span className="text-xs font-semibold" style={{color:'#4F46E5'}}>
                 ✦ &ldquo;22 years in Talent Acquisition taught me one thing — the best hires happen when both sides are honest about what they want. Naggare is built on that belief.&rdquo;
               </span>
-              <span className="text-xs font-bold" style={{color:'#7C3AED'}}>— Rajnish Alexander, Founder · 22 years TA</span>
+              <span className="text-xs font-bold" style={{color:'#7C3AED'}}>— Rajnish Alexander, Founder</span>
               <span className="text-xs" style={{color:'#C7D2FE'}}>✦</span>
             </div>
           ))}
@@ -91,7 +91,7 @@ export default function Landing() {
           Hiring, Humanised.
         </div>
         <h1 className="text-4xl font-bold leading-tight mb-4 max-w-md" style={{color:'#1E1B4B',fontFamily:'Georgia,serif',lineHeight:'1.2'}}>
-          Both sides show interest.<br/>Before the first call.
+          High quality signals.<br/>Before the first call.
         </h1>
         <p className="text-base leading-relaxed mb-8 max-w-sm" style={{color:'#6B7280'}}>
           Naggare is a mutual-match hiring platform. Candidates express interest. Recruiters pursue. A conversation only starts when both sides are ready.
