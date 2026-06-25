@@ -288,7 +288,7 @@ function RecruiterChatInner() {
             <div ref={messagesEndRef} />
           </div>
 
-          {(isActive || (session && session.status === 'pending')) && (
+          {session_id && (
             <div className="flex-shrink-0 p-3 border-t border-gray-100 flex gap-2 items-center">
               <input type="text" className="input flex-1 text-sm" placeholder="Type a message..."
                 value={newMessage} onChange={e => setNewMessage(e.target.value)}
