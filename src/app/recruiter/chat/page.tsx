@@ -113,10 +113,10 @@ function RecruiterChatInner() {
       .on('postgres_changes', {
         event: 'INSERT', schema: 'public', table: 'messages',
         filter: `session_id=eq.${session_id}`
-      }, (payload) => {
+      }, (payload: { new: Message }) => {
         setMessages(prev => {
           if (prev.find(m => m.id === payload.new.id)) return prev
-          return [...prev, payload.new as Message]
+          return [...prev, payload.new]
         })
         if (payload.new.sender_email !== email) {
           fetch('/api/chat/messages', {
