@@ -88,7 +88,7 @@ export default function Landing() {
             { emoji: '😔', text: 'You applied to 40 jobs. Heard back from 3.' },
             { emoji: '📭', text: 'Your LinkedIn is full of cold InMails from recruiters who never read your profile.' },
             { emoji: '🕳️', text: 'You had a great first call. Then silence. No feedback. Just a black hole.' },
-            { emoji: '🤷', text: 'You interviewed for a role that didn't match what was discussed.' },
+            { emoji: '🤷', text: 'You interviewed for a role that didn&apos;t match what was discussed.' },
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-3 p-4 rounded-2xl" style={{background:'#F9FAFB',border:'1px solid #F3F4F6'}}>
               <span className="text-xl flex-shrink-0">{item.emoji}</span>
@@ -104,7 +104,7 @@ export default function Landing() {
         <h2 className="text-2xl font-bold text-center mb-8" style={{color:'#1E1B4B',fontFamily:'Georgia,serif'}}>Mutual interest. Before hello.</h2>
         <div className="flex flex-col gap-6">
           {[
-            { step: '01', title: 'Build your profile', desc: 'Candidates and recruiters both build rich profiles — not just a CV or a job spec. Persona, philosophy, what you're really looking for.' },
+            { step: '01', title: 'Build your profile', desc: 'Candidates and recruiters both build rich profiles — not just a CV or a job spec. Persona, philosophy, what you&apos;re really looking for.' },
             { step: '02', title: 'Browse and signal', desc: 'Candidates swipe on JDs. Recruiters browse candidates. Both sides signal interest independently — no cold outreach.' },
             { step: '03', title: 'Mutual match unlocks chat', desc: 'Only when both sides have shown interest does a conversation open. No more black holes. No more spam.' },
             { step: '04', title: 'Hire with context', desc: 'By the time you speak, you already know each other. The first call is a real conversation, not a screening.' },
