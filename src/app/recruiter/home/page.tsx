@@ -153,6 +153,7 @@ export default function RecruiterHome() {
                   { icon: '✏️', label: 'Edit Profile', action: () => { router.push('/recruiter/register?edit=true'); setMenuOpen(false) } },
                   { icon: '📋', label: 'My JDs', action: () => { setView('myjds'); setMenuOpen(false) } },
                   { icon: '📋', label: 'Post a JD', action: () => { router.push('/recruiter/jd-builder'); setMenuOpen(false) } },
+                  { icon: '💬', label: 'Inbox', action: () => { router.push('/recruiter/inbox'); setMenuOpen(false) } },
                   { icon: '💚', label: 'My Matches', action: () => { showToast('Coming soon!', 'pursue'); setMenuOpen(false) } },
                   { icon: '⚙️', label: 'Account Settings', action: () => { router.push('/account-settings'); setMenuOpen(false) } },
                   { icon: '💬', label: 'Feedback', action: () => { router.push('/feedback'); setMenuOpen(false) } },
