@@ -169,6 +169,11 @@ export default function Home() {
                   <div className="text-sm font-bold text-white">Browse JDs</div>
                   <div className="text-xs" style={{ color: '#A5B4FC' }}>Find your match</div>
                 </div>
+                <div className="rounded-2xl p-4 cursor-pointer" style={{ background: 'rgba(255,255,255,0.1)' }} onClick={() => router.push('/candidate/inbox')}>
+                  <div className="text-2xl mb-1">💬</div>
+                  <div className="text-sm font-bold text-white">Inbox</div>
+                  <div className="text-xs" style={{ color: '#A5B4FC' }}>Your chats</div>
+                </div>
               </div>
             </div>
 
