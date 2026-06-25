@@ -218,7 +218,7 @@ function RecruiterChatInner() {
   return (
     <div className="min-h-screen bg-white flex flex-col" style={{maxWidth:'480px',margin:'0 auto'}}>
       {/* Header */}
-      <div style={{background:'#15803D'}} className="px-4 py-3 flex items-center gap-3 flex-shrink-0">
+      <div style={{background:'#4F46E5'}} className="px-4 py-3 flex items-center gap-3 flex-shrink-0">
         <button onClick={() => router.back()} className="text-white opacity-70 hover:opacity-100">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
@@ -252,7 +252,7 @@ function RecruiterChatInner() {
                 </button>
                 <button onClick={sendInmail} disabled={sending || !inmail.trim()}
                   className="flex-1 py-2.5 rounded-full text-sm font-semibold text-white"
-                  style={{background:'#15803D'}}>
+                  style={{background:'#4F46E5'}}>
                   {sending ? 'Sending...' : 'Send inmail'}
                 </button>
               </div>
@@ -305,7 +305,7 @@ function RecruiterChatInner() {
                 onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()} />
               <button onClick={sendMessage} disabled={sending || !newMessage.trim()}
                 className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-white flex-shrink-0"
-                style={{background:'#15803D'}}>
+                style={{background:'#4F46E5'}}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg>
               </button>
             </div>
