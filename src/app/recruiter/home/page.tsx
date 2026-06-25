@@ -402,7 +402,7 @@ export default function RecruiterHome() {
                     <span className="text-xs font-semibold text-red-500">Pass</span>
                   </button>
                   <button className="py-4 flex flex-col items-center gap-1.5 border-r border-gray-100 hover:bg-green-50 transition-colors"
-                    onClick={() => { const c = candidates[currentIndex]; const params = new URLSearchParams({ candidate_email: c.email||'', candidate_name: c.name||'', candidate_title: c.title||'', candidate_company: c.company||'', jd_title: 'your open role', jd_id: '' }); takeAction('pursue'); router.push('/recruiter/chat?'+params.toString()) }}>
+                    onClick={() => { const c = candidates[currentIdx]; const params = new URLSearchParams({ candidate_email: c.email||'', candidate_name: c.name||'', candidate_title: c.title||'', candidate_company: c.company||'', jd_title: 'your open role', jd_id: '' }); takeAction('pursue'); router.push('/recruiter/chat?'+params.toString()) }}>
                     <span className="text-2xl">💙</span>
                     <span className="text-xs font-semibold" style={{ color: '#4F46E5' }}>Pursue</span>
                   </button>
