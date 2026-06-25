@@ -17,6 +17,24 @@ export async function GET(req: NextRequest) {
       .or(`candidate_email.eq.${email},recruiter_email.eq.${email}`)
       .order('updated_at', { ascending: false })
 
+    // Enrich with recruiter photo_url
+    if (sessions && sessions.length > 0) {
+      const recruiterEmails = [...new Set(sessions.map((s: { recruiter_email: string }) => s.recruiter_email))]
+      const { data: recruiters } = await db
+        .from('recruiters')
+        .select('email, photo_url')
+        .in('email', recruiterEmails)
+      if (recruiters) {
+        const photoMap: Record<string, string> = {}
+        recruiters.forEach((r: { email: string; photo_url: string | null }) => {
+          if (r.photo_url) photoMap[r.email] = r.photo_url
+        })
+        sessions.forEach((s: { recruiter_email: string; recruiter_photo?: string }) => {
+          s.recruiter_photo = photoMap[s.recruiter_email] || ''
+        })
+      }
+    }
+
     if (error) throw error
     return NextResponse.json(sessions || [])
   } catch (e: unknown) {
