@@ -8,18 +8,15 @@ export default function Landing() {
   const [checking, setChecking] = useState(true)
 
   useEffect(() => {
-    // Always show landing page after 1.5s max — never loop
     const timeout = setTimeout(() => setChecking(false), 1500)
-
     async function checkSession() {
       try {
         const { data: { session } } = await supabase.auth.getSession()
-        const emailToCheck = session?.user?.email
-        if (emailToCheck) {
+        if (session?.user?.email) {
           const res = await fetch('/api/me', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: emailToCheck }),
+            body: JSON.stringify({ email: session.user.email }),
           })
           if (res.ok) {
             clearTimeout(timeout)
@@ -28,14 +25,11 @@ export default function Landing() {
             return
           }
         }
-      } catch {
-        // silently fail
-      }
+      } catch { /* silently fail */ }
       clearTimeout(timeout)
       setChecking(false)
     }
     checkSession()
-
     return () => clearTimeout(timeout)
   }, [])
 
@@ -46,36 +40,161 @@ export default function Landing() {
   )
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 text-center bg-white">
-      
-      <div className="mb-10">
-        <div className="mx-auto mb-4 flex flex-col items-center justify-center relative rounded-3xl px-8 py-5"
-          style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)',boxShadow:'0 8px 32px rgba(79,70,229,0.25)',display:'inline-flex',minWidth:'180px'}}>
-          <div className="absolute top-3 right-3 w-3 h-3 rounded-sm rotate-45" style={{background:'#EAB308'}}></div>
-          <span className="text-5xl font-bold text-white mb-1" style={{fontFamily:'Raleway,sans-serif'}}>N</span>
-          <span className="text-xl font-bold" style={{fontFamily:"Raleway,sans-serif",letterSpacing:"0.05em",color:"#ffffff"}}>Naggare</span>
+    <div className="min-h-screen flex flex-col bg-white" style={{fontFamily:'Raleway,sans-serif'}}>
+
+      {/* NAV */}
+      <nav className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
+            <span className="text-sm font-bold text-white" style={{fontFamily:'Georgia,serif'}}>N</span>
+          </div>
+          <span className="font-bold text-lg" style={{color:'#1E1B4B',fontFamily:'Georgia,serif'}}>Naggare</span>
         </div>
-        <p className="text-xs font-semibold tracking-widest mt-3" style={{fontFamily:'Raleway,sans-serif',color:'#6366F1',letterSpacing:'0.2em'}}>
-          HIRING, HUMANISED.
+        <button onClick={() => router.push('/signin')}
+          className="text-sm font-semibold px-4 py-2 rounded-full border"
+          style={{borderColor:'#E0E7FF',color:'#4F46E5'}}>
+          Sign in
+        </button>
+      </nav>
+
+      {/* HERO */}
+      <section className="flex flex-col items-center text-center px-6 pt-16 pb-12" style={{background:'linear-gradient(160deg,#EEF2FF 0%,#F5F3FF 50%,#ffffff 100%)'}}>
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 text-xs font-semibold tracking-wider uppercase"
+          style={{background:'#E0E7FF',color:'#4F46E5'}}>
+          Hiring, Humanised.
+        </div>
+        <h1 className="text-4xl font-bold leading-tight mb-4 max-w-md" style={{color:'#1E1B4B',fontFamily:'Georgia,serif',lineHeight:'1.2'}}>
+          Both sides show interest.<br/>Before the first call.
+        </h1>
+        <p className="text-base leading-relaxed mb-8 max-w-sm" style={{color:'#6B7280'}}>
+          Naggare is a mutual-match hiring platform. Candidates express interest. Recruiters pursue. A conversation only starts when both sides are ready.
         </p>
-      </div>
+        <div className="flex flex-col gap-3 w-full max-w-xs">
+          <button className="btn-primary text-base py-4" onClick={() => router.push('/signup?type=candidate')}>
+            I&apos;m looking for a job →
+          </button>
+          <button className="btn-green text-base py-4" onClick={() => router.push('/signup?type=recruiter')}>
+            I&apos;m hiring →
+          </button>
+        </div>
+        <p className="text-xs mt-4" style={{color:'#9CA3AF'}}>Free for candidates. Always.</p>
+      </section>
 
-      <p className="text-lg mb-12 max-w-sm leading-relaxed italic" style={{color:'#374151',fontFamily:'Raleway,sans-serif',fontWeight:400}}>
-        "Persona. Craft. Learnability. Attitude.<br/>Visible before the first call."
-      </p>
+      {/* THE PROBLEM */}
+      <section className="px-6 py-14 max-w-lg mx-auto w-full">
+        <p className="text-xs font-bold uppercase tracking-widest mb-6 text-center" style={{color:'#4F46E5'}}>Sound familiar?</p>
+        <div className="flex flex-col gap-4">
+          {[
+            { emoji: '😔', text: 'You applied to 40 jobs. Heard back from 3.' },
+            { emoji: '📭', text: 'Your LinkedIn is full of cold InMails from recruiters who never read your profile.' },
+            { emoji: '🕳️', text: 'You had a great first call. Then silence. No feedback. Just a black hole.' },
+            { emoji: '🤷', text: 'You interviewed for a role that didn't match what was discussed.' },
+          ].map((item, i) => (
+            <div key={i} className="flex items-start gap-3 p-4 rounded-2xl" style={{background:'#F9FAFB',border:'1px solid #F3F4F6'}}>
+              <span className="text-xl flex-shrink-0">{item.emoji}</span>
+              <p className="text-sm leading-relaxed" style={{color:'#374151'}}>{item.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-      <div className="w-full max-w-sm flex flex-col gap-3">
-        <button className="btn-primary text-lg py-5" onClick={() => router.push('/signup?type=candidate')}>
-          👤 I'm a Candidate
-        </button>
-        <button className="btn-green text-base py-4" onClick={() => router.push('/signup?type=recruiter')}>
-          🤝 I'm a Recruiter / TA
-        </button>
-        <div className="h-px my-1" style={{background:'#E5E7EB'}}></div>
-        <button className="btn-outline text-sm py-3" onClick={() => router.push('/signin')}>
-          Already on Naggare? Sign in →
-        </button>
-      </div>
+      {/* HOW IT WORKS */}
+      <section className="px-6 py-14 max-w-lg mx-auto w-full" style={{background:'#F5F3FF',borderRadius:'24px',margin:'0 auto 40px',maxWidth:'480px'}}>
+        <p className="text-xs font-bold uppercase tracking-widest mb-2 text-center" style={{color:'#4F46E5'}}>How Naggare works</p>
+        <h2 className="text-2xl font-bold text-center mb-8" style={{color:'#1E1B4B',fontFamily:'Georgia,serif'}}>Mutual interest. Before hello.</h2>
+        <div className="flex flex-col gap-6">
+          {[
+            { step: '01', title: 'Build your profile', desc: 'Candidates and recruiters both build rich profiles — not just a CV or a job spec. Persona, philosophy, what you're really looking for.' },
+            { step: '02', title: 'Browse and signal', desc: 'Candidates swipe on JDs. Recruiters browse candidates. Both sides signal interest independently — no cold outreach.' },
+            { step: '03', title: 'Mutual match unlocks chat', desc: 'Only when both sides have shown interest does a conversation open. No more black holes. No more spam.' },
+            { step: '04', title: 'Hire with context', desc: 'By the time you speak, you already know each other. The first call is a real conversation, not a screening.' },
+          ].map((item, i) => (
+            <div key={i} className="flex gap-4 items-start">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-xs font-bold text-white"
+                style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
+                {item.step}
+              </div>
+              <div>
+                <p className="font-bold text-sm mb-1" style={{color:'#1E1B4B'}}>{item.title}</p>
+                <p className="text-sm leading-relaxed" style={{color:'#6B7280'}}>{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* FOR CANDIDATES / RECRUITERS */}
+      <section className="px-6 py-14 max-w-lg mx-auto w-full">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-5 rounded-2xl" style={{background:'#EEF2FF',border:'1px solid #C7D2FE'}}>
+            <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{color:'#4F46E5'}}>For Candidates</p>
+            <ul className="flex flex-col gap-2">
+              {['No more black holes','Your profile speaks before you do','Only talk to recruiters who are serious','Free. Always.'].map((t,i) => (
+                <li key={i} className="flex items-start gap-2 text-xs" style={{color:'#374151'}}>
+                  <span style={{color:'#4F46E5',flexShrink:0}}>✓</span>{t}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="p-5 rounded-2xl" style={{background:'#F0FDF4',border:'1px solid #BBF7D0'}}>
+            <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{color:'#15803D'}}>For Recruiters</p>
+            <ul className="flex flex-col gap-2">
+              {['Only engage with interested candidates','Rich profiles before the first call','No cold outreach needed','₹2,000/month per seat'].map((t,i) => (
+                <li key={i} className="flex items-start gap-2 text-xs" style={{color:'#374151'}}>
+                  <span style={{color:'#15803D',flexShrink:0}}>✓</span>{t}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* FOUNDER NOTE */}
+      <section className="px-6 py-10 max-w-lg mx-auto w-full">
+        <div className="p-6 rounded-3xl" style={{background:'linear-gradient(160deg,#1E1B4B,#312E81)'}}>
+          <p className="text-sm leading-relaxed italic mb-4" style={{color:'#C7D2FE'}}>
+            &ldquo;22 years in Talent Acquisition taught me one thing — the best hires happen when both sides are honest about what they want. Naggare is built on that belief.&rdquo;
+          </p>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+              style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
+              RA
+            </div>
+            <div>
+              <p className="text-sm font-bold text-white">Rajnish Alexander</p>
+              <p className="text-xs" style={{color:'#A5B4FC'}}>Founder, Naggare · 22 years TA</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FINAL CTA */}
+      <section className="px-6 py-14 flex flex-col items-center text-center" style={{background:'linear-gradient(160deg,#4F46E5,#7C3AED)'}}>
+        <h2 className="text-2xl font-bold text-white mb-2" style={{fontFamily:'Georgia,serif'}}>Ready to hire differently?</h2>
+        <p className="text-sm mb-8" style={{color:'#C7D2FE'}}>Join candidates and recruiters who believe hiring can be better.</p>
+        <div className="flex flex-col gap-3 w-full max-w-xs">
+          <button className="py-4 rounded-full text-sm font-bold text-indigo-700 bg-white hover:bg-indigo-50 transition-colors"
+            onClick={() => router.push('/signup?type=candidate')}>
+            Join as Candidate →
+          </button>
+          <button className="py-4 rounded-full text-sm font-bold border-2 border-white text-white hover:bg-white hover:text-indigo-700 transition-colors"
+            onClick={() => router.push('/signup?type=recruiter')}>
+            Join as Recruiter / TA →
+          </button>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="px-6 py-6 flex items-center justify-between border-t border-gray-100">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
+            <span className="text-xs font-bold text-white" style={{fontFamily:'Georgia,serif'}}>N</span>
+          </div>
+          <span className="text-xs font-semibold" style={{color:'#1E1B4B',fontFamily:'Georgia,serif'}}>Naggare</span>
+        </div>
+        <p className="text-xs" style={{color:'#9CA3AF'}}>© 2025 Whiteglove Labs. Hyderabad.</p>
+      </footer>
+
     </div>
   )
 }
