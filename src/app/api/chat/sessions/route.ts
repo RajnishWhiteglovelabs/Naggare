@@ -5,33 +5,45 @@ function admin() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
 }
 
-// GET — fetch all sessions for a user
 export async function GET(req: NextRequest) {
   try {
     const email = req.nextUrl.searchParams.get('email')
     if (!email) return NextResponse.json({ error: 'Missing email' }, { status: 400 })
 
     const db = admin()
-    const { data, error } = await db
+    const { data: sessions, error } = await db
       .from('chat_sessions')
-      .select(`*, messages(id, sender_email, sender_role, content, read_at, created_at)`)
-      .or(`candidate_email.eq.${email},recruiter_email.eq.${email}`)
+      .select('*, messages(id, sender_email, sender_role, content, read_at, created_at)')
+      .or()
       .order('updated_at', { ascending: false })
 
     if (error) throw error
-    return NextResponse.json(data)
+
+    // Enrich with recruiter name and JD title
+    const enriched = await Promise.all((sessions || []).map(async (s: Record<string, unknown>) => {
+      const [recruiterRes, jdRes] = await Promise.all([
+        db.from('recruiters').select('name, photo_url').eq('email', s.recruiter_email).maybeSingle(),
+        s.jd_id ? db.from('jds').select('title').eq('id', s.jd_id).maybeSingle() : Promise.resolve({ data: null })
+      ])
+      return {
+        ...s,
+        recruiter_name: recruiterRes.data?.name || s.recruiter_email,
+        recruiter_photo: recruiterRes.data?.photo_url || null,
+        jd_title: jdRes.data?.title || 'Role'
+      }
+    }))
+
+    return NextResponse.json(enriched)
   } catch (e: unknown) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 })
   }
 }
 
-// POST — create a new session + opening message
 export async function POST(req: NextRequest) {
   try {
     const { candidate_email, recruiter_email, jd_id, initiated_by, message } = await req.json()
     const db = admin()
 
-    // Check if session already exists
     const { data: existing } = await db
       .from('chat_sessions')
       .select('id, status')
@@ -53,11 +65,10 @@ export async function POST(req: NextRequest) {
 
     if (sErr) throw sErr
 
-    const sender_role = initiated_by
     const sender_email = initiated_by === 'candidate' ? candidate_email : recruiter_email
 
     const { error: mErr } = await db.from('messages').insert({
-      session_id: session.id, sender_email, sender_role, content: message
+      session_id: session.id, sender_email, sender_role: initiated_by, content: message
     })
     if (mErr) throw mErr
 
@@ -67,7 +78,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// PATCH — extend timer or update status
 export async function PATCH(req: NextRequest) {
   try {
     const { session_id, action } = await req.json()
