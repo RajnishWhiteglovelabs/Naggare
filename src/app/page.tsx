@@ -85,10 +85,10 @@ export default function Landing() {
         <p className="text-xs font-bold uppercase tracking-widest mb-6 text-center" style={{color:'#4F46E5'}}>Sound familiar?</p>
         <div className="flex flex-col gap-4">
           {[
-            { emoji: '😔', text: 'You applied to 40 jobs. Heard back from 3.' },
-            { emoji: '📭', text: 'Your LinkedIn is full of cold InMails from recruiters who never read your profile.' },
-            { emoji: '🕳️', text: 'You had a great first call. Then silence. No feedback. Just a black hole.' },
-            { emoji: '🤷', text: 'You interviewed for a role that didn&apos;t match what was discussed.' },
+            { emoji: '😔', text: 'You spent 2 hours on an application form that asked for your resume — then made you type it all out again.' },
+            { emoji: '💸', text: 'You paid a premium for a resume builder. Got 2 views. Both were bots.' },
+            { emoji: '🕳️', text: 'You put your heart into the process. The recruiter never even read your profile.' },
+            { emoji: '✨', text: 'Your profile is more than a resume. But no one ever gave you the space to show it. Until now.' },
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-3 p-4 rounded-2xl" style={{background:'#F9FAFB',border:'1px solid #F3F4F6'}}>
               <span className="text-xl flex-shrink-0">{item.emoji}</span>
