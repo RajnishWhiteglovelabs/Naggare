@@ -175,24 +175,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* FOUNDER NOTE */}
-      <section className="px-6 py-10 max-w-lg mx-auto w-full">
-        <div className="p-6 rounded-3xl" style={{background:'linear-gradient(160deg,#1E1B4B,#312E81)'}}>
-          <p className="text-sm leading-relaxed italic mb-4" style={{color:'#C7D2FE'}}>
-            &ldquo;22 years in Talent Acquisition taught me one thing — the best hires happen when both sides are honest about what they want. Naggare is built on that belief.&rdquo;
-          </p>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
-              style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
-              RA
-            </div>
-            <div>
-              <p className="text-sm font-bold text-white">Rajnish Alexander</p>
-              <p className="text-xs" style={{color:'#A5B4FC'}}>Founder, Naggare · 22 years TA</p>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* FINAL CTA */}
       <section className="px-6 py-14 flex flex-col items-center text-center" style={{background:'linear-gradient(160deg,#4F46E5,#7C3AED)'}}>
