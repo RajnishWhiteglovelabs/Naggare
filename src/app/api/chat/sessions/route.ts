@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
       ])
       return {
         ...s,
-        recruiter_name: recruiterRes.data?.name || s.recruiter_email,
+        recruiter_name: recruiterRes.data?.name || (s as Record<string,unknown>).recruiter_name as string || s.recruiter_email,
         recruiter_photo: recruiterRes.data?.photo_url || null,
         jd_title: jdRes.data?.title || 'Role'
       }
