@@ -104,7 +104,6 @@ export default function Landing() {
             I&apos;m hiring →
           </button>
         </div>
-        <p className="text-xs mt-4" style={{color:'#9CA3AF'}}>Free for candidates. Always.</p>
       </section>
 
       {/* THE PROBLEM */}
