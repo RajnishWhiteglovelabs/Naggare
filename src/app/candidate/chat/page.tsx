@@ -40,6 +40,7 @@ function CandidateChatInner() {
 
   const [email, setEmail] = useState('')
   const [session, setSession] = useState<Session | null>(null)
+  const [recruiterPhoto, setRecruiterPhoto] = useState<string|null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [selectedTemplate, setSelectedTemplate] = useState(0)
   const [messageText, setMessageText] = useState('')
@@ -68,6 +69,10 @@ function CandidateChatInner() {
     if (existing) {
       setSession(existing)
       loadMessages(existing.id, userEmail)
+      // Fetch recruiter photo
+      supabase.from('recruiters').select('photo_url').eq('email', recruiter_email).maybeSingle().then(({ data }) => {
+        if (data?.photo_url) setRecruiterPhoto(data.photo_url)
+      })
     }
     setLoading(false)
 
@@ -232,9 +237,11 @@ function CandidateChatInner() {
         <button onClick={() => router.back()} className="text-white opacity-70 hover:opacity-100">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
-        <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0" style={{background:'rgba(255,255,255,0.2)',color:'white'}}>
-          {recruiter_name.split(' ').map((n: string) => n[0]).join('').slice(0,2).toUpperCase()}
-        </div>
+        {recruiterPhoto
+          ? <img src={recruiterPhoto} className="w-9 h-9 rounded-full object-cover flex-shrink-0" alt={recruiter_name}/>
+          : <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0" style={{background:'rgba(255,255,255,0.2)',color:'white'}}>
+              {recruiter_name.split(' ').map((n: string) => n[0]).join('').slice(0,2).toUpperCase()}
+            </div>}
         <div className="flex-1 min-w-0">
           <p className="text-white font-semibold text-sm truncate">{recruiter_name}</p>
           <p className="text-xs truncate" style={{color:'rgba(255,255,255,0.7)'}}>{jd_title}</p>
