@@ -281,8 +281,6 @@ export default function RecruiterHome() {
                   </div>
                 )}
               </div>
-
-              </div>
             </div>
           </div>
         )}
