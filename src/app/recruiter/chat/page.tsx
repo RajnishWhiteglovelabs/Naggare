@@ -16,6 +16,10 @@ interface Message {
 interface Session {
   id: string
   candidate_email: string
+      // Fetch candidate photo
+      supabase.from('candidates').select('photo_url').eq('email', candidateEmail || candidate_email || '').maybeSingle().then(({ data }) => {
+        if (data?.photo_url) setCandidatePhoto(data.photo_url)
+      })
   recruiter_email: string
   jd_id: string
   status: string
@@ -38,6 +42,7 @@ function RecruiterChatInner() {
 
   const [email, setEmail] = useState('')
   const [session, setSession] = useState<Session | null>(null)
+  const [candidatePhoto, setCandidatePhoto] = useState<string|null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [aiDraft, setAiDraft] = useState('')
   const [inmail, setInmail] = useState('')
@@ -214,9 +219,11 @@ function RecruiterChatInner() {
         <button onClick={() => router.back()} className="text-white opacity-70 hover:opacity-100">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
-        <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0" style={{background:'rgba(255,255,255,0.2)',color:'white'}}>
-          {candidateInitials}
-        </div>
+        {candidatePhoto
+          ? <img src={candidatePhoto} className="w-9 h-9 rounded-full object-cover flex-shrink-0" alt={candidateInitials}/>
+          : <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0" style={{background:'rgba(255,255,255,0.2)',color:'white'}}>
+              {candidateInitials}
+            </div>}
         <div className="flex-1 min-w-0">
           <p className="text-white font-semibold text-sm truncate">{candidate_name}</p>
           <p className="text-xs truncate" style={{color:'rgba(255,255,255,0.7)'}}>{candidate_title}{candidate_company ? ` · ${candidate_company}` : ''}</p>
