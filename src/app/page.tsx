@@ -57,6 +57,33 @@ export default function Landing() {
         </button>
       </nav>
 
+      {/* SCROLLING FOUNDER STRIP */}
+      <div className="overflow-hidden py-2.5 border-b border-indigo-100" style={{background:'#EEF2FF'}}>
+        <style>{`
+          @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: marquee 28s linear infinite;
+          }
+          .marquee-track:hover { animation-play-state: paused; }
+        `}</style>
+        <div className="marquee-track">
+          {[0,1].map(copy => (
+            <div key={copy} className="flex items-center gap-8 px-6" style={{whiteSpace:'nowrap'}}>
+              <span className="text-xs font-semibold" style={{color:'#4F46E5'}}>
+                ✦ &ldquo;22 years in Talent Acquisition taught me one thing — the best hires happen when both sides are honest about what they want. Naggare is built on that belief.&rdquo;
+              </span>
+              <span className="text-xs font-bold" style={{color:'#7C3AED'}}>— Rajnish Alexander, Founder · 22 years TA</span>
+              <span className="text-xs" style={{color:'#C7D2FE'}}>✦</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* HERO */}
       <section className="flex flex-col items-center text-center px-6 pt-16 pb-12" style={{background:'linear-gradient(160deg,#EEF2FF 0%,#F5F3FF 50%,#ffffff 100%)'}}>
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 text-xs font-semibold tracking-wider uppercase"
