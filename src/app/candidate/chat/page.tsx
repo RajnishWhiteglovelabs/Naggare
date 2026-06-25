@@ -315,7 +315,7 @@ function CandidateChatInner() {
       )}
 
       {/* Active chat */}
-      {isActive && session && (
+      {session && session.status !== 'expired' && session.status !== 'pending' || (session && isActive) ? (
         <div className="flex-1 flex flex-col overflow-hidden">
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {messages.map((msg) => {
