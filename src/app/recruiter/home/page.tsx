@@ -9,7 +9,7 @@ export default function RecruiterHome() {
   const [candidates, setCandidates] = useState<any[]>([])
   const [currentIdx, setCurrentIdx] = useState(0)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [view, setView] = useState<'home'|'browse'|'myjds'>('home')
+  const [view, setView] = useState<'home'|'browse'|'myjds'|'profile'>('home')
   const [myJds, setMyJds] = useState<any[]>([])
   const [expandedJd, setExpandedJd] = useState<string|null>(null)
   const [closingJd, setClosingJd] = useState<any|null>(null)
@@ -187,7 +187,7 @@ export default function RecruiterHome() {
               <h1 className="text-xl font-bold text-white text-center leading-snug mb-1" style={{fontFamily:'Georgia,serif'}}>Your candidates are waiting.</h1>
               <p className="text-sm text-center mb-6" style={{color:'#C7D2FE'}}>Find your next great hire.</p>
               <div className="grid grid-cols-3 gap-3">
-                <div onClick={()=>router.push('/recruiter/register?edit=true')} className="rounded-2xl p-3 cursor-pointer flex flex-col items-center gap-1 text-center" style={{background:'rgba(255,255,255,0.15)'}}>
+                <div onClick={()=>setView('profile')} className="rounded-2xl p-3 cursor-pointer flex flex-col items-center gap-1 text-center" style={{background:'rgba(255,255,255,0.15)'}}>
                   {recruiter?.photo_url
                     ? <img src={recruiter.photo_url} className="w-10 h-10 rounded-full object-cover mb-1" alt={recruiter.name}/>
                     : <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold mb-1" style={{background:'rgba(255,255,255,0.2)'}}>{initials}</div>}
@@ -281,6 +281,85 @@ export default function RecruiterHome() {
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+        )}
+
+
+        {/* PROFILE VIEW */}
+        {view === 'profile' && (
+          <div style={{maxWidth:'480px',margin:'0 auto'}}>
+            {/* Header */}
+            <div style={{background:'linear-gradient(160deg,#4F46E5,#7C3AED)'}} className="px-4 pt-4 pb-6">
+              <div className="flex items-center justify-between mb-4">
+                <button onClick={()=>setView('home')} className="text-white opacity-70 hover:opacity-100">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </button>
+                <p className="text-white font-semibold text-sm">My Profile</p>
+                <button onClick={()=>router.push('/recruiter/register?edit=true')}
+                  className="text-xs font-semibold px-3 py-1.5 rounded-full"
+                  style={{background:'rgba(255,255,255,0.2)',color:'white'}}>
+                  ✏️ Edit
+                </button>
+              </div>
+              {/* Photo + name */}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg mb-3 flex items-center justify-center text-white font-bold text-2xl"
+                  style={{background:'rgba(255,255,255,0.2)'}}>
+                  {recruiter?.photo_url
+                    ? <img src={recruiter.photo_url} className="w-full h-full object-cover" alt={recruiter.name}/>
+                    : <span>{initials}</span>}
+                </div>
+                <p className="text-xl font-bold text-white mb-0.5" style={{fontFamily:'Georgia,serif'}}>{recruiter.name}</p>
+                <p className="text-sm font-semibold" style={{color:'#C7D2FE'}}>{recruiter.title}</p>
+                <p className="text-xs mt-0.5" style={{color:'#A5B4FC'}}>{recruiter.company}</p>
+              </div>
+            </div>
+
+            {/* Profile body */}
+            <div className="px-4 py-4 flex flex-col gap-3">
+
+              {/* Hiring philosophy */}
+              {recruiter.looking_for && (
+                <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                  <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">My Hiring Philosophy</p>
+                  <p className="text-sm leading-relaxed text-gray-800">{recruiter.looking_for}</p>
+                </div>
+              )}
+
+              {/* Skills */}
+              {recruiter.skills?.length > 0 && (
+                <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                  <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Skills I hire for · {recruiter.skills.length}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {recruiter.skills.map((s:string) => <span key={s} className="tag">{s}</span>)}
+                  </div>
+                </div>
+              )}
+
+              {/* Prompts */}
+              {[recruiter.prompt_1_q, recruiter.prompt_2_q, recruiter.prompt_3_q].filter(Boolean).length > 0 && (
+                <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                  <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-3">In My Own Words</p>
+                  {[
+                    {q:recruiter.prompt_1_q, a:recruiter.prompt_1_a},
+                    {q:recruiter.prompt_2_q, a:recruiter.prompt_2_a},
+                    {q:recruiter.prompt_3_q, a:recruiter.prompt_3_a},
+                  ].filter(p=>p.q&&p.a).map((p,i)=>(
+                    <div key={i} className="mb-3 p-4 rounded-2xl" style={{background:'#EEF2FF',border:'0.5px solid #C7D2FE'}}>
+                      <p className="text-xs font-bold mb-2" style={{color:'#3730A3'}}>{p.q}</p>
+                      <p className="text-sm leading-relaxed text-gray-800">{p.a}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Edit CTA */}
+              <button onClick={()=>router.push('/recruiter/register?edit=true')}
+                className="w-full py-3 rounded-2xl text-sm font-semibold text-white"
+                style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
+                ✏️ Edit Profile
+              </button>
             </div>
           </div>
         )}
