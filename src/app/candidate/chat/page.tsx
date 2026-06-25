@@ -101,10 +101,10 @@ function CandidateChatInner() {
         schema: 'public',
         table: 'messages',
         filter: `session_id=eq.${session.id}`
-      }, (payload) => {
+      }, (payload: { new: Message }) => {
         setMessages(prev => {
           if (prev.find(m => m.id === payload.new.id)) return prev
-          return [...prev, payload.new as Message]
+          return [...prev, payload.new]
         })
         if (payload.new.sender_email !== email) {
           fetch('/api/chat/messages', {
@@ -120,7 +120,7 @@ function CandidateChatInner() {
         schema: 'public',
         table: 'chat_sessions',
         filter: `id=eq.${session.id}`
-      }, (payload) => {
+      }, (payload: { new: Partial<Session> }) => {
         setSession(prev => prev ? { ...prev, ...payload.new } : prev)
       })
       .subscribe()
