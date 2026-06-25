@@ -225,8 +225,8 @@ export default function RecruiterHome() {
 
             {/* Browse + My JDs quick actions */}
             <div className="grid grid-cols-2 gap-3 px-4 pb-4">
-              <button onClick={()=>setView('browse')} className="py-3 rounded-2xl text-sm font-semibold text-white" style={{background:'#15803D'}}>👥 Browse Candidates</button>
-              <button onClick={()=>setView('myjds')} className="py-3 rounded-2xl text-sm font-semibold" style={{background:'#F0FDF4',color:'#15803D',border:'1px solid #BBF7D0'}}>📁 My JDs</button>
+              <button onClick={()=>setView('browse')} className="py-3 rounded-2xl text-sm font-semibold text-white" style={{background:'#4F46E5'}}>👥 Browse Candidates</button>
+              <button onClick={()=>setView('myjds')} className="py-3 rounded-2xl text-sm font-semibold" style={{background:'#EEF2FF',color:'#4F46E5',border:'1px solid #C7D2FE'}}>📁 My JDs</button>
             </div>
 
             <div className="px-4 pb-5" style={{maxWidth:'420px',margin:'0 auto'}}>
