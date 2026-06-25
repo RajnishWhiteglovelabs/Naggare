@@ -92,14 +92,14 @@ function RecruiterInboxInner() {
   }
 
   const statusColor = (status: string) => {
-    if (status === 'active' || status === 'matched') return '#16A34A'
+    if (status === 'active' || status === 'matched') return '#4F46E5'
     if (status === 'expired') return '#9CA3AF'
     return '#D97706'
   }
 
   return (
     <div className="min-h-screen bg-white" style={{maxWidth:'480px',margin:'0 auto'}}>
-      <div style={{background:'#15803D'}} className="px-4 py-4 flex items-center gap-3">
+      <div style={{background:'#4F46E5'}} className="px-4 py-4 flex items-center gap-3">
         <button onClick={() => router.back()} className="text-white opacity-70 hover:opacity-100">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
@@ -143,7 +143,7 @@ function RecruiterInboxInner() {
                     <div className="flex items-center gap-2 flex-shrink-0">
                       {timeLeft && <span className="text-xs text-amber-600">{timeLeft}</span>}
                       {unread > 0 && (
-                        <span className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{background:'#15803D'}}>{unread}</span>
+                        <span className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{background:'#4F46E5'}}>{unread}</span>
                       )}
                     </div>
                   </div>
