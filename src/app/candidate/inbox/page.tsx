@@ -22,6 +22,7 @@ interface Session {
   messages: Message[]
   recruiter_name?: string
   jd_title?: string
+  recruiter_photo?: string
 }
 
 function CandidateInboxInner() {
@@ -117,10 +118,15 @@ function CandidateInboxInner() {
             return (
               <div key={session.id} onClick={() => openChat(session)}
                 className="flex items-center gap-3 px-4 py-4 cursor-pointer hover:bg-gray-50 transition-colors">
-                <div className="w-11 h-11 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0"
-                  style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
-                  {initials}
-                </div>
+                {session.recruiter_photo ? (
+                  <img src={session.recruiter_photo} alt={initials}
+                    className="w-11 h-11 rounded-full object-cover flex-shrink-0" />
+                ) : (
+                  <div className="w-11 h-11 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0"
+                    style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
+                    {initials}
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-0.5">
                     <p className="font-semibold text-sm text-gray-900 truncate">{session.recruiter_name || session.recruiter_email}</p>
