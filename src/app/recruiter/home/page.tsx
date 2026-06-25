@@ -241,19 +241,29 @@ export default function RecruiterHome() {
                 )}
               </div>
 
-              <button className="btn-primary py-3 mb-3" onClick={()=>setView('browse')}>
-                👥 Browse Candidates
-              </button>
-              <button className="btn-primary py-3 mb-3" onClick={()=>router.push('/recruiter/jd-builder')}
-                style={{background:'linear-gradient(135deg,#7C3AED,#4F46E5)'}}>
-                📋 Post a JD
-              </button>
-              <button className="btn-outline py-3 mb-3 text-sm" onClick={()=>setView('myjds')}>
-                📁 My JDs
-              </button>
-              <button className="btn-outline py-3 text-sm" onClick={()=>router.push('/recruiter/register?edit=true')}>
-                ✏️ Edit profile
-              </button>
+              {/* Dashboard tiles */}
+              <div className="grid grid-cols-2 gap-3 mt-2 mb-4">
+                <div onClick={()=>setView('browse')} className="rounded-2xl p-4 cursor-pointer flex flex-col gap-2" style={{background:'#15803D'}}>
+                  <div className="text-2xl">👥</div>
+                  <div className="text-sm font-bold text-white">Browse</div>
+                  <div className="text-xs" style={{color:'rgba(255,255,255,0.7)'}}>Find candidates</div>
+                </div>
+                <div onClick={()=>router.push('/recruiter/jd-builder')} className="rounded-2xl p-4 cursor-pointer flex flex-col gap-2" style={{background:'#15803D'}}>
+                  <div className="text-2xl">📋</div>
+                  <div className="text-sm font-bold text-white">Post a JD</div>
+                  <div className="text-xs" style={{color:'rgba(255,255,255,0.7)'}}>Create a role</div>
+                </div>
+                <div onClick={()=>setView('myjds')} className="rounded-2xl p-4 cursor-pointer flex flex-col gap-2" style={{background:'rgba(21,128,61,0.12)', border:'0.5px solid rgba(21,128,61,0.25)'}}>
+                  <div className="text-2xl">📁</div>
+                  <div className="text-sm font-bold" style={{color:'#15803D'}}>My JDs</div>
+                  <div className="text-xs text-gray-500">Manage roles</div>
+                </div>
+                <div onClick={()=>router.push('/recruiter/inbox')} className="rounded-2xl p-4 cursor-pointer flex flex-col gap-2" style={{background:'rgba(21,128,61,0.12)', border:'0.5px solid rgba(21,128,61,0.25)'}}>
+                  <div className="text-2xl">💬</div>
+                  <div className="text-sm font-bold" style={{color:'#15803D'}}>Inbox</div>
+                  <div className="text-xs text-gray-500">Your chats</div>
+                </div>
+              </div>
             </div>
           </div>
         )}
