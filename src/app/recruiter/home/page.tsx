@@ -187,7 +187,7 @@ export default function RecruiterHome() {
               <h1 className="text-xl font-bold text-white text-center leading-snug mb-1" style={{fontFamily:'Georgia,serif'}}>Your candidates are waiting.</h1>
               <p className="text-sm text-center mb-6" style={{color:'#C7D2FE'}}>Find your next great hire.</p>
               <div className="grid grid-cols-3 gap-3">
-                <div onClick={()=>setView('browse')} className="rounded-2xl p-3 cursor-pointer flex flex-col items-center gap-1 text-center" style={{background:'rgba(255,255,255,0.15)'}}>
+                <div onClick={()=>router.push('/recruiter/register?edit=true')} className="rounded-2xl p-3 cursor-pointer flex flex-col items-center gap-1 text-center" style={{background:'rgba(255,255,255,0.15)'}}>
                   {recruiter?.photo_url
                     ? <img src={recruiter.photo_url} className="w-10 h-10 rounded-full object-cover mb-1" alt={recruiter.name}/>
                     : <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold mb-1" style={{background:'rgba(255,255,255,0.2)'}}>{initials}</div>}
@@ -209,7 +209,7 @@ export default function RecruiterHome() {
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-3 px-4 py-4">
-              <div className="bg-white rounded-2xl p-3 text-center shadow-sm border border-gray-100">
+              <div className="bg-white rounded-2xl p-3 text-center shadow-sm border border-gray-100 cursor-pointer" onClick={()=>setView('myjds')}>
                 <p className="text-xl font-bold" style={{color:'#4F46E5'}}>{myJds.filter((j:any)=>j.status==='open').length}</p>
                 <p className="text-xs text-gray-500 mt-0.5">JDs live</p>
               </div>
@@ -217,7 +217,7 @@ export default function RecruiterHome() {
                 <p className="text-xl font-bold text-green-600">{candidates.length}</p>
                 <p className="text-xs text-gray-500 mt-0.5">Candidates</p>
               </div>
-              <div className="bg-white rounded-2xl p-3 text-center shadow-sm border border-gray-100">
+              <div className="bg-white rounded-2xl p-3 text-center shadow-sm border border-gray-100 cursor-pointer" onClick={()=>showToast('Matches coming soon!', 'pursue')}>
                 <p className="text-xl font-bold" style={{color:'#7C3AED'}}>0</p>
                 <p className="text-xs text-gray-500 mt-0.5">Matches</p>
               </div>
