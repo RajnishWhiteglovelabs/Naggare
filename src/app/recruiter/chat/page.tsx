@@ -57,14 +57,14 @@ function RecruiterChatInner() {
       setEmail(s.user.email)
 
       if (session_id) {
-        loadMessages(s      // Fetch candidate photo
-      if (cEmail) {
-        supabase.from('candidates').select('photo_url').eq('email', cEmail).maybeSingle()
-          .then(({ data }: { data: { photo_url: string | null } | null }) => {
-            if (data?.photo_url) setCandidatePhoto(data.photo_url)
-          })
-      }
-ession_id, s.user.email)
+        loadMessages(session_id, s.user.email)
+        // Fetch candidate photo
+        if (candidate_email) {
+          supabase.from('candidates').select('photo_url').eq('email', candidate_email).maybeSingle()
+            .then(({ data }: { data: { photo_url: string | null } | null }) => {
+              if (data?.photo_url) setCandidatePhoto(data.photo_url)
+            })
+        }
         const res = await fetch(`/api/chat/sessions?email=${encodeURIComponent(s.user.email)}`)
         const sessions: Session[] = await res.json()
         const found = sessions.find(x => x.id === session_id)
