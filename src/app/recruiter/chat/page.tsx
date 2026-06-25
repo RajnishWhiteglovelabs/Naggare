@@ -16,10 +16,6 @@ interface Message {
 interface Session {
   id: string
   candidate_email: string
-      // Fetch candidate photo
-      supabase.from('candidates').select('photo_url').eq('email', candidateEmail || candidate_email || '').maybeSingle().then(({ data }) => {
-        if (data?.photo_url) setCandidatePhoto(data.photo_url)
-      })
   recruiter_email: string
   jd_id: string
   status: string
@@ -42,12 +38,12 @@ function RecruiterChatInner() {
 
   const [email, setEmail] = useState('')
   const [session, setSession] = useState<Session | null>(null)
-  const [candidatePhoto, setCandidatePhoto] = useState<string|null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [aiDraft, setAiDraft] = useState('')
   const [inmail, setInmail] = useState('')
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(true)
+  const [candidatePhoto, setCandidatePhoto] = useState<string|null>(null)
   const [sending, setSending] = useState(false)
   const [drafting, setDrafting] = useState(false)
   const [extending, setExtending] = useState(false)
@@ -61,7 +57,14 @@ function RecruiterChatInner() {
       setEmail(s.user.email)
 
       if (session_id) {
-        loadMessages(session_id, s.user.email)
+        loadMessages(s      // Fetch candidate photo
+      if (cEmail) {
+        supabase.from('candidates').select('photo_url').eq('email', cEmail).maybeSingle()
+          .then(({ data }: { data: { photo_url: string | null } | null }) => {
+            if (data?.photo_url) setCandidatePhoto(data.photo_url)
+          })
+      }
+ession_id, s.user.email)
         const res = await fetch(`/api/chat/sessions?email=${encodeURIComponent(s.user.email)}`)
         const sessions: Session[] = await res.json()
         const found = sessions.find(x => x.id === session_id)
