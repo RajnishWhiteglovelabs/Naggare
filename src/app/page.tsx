@@ -87,8 +87,7 @@ export default function Landing() {
           {[
             { emoji: '😔', text: 'You spent 2 hours on an application form that asked for your resume — then made you type it all out again.' },
             { emoji: '💸', text: 'You paid a premium for a resume builder. Got 2 views. Both were bots.' },
-            { emoji: '🕳️', text: 'You put your heart into the process. The recruiter never even read your profile.' },
-            { emoji: '✨', text: 'Your profile is more than a resume. But no one ever gave you the space to show it. Until now.' },
+            { emoji: '✨', text: 'Your profile is more than a resume — a persona, a craft, a fun colleague. But no one ever gave you the space to show it. Until now.' },
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-3 p-4 rounded-2xl" style={{background:'#F9FAFB',border:'1px solid #F3F4F6'}}>
               <span className="text-xl flex-shrink-0">{item.emoji}</span>
