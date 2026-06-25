@@ -14,26 +14,11 @@ export async function GET(req: NextRequest) {
     const { data: sessions, error } = await db
       .from('chat_sessions')
       .select('*, messages(id, sender_email, sender_role, content, read_at, created_at)')
-      .or()
+      .or(`candidate_email.eq.${email},recruiter_email.eq.${email}`)
       .order('updated_at', { ascending: false })
 
     if (error) throw error
-
-    // Enrich with recruiter name and JD title
-    const enriched = await Promise.all((sessions || []).map(async (s: Record<string, unknown>) => {
-      const [recruiterRes, jdRes] = await Promise.all([
-        db.from('recruiters').select('name, photo_url').eq('email', s.recruiter_email).maybeSingle(),
-        s.jd_id ? db.from('jds').select('title').eq('id', s.jd_id).maybeSingle() : Promise.resolve({ data: null })
-      ])
-      return {
-        ...s,
-        recruiter_name: recruiterRes.data?.name || (s as Record<string,unknown>).recruiter_name as string || s.recruiter_email,
-        recruiter_photo: recruiterRes.data?.photo_url || null,
-        jd_title: jdRes.data?.title || 'Role'
-      }
-    }))
-
-    return NextResponse.json(enriched)
+    return NextResponse.json(sessions || [])
   } catch (e: unknown) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 })
   }
@@ -41,7 +26,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { candidate_email, recruiter_email, jd_id, initiated_by, message } = await req.json()
+    const { candidate_email, recruiter_email, jd_id, initiated_by, message, recruiter_name, jd_title } = await req.json()
     const db = admin()
 
     const { data: existing } = await db
@@ -59,7 +44,12 @@ export async function POST(req: NextRequest) {
 
     const { data: session, error: sErr } = await db
       .from('chat_sessions')
-      .insert({ candidate_email, recruiter_email, jd_id, initiated_by, expires_at, status: 'pending' })
+      .insert({
+        candidate_email, recruiter_email, jd_id, initiated_by, expires_at,
+        status: 'pending',
+        recruiter_name: recruiter_name || null,
+        jd_title: jd_title || null
+      })
       .select()
       .single()
 
