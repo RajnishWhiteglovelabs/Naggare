@@ -168,7 +168,9 @@ function CandidateChatInner() {
         recruiter_email,
         jd_id,
         initiated_by: 'candidate',
-        message: messageText.trim()
+        message: messageText.trim(),
+        recruiter_name,
+        jd_title
       })
     })
     const data = await res.json()
