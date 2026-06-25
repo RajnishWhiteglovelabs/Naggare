@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect, useRef, Suspense } from 'react'
-import type { Session } from '@supabase/supabase-js'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
 
@@ -53,7 +52,7 @@ function CandidateChatInner() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session: s } }: { data: { session: Session | null } }) => {
+    supabase.auth.getSession().then(({ data }: { data: { session: { user: { email: string } } | null } }) => { const s = data.session
       if (!s?.user?.email) { router.push('/signin'); return }
       setEmail(s.user.email)
       loadSession(s.user.email)
