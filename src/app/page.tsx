@@ -112,7 +112,7 @@ export default function Landing() {
         <p className="text-xs font-bold uppercase tracking-widest mb-6 text-center" style={{color:'#4F46E5'}}>Sound familiar?</p>
         <div className="flex flex-col gap-4">
           {[
-            { emoji: '😔', text: 'You spent 2 hours on an application form that asked for your resume — then made you type it all out again.' },
+            { emoji: '😔', text: 'You spent hours on an application form that asked for your resume — then made you type it all out again. Here you build once, in under 5 minutes.' },
             { emoji: '💸', text: 'You paid a premium for a resume builder. Got 2 views. Both were bots.' },
             { emoji: '✨', text: 'Your profile is more than a resume — a persona, a craft, a fun colleague. But no one ever gave you the space to show it. Until now.' },
           ].map((item, i) => (
