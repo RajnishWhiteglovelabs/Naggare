@@ -181,14 +181,55 @@ export default function RecruiterHome() {
         {/* HOME VIEW - Recruiter's own profile */}
         {view === 'home' && (
           <div>
-            <div className="flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-100 sticky top-14 z-10">
-              <h2 className="text-base font-bold">My Profile</h2>
-              <button className="ml-auto text-xs font-semibold px-3 py-1.5 rounded-full"
-                style={{background:'#EEF2FF',color:'#4F46E5',border:'0.5px solid #C7D2FE'}}
-                onClick={()=>showToast('Share naggare.com 🔗', 'pursue')}>Share 🔗</button>
+            {/* Indigo hero banner with tiles — matches candidate home */}
+            <div style={{background:'linear-gradient(160deg,#4F46E5,#7C3AED)'}} className="px-4 pt-6 pb-8">
+              <p className="text-xs font-semibold tracking-widest mb-2 uppercase text-center" style={{color:'#A5B4FC'}}>Good to see you, {recruiter.name?.split(' ')[0]}</p>
+              <h1 className="text-xl font-bold text-white text-center leading-snug mb-1" style={{fontFamily:'Georgia,serif'}}>Your candidates are waiting.</h1>
+              <p className="text-sm text-center mb-6" style={{color:'#C7D2FE'}}>Find your next great hire.</p>
+              <div className="grid grid-cols-3 gap-3">
+                <div onClick={()=>setView('browse')} className="rounded-2xl p-3 cursor-pointer flex flex-col items-center gap-1 text-center" style={{background:'rgba(255,255,255,0.15)'}}>
+                  {recruiter?.photo_url
+                    ? <img src={recruiter.photo_url} className="w-10 h-10 rounded-full object-cover mb-1" alt={recruiter.name}/>
+                    : <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold mb-1" style={{background:'rgba(255,255,255,0.2)'}}>{initials}</div>}
+                  <div className="text-xs font-bold text-white">My Profile</div>
+                  <div className="text-xs" style={{color:'rgba(255,255,255,0.7)'}}>View & edit</div>
+                </div>
+                <div onClick={()=>router.push('/recruiter/jd-builder')} className="rounded-2xl p-3 cursor-pointer flex flex-col items-center gap-1 text-center" style={{background:'rgba(255,255,255,0.15)'}}>
+                  <div className="text-2xl mb-1">📋</div>
+                  <div className="text-xs font-bold text-white">Post a JD</div>
+                  <div className="text-xs" style={{color:'rgba(255,255,255,0.7)'}}>Create a role</div>
+                </div>
+                <div onClick={()=>router.push('/recruiter/inbox')} className="rounded-2xl p-3 cursor-pointer flex flex-col items-center gap-1 text-center" style={{background:'rgba(255,255,255,0.15)'}}>
+                  <div className="text-2xl mb-1">💬</div>
+                  <div className="text-xs font-bold text-white">Inbox</div>
+                  <div className="text-xs" style={{color:'rgba(255,255,255,0.7)'}}>Your chats</div>
+                </div>
+              </div>
             </div>
 
-            <div className="px-4 py-5" style={{maxWidth:'420px',margin:'0 auto'}}>
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-3 px-4 py-4">
+              <div className="bg-white rounded-2xl p-3 text-center shadow-sm border border-gray-100">
+                <p className="text-xl font-bold" style={{color:'#4F46E5'}}>{myJds.filter((j:any)=>j.status==='open').length}</p>
+                <p className="text-xs text-gray-500 mt-0.5">JDs live</p>
+              </div>
+              <div className="bg-white rounded-2xl p-3 text-center shadow-sm border border-gray-100" onClick={()=>setView('browse')} style={{cursor:'pointer'}}>
+                <p className="text-xl font-bold text-green-600">{candidates.length}</p>
+                <p className="text-xs text-gray-500 mt-0.5">Candidates</p>
+              </div>
+              <div className="bg-white rounded-2xl p-3 text-center shadow-sm border border-gray-100">
+                <p className="text-xl font-bold" style={{color:'#7C3AED'}}>0</p>
+                <p className="text-xs text-gray-500 mt-0.5">Matches</p>
+              </div>
+            </div>
+
+            {/* Browse + My JDs quick actions */}
+            <div className="grid grid-cols-2 gap-3 px-4 pb-4">
+              <button onClick={()=>setView('browse')} className="py-3 rounded-2xl text-sm font-semibold text-white" style={{background:'#15803D'}}>👥 Browse Candidates</button>
+              <button onClick={()=>setView('myjds')} className="py-3 rounded-2xl text-sm font-semibold" style={{background:'#F0FDF4',color:'#15803D',border:'1px solid #BBF7D0'}}>📁 My JDs</button>
+            </div>
+
+            <div className="px-4 pb-5" style={{maxWidth:'420px',margin:'0 auto'}}>
               <div className="rounded-3xl overflow-hidden shadow-xl mb-4" style={{border:'1px solid #E0E7FF'}}>
 
                 {/* Hero */}
@@ -264,6 +305,7 @@ export default function RecruiterHome() {
                   <div className="text-xs text-gray-500">Your chats</div>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         )}
