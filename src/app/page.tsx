@@ -129,7 +129,7 @@ export default function Landing() {
           <div className="p-5 rounded-2xl" style={{background:'#EEF2FF',border:'1px solid #C7D2FE'}}>
             <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{color:'#4F46E5'}}>For Candidates</p>
             <ul className="flex flex-col gap-2">
-              {['No more black holes','Your profile speaks before you do','Only talk to recruiters who are serious','Free. Always.'].map((t,i) => (
+              {['No more black holes','High quality signals before the first call','Only talk to recruiters who are serious','Free. Always.'].map((t,i) => (
                 <li key={i} className="flex items-start gap-2 text-xs" style={{color:'#374151'}}>
                   <span style={{color:'#4F46E5',flexShrink:0}}>✓</span>{t}
                 </li>
@@ -139,7 +139,7 @@ export default function Landing() {
           <div className="p-5 rounded-2xl" style={{background:'#F0FDF4',border:'1px solid #BBF7D0'}}>
             <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{color:'#15803D'}}>For Recruiters</p>
             <ul className="flex flex-col gap-2">
-              {['Only engage with interested candidates','Rich profiles before the first call','No cold outreach needed','₹2,000/month per seat'].map((t,i) => (
+              {['Only engage with interested candidates','High quality signals before the first call','No cold outreach needed','₹2,000/month per seat'].map((t,i) => (
                 <li key={i} className="flex items-start gap-2 text-xs" style={{color:'#374151'}}>
                   <span style={{color:'#15803D',flexShrink:0}}>✓</span>{t}
                 </li>
