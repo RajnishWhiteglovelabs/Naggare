@@ -70,7 +70,7 @@ function CandidateChatInner() {
       setSession(existing)
       loadMessages(existing.id, userEmail)
       // Fetch recruiter photo
-      supabase.from('recruiters').select('photo_url').eq('email', recruiter_email).maybeSingle().then(({ data }) => {
+      supabase.from('recruiters').select('photo_url').eq('email', recruiter_email).maybeSingle().then(({ data }: { data: { photo_url: string | null } | null }) => {
         if (data?.photo_url) setRecruiterPhoto(data.photo_url)
       })
     }
