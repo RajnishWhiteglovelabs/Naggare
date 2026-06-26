@@ -299,7 +299,9 @@ export default function Home() {
                   )}
                   <div className="flex gap-2 p-4">
                     <button className="flex-1 py-3 rounded-full border border-gray-200 text-sm font-semibold text-gray-500" onClick={()=>{setSwipedLeft(prev=>new Set([...prev,jd.id]));showToast('Passed')}}>Not Interested</button>
-                    <button className="flex-1 py-3 rounded-full text-white text-sm font-semibold" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}} onClick={()=>{ setSwipedRight(prev=>new Set([...prev,jd.id])); const params = new URLSearchParams({ jd_id: jd.id, recruiter_email: jd.recruiter_email||'', jd_title: jd.title||'', recruiter_name: jd.recruiter_name||'' }); router.push('/candidate/chat?'+params.toString()) }}>Interested →</button>
+                    <button className="flex-1 py-3 rounded-full text-white text-sm font-semibold" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}} onClick={()=>{ setSwipedRight(prev=>new Set([...prev,jd.id]));
+                      fetch('/api/track/jd-interest', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ candidate_email: user?.email, jd_id: jd.id }) }).catch(()=>{});
+                      const params = new URLSearchParams({ jd_id: jd.id, recruiter_email: jd.recruiter_email||'', jd_title: jd.title||'', recruiter_name: jd.recruiter_name||'' }); router.push('/candidate/chat?'+params.toString()) }}>Interested →</button>
                   </div>
                 </div>
                 )
@@ -433,7 +435,9 @@ export default function Home() {
                   )}
                   <div className="flex gap-2 p-4">
                     <button className="flex-1 py-3 rounded-full border border-gray-200 text-sm font-semibold text-gray-500" onClick={()=>{setSwipedLeft(prev=>new Set([...prev,jd.id]));showToast('Passed')}}>Not Interested</button>
-                    <button className="flex-1 py-3 rounded-full text-white text-sm font-semibold" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}} onClick={()=>{ setSwipedRight(prev=>new Set([...prev,jd.id])); const params = new URLSearchParams({ jd_id: jd.id, recruiter_email: jd.recruiter_email||'', jd_title: jd.title||'', recruiter_name: jd.recruiter_name||'' }); router.push('/candidate/chat?'+params.toString()) }}>Interested →</button>
+                    <button className="flex-1 py-3 rounded-full text-white text-sm font-semibold" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}} onClick={()=>{ setSwipedRight(prev=>new Set([...prev,jd.id]));
+                      fetch('/api/track/jd-interest', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ candidate_email: user?.email, jd_id: jd.id }) }).catch(()=>{});
+                      const params = new URLSearchParams({ jd_id: jd.id, recruiter_email: jd.recruiter_email||'', jd_title: jd.title||'', recruiter_name: jd.recruiter_name||'' }); router.push('/candidate/chat?'+params.toString()) }}>Interested →</button>
                   </div>
                 </div>
                 )
