@@ -632,6 +632,27 @@ export default function RecruiterHome() {
                   </div>
                 )}
 
+                {/* Quick signals */}
+                {(candidate.notice_period || candidate.availability || candidate.work_preference) && (
+                  <div className="px-5 py-3 border-b border-gray-100 flex flex-wrap gap-2">
+                    {candidate.availability && (
+                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold" style={{background:'#EEF2FF',color:'#4F46E5'}}>
+                        {candidate.availability === 'Actively looking' ? '🟢' : '🟡'} {candidate.availability}
+                      </span>
+                    )}
+                    {candidate.notice_period && (
+                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold" style={{background:'#F0FDF4',color:'#15803D'}}>
+                        ⏱ {candidate.notice_period}
+                      </span>
+                    )}
+                    {candidate.work_preference && (
+                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold" style={{background:'#FFF7ED',color:'#C2410C'}}>
+                        🏠 {candidate.work_preference}
+                      </span>
+                    )}
+                  </div>
+                )}
+
                 {/* Skills */}
                 {candidate.skills?.length > 0 && (
                   <div className="px-5 py-4 border-b border-gray-100">
