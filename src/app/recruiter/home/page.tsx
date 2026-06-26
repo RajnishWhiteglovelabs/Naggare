@@ -15,6 +15,8 @@ export default function RecruiterHome() {
   const [filterNotice, setFilterNotice] = useState('')
   const [filterWork, setFilterWork] = useState('')
   const [filterCity, setFilterCity] = useState('')
+  const [filterCurrentCtc, setFilterCurrentCtc] = useState('')
+  const [filterExpectedCtc, setFilterExpectedCtc] = useState('')
   const [showFilters, setShowFilters] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [view, setView] = useState<'home'|'browse'|'myjds'|'profile'>('home')
@@ -58,7 +60,7 @@ export default function RecruiterHome() {
   }, [])
 
   // Filtered candidates
-  const activeFilterCount = [filterDomain, filterExp, filterAvailability, filterNotice, filterWork, filterCity].filter(Boolean).length
+  const activeFilterCount = [filterDomain, filterExp, filterAvailability, filterNotice, filterWork, filterCity, filterCurrentCtc, filterExpectedCtc].filter(Boolean).length
   const filteredCandidates = candidates.filter(cand => {
     const q = searchQuery.toLowerCase()
     const matchesSearch = !q ||
@@ -80,7 +82,23 @@ export default function RecruiterHome() {
     const matchesNotice = !filterNotice || (cand.notice_period || '') === filterNotice
     const matchesWork = !filterWork || (cand.work_preference || '') === filterWork
     const matchesCity = !filterCity || (cand.city || '').toLowerCase().includes(filterCity.toLowerCase())
-    return matchesSearch && matchesDomain && matchesExp && matchesAvailability && matchesNotice && matchesWork && matchesCity
+    const matchesCurrentCtc = !filterCurrentCtc || (() => {
+      const ctc = parseFloat(cand.current_ctc || '0')
+      if (filterCurrentCtc === '<10') return ctc < 10
+      if (filterCurrentCtc === '10-20') return ctc >= 10 && ctc <= 20
+      if (filterCurrentCtc === '20-35') return ctc > 20 && ctc <= 35
+      if (filterCurrentCtc === '35+') return ctc > 35
+      return true
+    })()
+    const matchesExpectedCtc = !filterExpectedCtc || (() => {
+      const ctc = parseFloat(cand.expected_ctc || '0')
+      if (filterExpectedCtc === '<10') return ctc < 10
+      if (filterExpectedCtc === '10-20') return ctc >= 10 && ctc <= 20
+      if (filterExpectedCtc === '20-35') return ctc > 20 && ctc <= 35
+      if (filterExpectedCtc === '35+') return ctc > 35
+      return true
+    })()
+    return matchesSearch && matchesDomain && matchesExp && matchesAvailability && matchesNotice && matchesWork && matchesCity && matchesCurrentCtc && matchesExpectedCtc
   })
 
   function showToast(msg: string, type: 'pass'|'pursue'|'buzzer') {
@@ -519,8 +537,36 @@ export default function RecruiterHome() {
                     />
                   </div>
 
+                  {/* Current CTC */}
+                  <div>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Current CTC</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[['','All'],['<10','<10 LPA'],['10-20','10–20 LPA'],['20-35','20–35 LPA'],['35+','35+ LPA']].map(([val,label]) => (
+                        <button key={val} onClick={() => { setFilterCurrentCtc(val); setCurrentIdx(0) }}
+                          className="px-3 py-1 rounded-full text-xs font-semibold border"
+                          style={{background: filterCurrentCtc===val?'#4F46E5':'#F9FAFB', color: filterCurrentCtc===val?'white':'#374151', borderColor: filterCurrentCtc===val?'#4F46E5':'#E5E7EB'}}>
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Expected CTC */}
+                  <div>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Expected CTC</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[['','All'],['<10','<10 LPA'],['10-20','10–20 LPA'],['20-35','20–35 LPA'],['35+','35+ LPA']].map(([val,label]) => (
+                        <button key={val} onClick={() => { setFilterExpectedCtc(val); setCurrentIdx(0) }}
+                          className="px-3 py-1 rounded-full text-xs font-semibold border"
+                          style={{background: filterExpectedCtc===val?'#4F46E5':'#F9FAFB', color: filterExpectedCtc===val?'white':'#374151', borderColor: filterExpectedCtc===val?'#4F46E5':'#E5E7EB'}}>
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   {activeFilterCount > 0 && (
-                    <button onClick={() => { setFilterDomain(''); setFilterExp(''); setFilterAvailability(''); setFilterNotice(''); setFilterWork(''); setFilterCity(''); setCurrentIdx(0) }}
+                    <button onClick={() => { setFilterDomain(''); setFilterExp(''); setFilterAvailability(''); setFilterNotice(''); setFilterWork(''); setFilterCity(''); setFilterCurrentCtc(''); setFilterExpectedCtc(''); setCurrentIdx(0) }}
                       className="text-xs text-red-500 font-semibold text-left">
                       ✕ Clear all filters ({activeFilterCount})
                     </button>
@@ -552,7 +598,7 @@ export default function RecruiterHome() {
             <div className="text-5xl mb-4">🔍</div>
             <h2 className="text-xl font-bold mb-2" style={{ color: '#1E1B4B', fontFamily: 'Georgia,serif' }}>No matches found</h2>
             <p className="text-sm text-gray-500 mb-6">Try adjusting your search or filters.</p>
-            <button className="btn-primary py-3 px-8 w-auto rounded-full" onClick={() => { setSearchQuery(''); setFilterDomain(''); setFilterExp(''); setFilterAvailability(''); setFilterNotice(''); setFilterWork(''); setFilterCity(''); setCurrentIdx(0) }}>Clear filters</button>
+            <button className="btn-primary py-3 px-8 w-auto rounded-full" onClick={() => { setSearchQuery(''); setFilterDomain(''); setFilterExp(''); setFilterAvailability(''); setFilterNotice(''); setFilterWork(''); setFilterCity(''); setFilterCurrentCtc(''); setFilterExpectedCtc(''); setCurrentIdx(0) }}>Clear filters</button>
           </div>
         )}
 
