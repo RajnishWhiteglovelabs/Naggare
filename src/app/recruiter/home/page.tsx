@@ -103,6 +103,17 @@ export default function RecruiterHome() {
     return matchesSearch && matchesDomain && matchesExp && matchesAvailability && matchesNotice && matchesWork && matchesCity && matchesCurrentCtc && matchesExpectedCtc
   })
 
+  // Track profile view when candidate card changes
+  useEffect(() => {
+    const candidate = filteredCandidates[currentIdx]
+    if (!candidate || !recruiter) return
+    fetch('/api/track/profile-view', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ recruiter_email: recruiter.email, candidate_email: candidate.email }),
+    }).catch(() => {})
+  }, [currentIdx])
+
   function showToast(msg: string, type: 'pass'|'pursue'|'buzzer') {
     setToast(msg)
     setToastType(type)
