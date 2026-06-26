@@ -155,7 +155,7 @@ export default function Home() {
             <div className="px-5 py-8 text-center text-white" style={{ background: 'linear-gradient(135deg,#1E1B4B,#312e81)' }}>
               <p className="text-xs font-semibold tracking-widest mb-2 uppercase" style={{ color: '#A5B4FC' }}>Good to see you, {firstName}</p>
               <h1 className="text-xl font-bold leading-snug mb-2" style={{ fontFamily: 'Georgia,serif' }}>Your profile is live.<br />Let the right roles find you.</h1>
-              <p className="text-sm mb-6" style={{ color: '#C7D2FE' }}>Swipe right on roles that excite you.</p>
+              <p className="text-sm mb-6" style={{ color: '#C7D2FE' }}>Tap on roles that excite you.</p>
               <div className="flex gap-3 justify-center max-w-xs mx-auto">
                 <div className="flex-1 p-3 rounded-2xl cursor-pointer border border-white/20 text-left" style={{ background: 'rgba(255,255,255,0.1)' }} onClick={() => setView('profile')}>
                   <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center text-white text-sm font-bold mb-1 flex-shrink-0" style={{ background: 'rgba(255,255,255,0.2)' }}>
