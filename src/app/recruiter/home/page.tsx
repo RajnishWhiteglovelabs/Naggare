@@ -19,6 +19,8 @@ export default function RecruiterHome() {
   const [filterCurrentCtcMax, setFilterCurrentCtcMax] = useState('')
   const [filterExpectedCtcMin, setFilterExpectedCtcMin] = useState('')
   const [filterExpectedCtcMax, setFilterExpectedCtcMax] = useState('')
+  const [filterCurrentCtcChip, setFilterCurrentCtcChip] = useState('')
+  const [filterExpectedCtcChip, setFilterExpectedCtcChip] = useState('')
   const [showFilters, setShowFilters] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [view, setView] = useState<'home'|'browse'|'myjds'|'profile'>('home')
@@ -540,14 +542,29 @@ export default function RecruiterHome() {
                   {/* Current CTC */}
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Current CTC (LPA)</p>
+                    <p className="text-xs text-gray-400 mb-2">Tap a range to quick-select, or type your own Min / Max below</p>
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {[['','All'],['0-10','<10'],['10-20','10–20'],['20-35','20–35'],['35-50','35–50'],['50-75','50–75'],['75-999','75+']].map(([val,label]) => (
+                        <button key={val} onClick={() => {
+                          setFilterCurrentCtcChip(val)
+                          if (val === '') { setFilterCurrentCtcMin(''); setFilterCurrentCtcMax('') }
+                          else { const [mn,mx] = val.split('-'); setFilterCurrentCtcMin(mn); setFilterCurrentCtcMax(mx === '999' ? '' : mx) }
+                          setCurrentIdx(0)
+                        }}
+                          className="px-3 py-1 rounded-full text-xs font-semibold border"
+                          style={{background: filterCurrentCtcChip===val?'#4F46E5':'#F9FAFB', color: filterCurrentCtcChip===val?'white':'#374151', borderColor: filterCurrentCtcChip===val?'#4F46E5':'#E5E7EB'}}>
+                          {label}
+                        </button>
+                      ))}
+                    </div>
                     <div className="flex items-center gap-2">
                       <input type="number" placeholder="Min" value={filterCurrentCtcMin}
-                        onChange={e => { setFilterCurrentCtcMin(e.target.value); setCurrentIdx(0) }}
+                        onChange={e => { setFilterCurrentCtcMin(e.target.value); setFilterCurrentCtcChip(''); setCurrentIdx(0) }}
                         className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none"
                         style={{color:'#1E1B4B'}}/>
                       <span className="text-xs text-gray-400">to</span>
                       <input type="number" placeholder="Max" value={filterCurrentCtcMax}
-                        onChange={e => { setFilterCurrentCtcMax(e.target.value); setCurrentIdx(0) }}
+                        onChange={e => { setFilterCurrentCtcMax(e.target.value); setFilterCurrentCtcChip(''); setCurrentIdx(0) }}
                         className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none"
                         style={{color:'#1E1B4B'}}/>
                     </div>
@@ -556,21 +573,36 @@ export default function RecruiterHome() {
                   {/* Expected CTC */}
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Expected CTC (LPA)</p>
+                    <p className="text-xs text-gray-400 mb-2">Tap a range to quick-select, or type your own Min / Max below</p>
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {[['','All'],['0-10','<10'],['10-20','10–20'],['20-35','20–35'],['35-50','35–50'],['50-75','50–75'],['75-999','75+']].map(([val,label]) => (
+                        <button key={val} onClick={() => {
+                          setFilterExpectedCtcChip(val)
+                          if (val === '') { setFilterExpectedCtcMin(''); setFilterExpectedCtcMax('') }
+                          else { const [mn,mx] = val.split('-'); setFilterExpectedCtcMin(mn); setFilterExpectedCtcMax(mx === '999' ? '' : mx) }
+                          setCurrentIdx(0)
+                        }}
+                          className="px-3 py-1 rounded-full text-xs font-semibold border"
+                          style={{background: filterExpectedCtcChip===val?'#4F46E5':'#F9FAFB', color: filterExpectedCtcChip===val?'white':'#374151', borderColor: filterExpectedCtcChip===val?'#4F46E5':'#E5E7EB'}}>
+                          {label}
+                        </button>
+                      ))}
+                    </div>
                     <div className="flex items-center gap-2">
                       <input type="number" placeholder="Min" value={filterExpectedCtcMin}
-                        onChange={e => { setFilterExpectedCtcMin(e.target.value); setCurrentIdx(0) }}
+                        onChange={e => { setFilterExpectedCtcMin(e.target.value); setFilterExpectedCtcChip(''); setCurrentIdx(0) }}
                         className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none"
                         style={{color:'#1E1B4B'}}/>
                       <span className="text-xs text-gray-400">to</span>
                       <input type="number" placeholder="Max" value={filterExpectedCtcMax}
-                        onChange={e => { setFilterExpectedCtcMax(e.target.value); setCurrentIdx(0) }}
+                        onChange={e => { setFilterExpectedCtcMax(e.target.value); setFilterExpectedCtcChip(''); setCurrentIdx(0) }}
                         className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none"
                         style={{color:'#1E1B4B'}}/>
                     </div>
                   </div>
 
                   {activeFilterCount > 0 && (
-                    <button onClick={() => { setFilterDomain(''); setFilterExp(''); setFilterAvailability(''); setFilterNotice(''); setFilterWork(''); setFilterCity(''); setFilterCurrentCtcMin(''); setFilterCurrentCtcMax(''); setFilterExpectedCtcMin(''); setFilterExpectedCtcMax(''); setCurrentIdx(0) }}
+                    <button onClick={() => { setFilterDomain(''); setFilterExp(''); setFilterAvailability(''); setFilterNotice(''); setFilterWork(''); setFilterCity(''); setFilterCurrentCtcMin(''); setFilterCurrentCtcMax(''); setFilterCurrentCtcChip(''); setFilterExpectedCtcMin(''); setFilterExpectedCtcMax(''); setFilterExpectedCtcChip(''); setCurrentIdx(0) }}
                       className="text-xs text-red-500 font-semibold text-left">
                       ✕ Clear all filters ({activeFilterCount})
                     </button>
@@ -602,7 +634,7 @@ export default function RecruiterHome() {
             <div className="text-5xl mb-4">🔍</div>
             <h2 className="text-xl font-bold mb-2" style={{ color: '#1E1B4B', fontFamily: 'Georgia,serif' }}>No matches found</h2>
             <p className="text-sm text-gray-500 mb-6">Try adjusting your search or filters.</p>
-            <button className="btn-primary py-3 px-8 w-auto rounded-full" onClick={() => { setSearchQuery(''); setFilterDomain(''); setFilterExp(''); setFilterAvailability(''); setFilterNotice(''); setFilterWork(''); setFilterCity(''); setFilterCurrentCtcMin(''); setFilterCurrentCtcMax(''); setFilterExpectedCtcMin(''); setFilterExpectedCtcMax(''); setCurrentIdx(0) }}>Clear filters</button>
+            <button className="btn-primary py-3 px-8 w-auto rounded-full" onClick={() => { setSearchQuery(''); setFilterDomain(''); setFilterExp(''); setFilterAvailability(''); setFilterNotice(''); setFilterWork(''); setFilterCity(''); setFilterCurrentCtcMin(''); setFilterCurrentCtcMax(''); setFilterCurrentCtcChip(''); setFilterExpectedCtcMin(''); setFilterExpectedCtcMax(''); setFilterExpectedCtcChip(''); setCurrentIdx(0) }}>Clear filters</button>
           </div>
         )}
 
