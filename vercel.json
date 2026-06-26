@@ -1,0 +1,20 @@
+{
+  "crons": [
+    {
+      "path": "/api/digest/monday",
+      "schedule": "0 6 * * 1"
+    },
+    {
+      "path": "/api/digest/wednesday",
+      "schedule": "0 6 * * 3"
+    },
+    {
+      "path": "/api/digest/friday",
+      "schedule": "30 10 * * 5"
+    },
+    {
+      "path": "/api/digest/saturday",
+      "schedule": "30 6 * * 6"
+    }
+  ]
+}
