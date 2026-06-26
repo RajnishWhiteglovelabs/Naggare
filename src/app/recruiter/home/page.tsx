@@ -347,6 +347,10 @@ export default function RecruiterHome() {
                 <p className="text-xl font-bold text-white mb-0.5" style={{fontFamily:'Georgia,serif'}}>{recruiter.name}</p>
                 <p className="text-sm font-semibold" style={{color:'#C7D2FE'}}>{recruiter.title}</p>
                 <p className="text-xs mt-0.5" style={{color:'#A5B4FC'}}>{recruiter.company}</p>
+                <div className="flex items-center gap-3 mt-2">
+                  {recruiter.email && <p className="text-xs" style={{color:'rgba(255,255,255,0.6)'}}>{recruiter.email}</p>}
+                  {recruiter.mobile && <p className="text-xs" style={{color:'rgba(255,255,255,0.6)'}}>· {recruiter.mobile}</p>}
+                </div>
               </div>
             </div>
 
