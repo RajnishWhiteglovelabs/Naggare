@@ -297,20 +297,20 @@ export default function RecruiterHome() {
 
             {/* Browse + My JDs quick actions */}
             <div className="grid grid-cols-2 gap-3 px-4 pb-4">
+              <button onClick={()=>setView('browse')} className="py-3 rounded-2xl text-sm font-semibold text-white" style={{background:'#4F46E5'}}>👥 Browse Candidates</button>
+              <button onClick={()=>setView('myjds')} className="py-3 rounded-2xl text-sm font-semibold" style={{background:'#EEF2FF',color:'#4F46E5',border:'1px solid #C7D2FE'}}>📁 My JDs</button>
               {jdStats?.summary && (
-                <div className="grid grid-cols-2 gap-2 mb-1">
-                  <div className="bg-white rounded-xl p-3 text-center border border-gray-100">
+                <div className="grid grid-cols-2 gap-2 mt-1">
+                  <div className="bg-white rounded-xl p-3 text-center border border-gray-100 shadow-sm">
                     <p className="text-lg font-bold" style={{color:'#4F46E5'}}>{jdStats.summary.totalInterests}</p>
                     <p className="text-xs text-gray-400">Total Interests</p>
                   </div>
-                  <div className="bg-white rounded-xl p-3 text-center border border-gray-100">
+                  <div className="bg-white rounded-xl p-3 text-center border border-gray-100 shadow-sm">
                     <p className="text-lg font-bold" style={{color:'#15803D'}}>{jdStats.summary.avgConversion}%</p>
                     <p className="text-xs text-gray-400">Avg Conversion</p>
                   </div>
                 </div>
               )}
-              <button onClick={()=>setView('browse')} className="py-3 rounded-2xl text-sm font-semibold text-white" style={{background:'#4F46E5'}}>👥 Browse Candidates</button>
-              <button onClick={()=>setView('myjds')} className="py-3 rounded-2xl text-sm font-semibold" style={{background:'#EEF2FF',color:'#4F46E5',border:'1px solid #C7D2FE'}}>📁 My JDs</button>
             </div>
 
             <div className="px-4 pb-5" style={{maxWidth:'420px',margin:'0 auto'}}>
