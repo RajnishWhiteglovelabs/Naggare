@@ -181,15 +181,35 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="px-4 py-5 max-w-2xl mx-auto">
-              <div className="grid grid-cols-3 gap-3 mb-6">
-                {[[jds.length.toString(), 'JDs live', '#4F46E5'], ['1', 'Candidates', '#16A34A'], ['0', 'Matches', '#7C3AED']].map(([n, l, c]) => (
-                  <div key={l} className="bg-white rounded-2xl p-3 text-center shadow-sm border border-gray-100">
-                    <div className="text-xl font-bold" style={{ color: c }}>{n}</div>
-                    <div className="text-xs text-gray-500 mt-0.5">{l}</div>
+            <div className="px-4 py-4 max-w-2xl mx-auto">
+              {/* Activity metrics */}
+              {metrics && (
+                <div className="mb-4">
+                  <p className="text-xs font-bold uppercase tracking-wider mb-3 px-1" style={{color:'#4F46E5'}}>Your Activity</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                      <p className="text-xs text-gray-400 mb-1">Profile Views</p>
+                      <p className="text-2xl font-bold" style={{color:'#4F46E5'}}>{metrics.totalViews}</p>
+                      <p className="text-xs text-gray-400">+{metrics.viewsThisWeek} this week</p>
+                    </div>
+                    <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                      <p className="text-xs text-gray-400 mb-1">Roles Interested</p>
+                      <p className="text-2xl font-bold" style={{color:'#7C3AED'}}>{metrics.totalInterests}</p>
+                      <p className="text-xs text-gray-400">JDs you tapped Interested</p>
+                    </div>
+                    <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                      <p className="text-xs text-gray-400 mb-1">Active Chats</p>
+                      <p className="text-2xl font-bold" style={{color:'#15803D'}}>{metrics.activeChats}</p>
+                      <p className="text-xs text-gray-400">{metrics.totalChats} total conversations</p>
+                    </div>
+                    <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                      <p className="text-xs text-gray-400 mb-1">Response Rate</p>
+                      <p className="text-2xl font-bold" style={{color:'#C2410C'}}>{metrics.responseRate}%</p>
+                      <p className="text-xs text-gray-400">Recruiters who replied</p>
+                    </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Featured roles</p>
               {jds.length === 0 && (
                 <div className="bg-white rounded-2xl p-6 text-center border border-gray-100">
@@ -312,34 +332,7 @@ export default function Home() {
               })}
               <button className="w-full py-3 rounded-xl text-sm font-semibold text-indigo-600 border border-indigo-200 bg-indigo-50" onClick={() => setView('browse')}>View all JDs →</button>
             </div>
-          {/* METRICS */}
-            {metrics && (
-              <div className="px-4 py-4">
-                <p className="text-xs font-bold uppercase tracking-wider mb-3 px-1" style={{color:'#4F46E5'}}>Your Activity</p>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                    <p className="text-xs text-gray-400 mb-1">Profile Views</p>
-                    <p className="text-2xl font-bold" style={{color:'#4F46E5'}}>{metrics.totalViews}</p>
-                    <p className="text-xs text-gray-400">+{metrics.viewsThisWeek} this week</p>
-                  </div>
-                  <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                    <p className="text-xs text-gray-400 mb-1">Roles Interested</p>
-                    <p className="text-2xl font-bold" style={{color:'#7C3AED'}}>{metrics.totalInterests}</p>
-                    <p className="text-xs text-gray-400">JDs you tapped Interested</p>
-                  </div>
-                  <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                    <p className="text-xs text-gray-400 mb-1">Active Chats</p>
-                    <p className="text-2xl font-bold" style={{color:'#15803D'}}>{metrics.activeChats}</p>
-                    <p className="text-xs text-gray-400">{metrics.totalChats} total conversations</p>
-                  </div>
-                  <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                    <p className="text-xs text-gray-400 mb-1">Response Rate</p>
-                    <p className="text-2xl font-bold" style={{color:'#C2410C'}}>{metrics.responseRate}%</p>
-                    <p className="text-xs text-gray-400">Recruiters who replied</p>
-                  </div>
-                </div>
-              </div>
-            )}
+
           </>
         )}
 
