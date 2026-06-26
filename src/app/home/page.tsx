@@ -17,6 +17,7 @@ export default function Home() {
   const [toast, setToast] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
   const [welcomeBanner, setWelcomeBanner] = useState(false)
+  const [metrics, setMetrics] = useState<any>(null)
 
   useEffect(() => {
     async function load() {
@@ -32,6 +33,9 @@ export default function Home() {
           const profile = await res.json()
           if (profile.type === 'recruiter') { router.push('/recruiter/home'); return }
           setUser(profile)
+          // Load metrics
+          fetch('/api/candidate/metrics', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: session.user.email }) })
+            .then(r => r.json()).then(setMetrics).catch(() => {})
 
           // Load real JDs
           const jdRes = await fetch('/api/jds')
@@ -308,6 +312,34 @@ export default function Home() {
               })}
               <button className="w-full py-3 rounded-xl text-sm font-semibold text-indigo-600 border border-indigo-200 bg-indigo-50" onClick={() => setView('browse')}>View all JDs →</button>
             </div>
+          {/* METRICS */}
+            {metrics && (
+              <div className="px-4 py-4">
+                <p className="text-xs font-bold uppercase tracking-wider mb-3 px-1" style={{color:'#4F46E5'}}>Your Activity</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                    <p className="text-xs text-gray-400 mb-1">Profile Views</p>
+                    <p className="text-2xl font-bold" style={{color:'#4F46E5'}}>{metrics.totalViews}</p>
+                    <p className="text-xs text-gray-400">+{metrics.viewsThisWeek} this week</p>
+                  </div>
+                  <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                    <p className="text-xs text-gray-400 mb-1">Roles Interested</p>
+                    <p className="text-2xl font-bold" style={{color:'#7C3AED'}}>{metrics.totalInterests}</p>
+                    <p className="text-xs text-gray-400">JDs you tapped Interested</p>
+                  </div>
+                  <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                    <p className="text-xs text-gray-400 mb-1">Active Chats</p>
+                    <p className="text-2xl font-bold" style={{color:'#15803D'}}>{metrics.activeChats}</p>
+                    <p className="text-xs text-gray-400">{metrics.totalChats} total conversations</p>
+                  </div>
+                  <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                    <p className="text-xs text-gray-400 mb-1">Response Rate</p>
+                    <p className="text-2xl font-bold" style={{color:'#C2410C'}}>{metrics.responseRate}%</p>
+                    <p className="text-xs text-gray-400">Recruiters who replied</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </>
         )}
 
