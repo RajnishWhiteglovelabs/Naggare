@@ -9,25 +9,47 @@ export default function AdminDashboard() {
   const router = useRouter()
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [activeTab, setActiveTab] = useState<'overview'|'candidates'|'recruiters'|'jds'>('overview')
 
   useEffect(() => {
     async function load() {
+      // Wait for auth to be ready
       const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.user?.email || session.user.email.toLowerCase() !== ADMIN_EMAIL) {
-        router.push('/')
+      
+      if (!session?.user?.email) {
+        setError('Not logged in')
+        setLoading(false)
         return
       }
-      const res = await fetch('/api/admin/stats', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: session.user.email }),
-      })
-      if (!res.ok) { router.push('/'); return }
-      setData(await res.json())
+
+      if (session.user.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+        setError('Unauthorized')
+        setLoading(false)
+        return
+      }
+
+      try {
+        const res = await fetch('/api/admin/stats', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: session.user.email }),
+        })
+        if (!res.ok) {
+          setError('Failed to load stats')
+          setLoading(false)
+          return
+        }
+        setData(await res.json())
+      } catch (e) {
+        setError('Error loading dashboard')
+      }
       setLoading(false)
     }
-    load()
+
+    // Small delay to ensure Supabase session is hydrated
+    const timer = setTimeout(load, 500)
+    return () => clearTimeout(timer)
   }, [])
 
   if (loading) return (
@@ -36,15 +58,25 @@ export default function AdminDashboard() {
     </div>
   )
 
+  if (error) return (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{background:'#F1F0FB'}}>
+      <p className="text-sm font-semibold" style={{color:'#DC2626'}}>{error}</p>
+      <p className="text-xs text-gray-500">Logged in as: {error === 'Not logged in' ? 'nobody' : 'wrong account'}</p>
+      <button onClick={() => router.push('/recruiter/home')} className="text-xs font-semibold px-4 py-2 rounded-full text-white" style={{background:'#4F46E5'}}>
+        Go to App
+      </button>
+    </div>
+  )
+
   const { stats, candidates, recruiters, recentJds } = data
 
   const statCards = [
-    { label: 'Total Candidates', value: stats.candidates.total, sub: `+${stats.candidates.newThisWeek} this week`, color: '#4F46E5', bg: '#EEF2FF' },
-    { label: 'Active Candidates', value: stats.candidates.active, sub: `${stats.candidates.total - stats.candidates.active} incomplete`, color: '#4F46E5', bg: '#EEF2FF' },
-    { label: 'Total Recruiters', value: stats.recruiters.total, sub: `+${stats.recruiters.newThisWeek} this week`, color: '#15803D', bg: '#F0FDF4' },
-    { label: 'Active Recruiters', value: stats.recruiters.active, sub: `${stats.recruiters.total - stats.recruiters.active} inactive`, color: '#15803D', bg: '#F0FDF4' },
-    { label: 'JDs Live', value: stats.jds.active, sub: `${stats.jds.total} total posted`, color: '#7C3AED', bg: '#F5F3FF' },
-    { label: 'Active Chats', value: stats.chats.active, sub: `${stats.chats.expired} expired`, color: '#C2410C', bg: '#FFF7ED' },
+    { label: 'Total Candidates', value: stats.candidates.total, sub: `+${stats.candidates.newThisWeek} this week`, color: '#4F46E5' },
+    { label: 'Active Candidates', value: stats.candidates.active, sub: `${stats.candidates.total - stats.candidates.active} incomplete`, color: '#4F46E5' },
+    { label: 'Total Recruiters', value: stats.recruiters.total, sub: `+${stats.recruiters.newThisWeek} this week`, color: '#15803D' },
+    { label: 'Active Recruiters', value: stats.recruiters.active, sub: `${stats.recruiters.total - stats.recruiters.active} inactive`, color: '#15803D' },
+    { label: 'JDs Live', value: stats.jds.active, sub: `${stats.jds.total} total posted`, color: '#7C3AED' },
+    { label: 'Active Chats', value: stats.chats.active, sub: `${stats.chats.expired} expired`, color: '#C2410C' },
   ]
 
   return (
@@ -70,7 +102,7 @@ export default function AdminDashboard() {
         <div className="flex gap-2 mb-6">
           {(['overview','candidates','recruiters','jds'] as const).map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              className="px-4 py-2 rounded-xl text-xs font-bold capitalize border transition-colors"
+              className="px-4 py-2 rounded-xl text-xs font-bold capitalize border"
               style={{
                 background: activeTab === tab ? '#4F46E5' : 'white',
                 color: activeTab === tab ? 'white' : '#6B7280',
