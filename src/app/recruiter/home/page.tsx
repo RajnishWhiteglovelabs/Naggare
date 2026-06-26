@@ -211,6 +211,7 @@ export default function RecruiterHome() {
                   { icon: '💚', label: 'My Matches', action: () => { showToast('Coming soon!', 'pursue'); setMenuOpen(false) } },
                   { icon: '⚙️', label: 'Account Settings', action: () => { router.push('/account-settings'); setMenuOpen(false) } },
                   { icon: '💬', label: 'Feedback', action: () => { router.push('/feedback'); setMenuOpen(false) } },
+                  ...(recruiter?.email === 'raj@whiteglovelabs.io' ? [{ icon: '🔐', label: 'Admin Dashboard', action: () => { router.push('/admin'); setMenuOpen(false) } }] : []),
                 ].map(item => (
                   <button key={item.label} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-green-50 transition-colors text-left" onClick={item.action}>
                     <span>{item.icon}</span>
