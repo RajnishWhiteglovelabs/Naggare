@@ -61,8 +61,8 @@ export default function RecruiterHome() {
       const { data } = await admin.from('candidates').select('*').eq('status', 'active').order('created_at', { ascending: false })
       setCandidates(data || [])
       // Load JD stats
-      if (s.user.email) {
-        fetch('/api/recruiter/jd-stats', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: s.user.email }) })
+      if (session?.user?.email) {
+        fetch('/api/recruiter/jd-stats', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: session.user.email }) })
           .then(r => r.json()).then(setJdStats).catch(() => {})
       }
     }
