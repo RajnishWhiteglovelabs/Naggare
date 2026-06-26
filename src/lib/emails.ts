@@ -547,3 +547,190 @@ export function emailCandidateSuperPursued(name: string, recruiterName: string, 
     )
   }
 }
+
+
+// ─── Digest Emails ────────────────────────────────────────────────────────────
+
+export function emailRecruiterMonday(name: string, jdsLive: number, newCandidates: number, pendingChats: number): { subject: string; html: string } {
+  const first = name.split(' ')[0]
+  return {
+    subject: `Happy Monday ${first} - Here's your week on Naggare`,
+    html: layout(
+      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
+      hero('Happy Monday!', `Let's make some great hires this week.`),
+      `${letter([
+        `Hi ${first},`,
+        `Here's a quick look at where things stand as you kick off the week:`,
+      ])}
+      <table style="width:100%;border-collapse:collapse;margin:20px 0;">
+        <tr>
+          <td style="padding:12px;background:#EEF2FF;border-radius:8px;text-align:center;width:33%;">
+            <div style="font-size:24px;font-weight:700;color:#4F46E5;">${jdsLive}</div>
+            <div style="font-size:11px;color:#6B7280;margin-top:2px;">JDs Live</div>
+          </td>
+          <td style="width:8px;"></td>
+          <td style="padding:12px;background:#F0FDF4;border-radius:8px;text-align:center;width:33%;">
+            <div style="font-size:24px;font-weight:700;color:#15803D;">${newCandidates}</div>
+            <div style="font-size:11px;color:#6B7280;margin-top:2px;">New Candidates</div>
+          </td>
+          <td style="width:8px;"></td>
+          <td style="padding:12px;background:#FFF7ED;border-radius:8px;text-align:center;width:33%;">
+            <div style="font-size:24px;font-weight:700;color:#C2410C;">${pendingChats}</div>
+            <div style="font-size:11px;color:#6B7280;margin-top:2px;">Pending Chats</div>
+          </td>
+        </tr>
+      </table>
+      ${pendingChats > 0 ? `<p style="font-size:13px;color:#374151;margin:12px 0;padding:12px;background:#FFF7ED;border-radius:8px;border-left:3px solid #F97316;">
+        You have ${pendingChats} candidate${pendingChats > 1 ? 's' : ''} waiting for your response. Don't leave them hanging!
+      </p>` : ''}
+      ${cta('https://naggare.com/recruiter/home', 'Go to Dashboard', 'indigo')}`,
+      sig('indigo')
+    )
+  }
+}
+
+export function emailRecruiterHumpDay(name: string, pendingChats: number): { subject: string; html: string } {
+  const first = name.split(' ')[0]
+  return {
+    subject: `Happy Hump Day ${first} - Halfway there!`,
+    html: layout(
+      `linear-gradient(135deg,#7C3AED 0%,#4F46E5 100%)`,
+      hero('Hump Day!', `It's all downhill from here.`),
+      `<div style="text-align:center;margin:16px 0;">
+  <svg width="200" height="100" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C7D2FE"/><stop offset="100%" stop-color="#EEF2FF"/></linearGradient></defs>
+    <rect width="200" height="100" fill="url(#sky)" rx="8"/>
+    <ellipse cx="100" cy="110" rx="90" ry="55" fill="#4F46E5"/>
+    <ellipse cx="100" cy="108" rx="88" ry="52" fill="#6366F1"/>
+    <circle cx="100" cy="48" r="8" fill="#FCD34D"/>
+    <rect x="97" y="56" width="6" height="12" rx="3" fill="#1E1B4B"/>
+    <line x1="100" y1="62" x2="88" y2="70" stroke="#1E1B4B" stroke-width="2" stroke-linecap="round"/>
+    <line x1="100" y1="62" x2="112" y2="70" stroke="#1E1B4B" stroke-width="2" stroke-linecap="round"/>
+    <line x1="100" y1="68" x2="93" y2="78" stroke="#1E1B4B" stroke-width="2" stroke-linecap="round"/>
+    <line x1="100" y1="68" x2="107" y2="78" stroke="#1E1B4B" stroke-width="2" stroke-linecap="round"/>
+    <text x="100" y="22" text-anchor="middle" font-size="9" fill="#4F46E5" font-family="sans-serif" font-weight="bold">It's all downhill from here!</text>
+  </svg>
+</div>
+      ${letter([
+        `Hi ${first},`,
+        `You've made it to Wednesday. The week's peak is behind you - now it's smooth sailing to Friday.`,
+        pendingChats > 0
+          ? `Quick nudge - you have ${pendingChats} candidate${pendingChats > 1 ? 's' : ''} waiting to hear from you. A quick reply today could make someone's week.`
+          : `Your inbox is clear. Browse some fresh candidates and find your next great hire.`,
+      ])}
+      ${cta('https://naggare.com/recruiter/home', 'Browse Candidates', 'indigo')}`,
+      sig('indigo')
+    )
+  }
+}
+
+export function emailRecruiterFriday(name: string, pendingChats: number, expiringJds: number): { subject: string; html: string } {
+  const first = name.split(' ')[0]
+  const jokes = [
+    `Why did the recruiter bring a ladder to the interview? Because they heard the candidate was on another level.`,
+    `A recruiter's favourite music? "We Will, We Will ... Shortlist You."`,
+    `Why do recruiters make great comedians? Because they always know how to "screen" for the best material.`,
+    `What do you call a recruiter on holiday? Unreachable. (Not you though - you're dedicated.)`,
+  ]
+  const joke = jokes[new Date().getDate() % jokes.length]
+  return {
+    subject: `Weekend is here ${first} - You've earned it!`,
+    html: layout(
+      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#312E81 100%)`,
+      hero('Weekend is here!', `You've put in the work. Now go enjoy it.`),
+      `${letter([
+        `Hi ${first},`,
+        `TGIF! Before you log off, here's a quick laugh:`,
+      ])}
+      <p style="font-size:13px;color:#374151;padding:16px;background:#EEF2FF;border-radius:8px;font-style:italic;margin:12px 0;">"${joke}"</p>
+      ${(pendingChats > 0 || expiringJds > 0) ? `
+      <p style="font-size:13px;font-weight:600;color:#1E1B4B;margin:16px 0 8px;">Before you go...</p>
+      ${pendingChats > 0 ? `<p style="font-size:13px;color:#374151;margin:6px 0;">${pendingChats} candidate${pendingChats > 1 ? 's' : ''} waiting for your response</p>` : ''}
+      ${expiringJds > 0 ? `<p style="font-size:13px;color:#374151;margin:6px 0;">${expiringJds} JD${expiringJds > 1 ? 's' : ''} expiring soon - renew them so candidates can still find you</p>` : ''}
+      ` : `<p style="font-size:13px;color:#374151;margin:12px 0;">Your inbox is clear and your JDs are live. Enjoy the weekend guilt-free!</p>`}
+      ${cta('https://naggare.com/recruiter/home', 'Quick check-in', 'indigo')}`,
+      sig('indigo')
+    )
+  }
+}
+
+export function emailCandidateMonday(name: string): { subject: string; html: string } {
+  const first = name.split(' ')[0]
+  const vibes = [
+    `Monday called. You didn't answer. Good for you.`,
+    `It's Monday. Coffee first. Everything else can wait.`,
+    `Monday is just a reminder that the weekend will happen again in 5 days. Hang tight.`,
+    `Scientists have confirmed: Mondays are hard. You're doing great just by showing up.`,
+  ]
+  const vibe = vibes[new Date().getDate() % vibes.length]
+  return {
+    subject: `Hey ${first}, it's Monday. Don't panic.`,
+    html: layout(
+      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#534AB7 100%)`,
+      hero(`Hey ${first}!`, `Monday doesn't have to be that bad.`),
+      `${letter([
+        `Hi ${first},`,
+        vibe,
+        `While you're easing into the week, just a gentle reminder - there are recruiters on Naggare who've posted roles that might be exactly what you're looking for.`,
+        `No cover letters. No lengthy forms. Just your profile, one tap, and a real conversation if it's a match.`,
+        `Go at your own pace. We've got you.`,
+      ])}
+      ${cta('https://naggare.com/home', 'Browse Roles', 'indigo')}`,
+      sig('indigo')
+    )
+  }
+}
+
+export function emailCandidateHumpDay(name: string): { subject: string; html: string } {
+  const first = name.split(' ')[0]
+  return {
+    subject: `Hump Day ${first}! Halfway there - and so is your next job.`,
+    html: layout(
+      `linear-gradient(135deg,#7C3AED 0%,#4F46E5 100%)`,
+      hero('Hump Day!', `The week's peak is behind you.`),
+      `<div style="text-align:center;margin:16px 0;">
+  <svg width="200" height="100" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C7D2FE"/><stop offset="100%" stop-color="#EEF2FF"/></linearGradient></defs>
+    <rect width="200" height="100" fill="url(#sky)" rx="8"/>
+    <ellipse cx="100" cy="110" rx="90" ry="55" fill="#4F46E5"/>
+    <ellipse cx="100" cy="108" rx="88" ry="52" fill="#6366F1"/>
+    <circle cx="100" cy="48" r="8" fill="#FCD34D"/>
+    <rect x="97" y="56" width="6" height="12" rx="3" fill="#1E1B4B"/>
+    <line x1="100" y1="62" x2="88" y2="70" stroke="#1E1B4B" stroke-width="2" stroke-linecap="round"/>
+    <line x1="100" y1="62" x2="112" y2="70" stroke="#1E1B4B" stroke-width="2" stroke-linecap="round"/>
+    <line x1="100" y1="68" x2="93" y2="78" stroke="#1E1B4B" stroke-width="2" stroke-linecap="round"/>
+    <line x1="100" y1="68" x2="107" y2="78" stroke="#1E1B4B" stroke-width="2" stroke-linecap="round"/>
+    <text x="100" y="22" text-anchor="middle" font-size="9" fill="#4F46E5" font-family="sans-serif" font-weight="bold">It's all downhill from here!</text>
+  </svg>
+</div>
+      ${letter([
+        `Hi ${first},`,
+        `You've made it to Wednesday - it's all downhill from here!`,
+        `While you're in the flow, don't forget to keep an eye out for roles that excite you.`,
+        `On Naggare it's faster than you think - browse, tap Interested, and if the recruiter pursues, you chat. One click away from your next opportunity.`,
+      ])}
+      ${cta('https://naggare.com/home', 'Browse Roles - One Click Away', 'indigo')}`,
+      sig('indigo')
+    )
+  }
+}
+
+export function emailCandidateSaturday(name: string): { subject: string; html: string } {
+  const first = name.split(' ')[0]
+  return {
+    subject: `Happy weekend ${first}! (P.S. don't forget about that dream job)`,
+    html: layout(
+      `linear-gradient(135deg,${BRAND_INDIGO} 0%,#312E81 100%)`,
+      hero(`Enjoy your weekend ${first}!`, `You've earned it.`),
+      `${letter([
+        `Hi ${first},`,
+        `It's Saturday. Sleep in. Eat well. Do absolutely nothing productive if you want to.`,
+        `But ... if you do find yourself with 5 spare minutes between your second coffee and your afternoon nap - there are some great roles waiting for you on Naggare.`,
+        `No pressure. No forms. No black holes. Just real roles from real recruiters, and a conversation that only starts when both sides are ready.`,
+        `Have a brilliant weekend.`,
+      ])}
+      ${cta('https://naggare.com/home', 'Sneak a peek at roles', 'indigo')}`,
+      sig('indigo')
+    )
+  }
+}
