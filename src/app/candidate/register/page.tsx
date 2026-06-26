@@ -660,15 +660,15 @@ function CandidateRegisterInner() {
               {/* CTC */}
               <div className="grid grid-cols-2 gap-3 mb-6">
                 <div>
-                  <label className="label">Current CTC <span className="text-gray-400 font-normal">(LPA)</span></label>
+                  <label className="label">Current CTC <span className="text-red-500">*</span> <span className="text-gray-400 font-normal">(LPA)</span></label>
                   <input className="input" type="number" placeholder="18" value={currentCtc} onChange={e=>setCurrentCtc(e.target.value)}/>
                 </div>
                 <div>
-                  <label className="label">Expected CTC <span className="text-gray-400 font-normal">(LPA)</span></label>
+                  <label className="label">Expected CTC <span className="text-red-500">*</span> <span className="text-gray-400 font-normal">(LPA)</span></label>
                   <input className="input" type="number" placeholder="24" value={expectedCtc} onChange={e=>setExpectedCtc(e.target.value)}/>
                 </div>
               </div>
-                            <button className="btn-primary py-4 mb-3" onClick={() => { if(!name||!mobile||!title||!company){setError('Please fill all required fields');return}; setError(''); setCareer(prev => { const updated = [...prev]; updated[0] = { ...updated[0], org: company, role: title }; return updated; }); setStep(5) }}>Continue →</button>
+                            <button className="btn-primary py-4 mb-3" onClick={() => { if(!name||!mobile||!title||!company){setError('Please fill all required fields');return}; if(!currentCtc||!expectedCtc){setError('Please enter your current and expected CTC');return}; setError(''); setCareer(prev => { const updated = [...prev]; updated[0] = { ...updated[0], org: company, role: title }; return updated; }); setStep(5) }}>Continue →</button>
               <button className="text-sm font-semibold text-indigo-600 w-full py-3 text-center" onClick={saveAndExit}>Save & come back later</button>
             </div>
           )}
