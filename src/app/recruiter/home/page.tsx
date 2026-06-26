@@ -8,6 +8,10 @@ export default function RecruiterHome() {
   const [recruiter, setRecruiter] = useState<any>(null)
   const [candidates, setCandidates] = useState<any[]>([])
   const [currentIdx, setCurrentIdx] = useState(0)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [filterDomain, setFilterDomain] = useState('')
+  const [filterExp, setFilterExp] = useState('')
+  const [showFilters, setShowFilters] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [view, setView] = useState<'home'|'browse'|'myjds'|'profile'>('home')
   const [myJds, setMyJds] = useState<any[]>([])
@@ -49,6 +53,27 @@ export default function RecruiterHome() {
     load()
   }, [])
 
+  // Filtered candidates
+  const filteredCandidates = candidates.filter(cand => {
+    const q = searchQuery.toLowerCase()
+    const matchesSearch = !q ||
+      (cand.name || '').toLowerCase().includes(q) ||
+      (cand.domain || '').toLowerCase().includes(q) ||
+      (cand.current_title || '').toLowerCase().includes(q) ||
+      (cand.current_company || '').toLowerCase().includes(q) ||
+      (cand.skills || []).some((s: string) => s.toLowerCase().includes(q))
+    const matchesDomain = !filterDomain || (cand.domain || '') === filterDomain
+    const matchesExp = !filterExp || (() => {
+      const yrs = parseInt(cand.years_of_experience || cand.total_experience || '0')
+      if (filterExp === '0-3') return yrs <= 3
+      if (filterExp === '3-7') return yrs > 3 && yrs <= 7
+      if (filterExp === '7-12') return yrs > 7 && yrs <= 12
+      if (filterExp === '12+') return yrs > 12
+      return true
+    })()
+    return matchesSearch && matchesDomain && matchesExp
+  })
+
   function showToast(msg: string, type: 'pass'|'pursue'|'buzzer') {
     setToast(msg)
     setToastType(type)
@@ -56,7 +81,7 @@ export default function RecruiterHome() {
   }
 
   async function takeAction(action: 'pass'|'pursue'|'golden_buzzer') {
-    const candidate = candidates[currentIdx]
+    const candidate = filteredCandidates[currentIdx]
     if (!candidate || !recruiter) return
 
     setActionDone(true)
@@ -100,7 +125,7 @@ export default function RecruiterHome() {
 
   const firstName = recruiter?.name?.split(' ')[0] || 'there'
   const initials = recruiter?.name?.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() || '?'
-  const candidate = candidates[currentIdx]
+  const candidate = filteredCandidates[currentIdx]
   const candidateInitials = candidate?.name?.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() || '?'
   const prompts = candidate ? [
     candidate.prompt_1_q ? { q: candidate.prompt_1_q, a: candidate.prompt_1_a } : null,
@@ -367,18 +392,87 @@ export default function RecruiterHome() {
         {/* BROWSE VIEW */}
         {view === 'browse' && (
           <div className="px-4 py-4" style={{ maxWidth: '460px', margin: '0 auto' }}>
-            <div className="flex items-center justify-between mb-3 px-1">
-              <button className="text-2xl" style={{ color: GREEN }} onClick={() => setView('home')}>‹</button>
-              <p className="text-xs text-gray-400">{currentIdx + 1} of {candidates.length} candidates</p>
-              <div className="flex gap-1">
-                {candidates.slice(0, Math.min(candidates.length, 5)).map((_, i) => (
-                  <div key={i} className="h-1 w-5 rounded-full" style={{ background: i <= currentIdx ? GREEN : '#E0E7FF' }} />
-                ))}
+            {/* Search + Filter bar */}
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <button className="text-2xl flex-shrink-0" style={{ color: GREEN }} onClick={() => setView('home')}>‹</button>
+                <div className="flex-1 flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  <input
+                    type="text"
+                    placeholder="Search by name, skill, domain..."
+                    value={searchQuery}
+                    onChange={e => { setSearchQuery(e.target.value); setCurrentIdx(0) }}
+                    className="flex-1 text-sm outline-none bg-transparent"
+                    style={{color:'#1E1B4B'}}
+                  />
+                  {searchQuery && <button onClick={() => { setSearchQuery(''); setCurrentIdx(0) }} className="text-gray-400 text-xs">✕</button>}
+                </div>
+                <button onClick={() => setShowFilters(!showFilters)}
+                  className="flex-shrink-0 px-3 py-2 rounded-xl text-xs font-semibold border"
+                  style={{
+                    background: (filterDomain || filterExp) ? '#4F46E5' : 'white',
+                    color: (filterDomain || filterExp) ? 'white' : '#6B7280',
+                    borderColor: (filterDomain || filterExp) ? '#4F46E5' : '#E5E7EB'
+                  }}>
+                  ⚙ {(filterDomain || filterExp) ? 'Filtered' : 'Filter'}
+                </button>
               </div>
+
+              {/* Filter panel */}
+              {showFilters && (
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex flex-col gap-3">
+                  <div>
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Domain</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {['','Technology','Talent Acquisition','Finance','Sales','Marketing','HR'].map(d => (
+                        <button key={d} onClick={() => { setFilterDomain(d); setCurrentIdx(0) }}
+                          className="px-3 py-1 rounded-full text-xs font-semibold border"
+                          style={{
+                            background: filterDomain === d ? '#4F46E5' : '#F9FAFB',
+                            color: filterDomain === d ? 'white' : '#374151',
+                            borderColor: filterDomain === d ? '#4F46E5' : '#E5E7EB'
+                          }}>
+                          {d || 'All'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Experience</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[['','All'],['0-3','0–3 yrs'],['3-7','3–7 yrs'],['7-12','7–12 yrs'],['12+','12+ yrs']].map(([val,label]) => (
+                        <button key={val} onClick={() => { setFilterExp(val); setCurrentIdx(0) }}
+                          className="px-3 py-1 rounded-full text-xs font-semibold border"
+                          style={{
+                            background: filterExp === val ? '#4F46E5' : '#F9FAFB',
+                            color: filterExp === val ? 'white' : '#374151',
+                            borderColor: filterExp === val ? '#4F46E5' : '#E5E7EB'
+                          }}>
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {(filterDomain || filterExp) && (
+                    <button onClick={() => { setFilterDomain(''); setFilterExp(''); setCurrentIdx(0) }}
+                      className="text-xs text-red-500 font-semibold text-left">
+                      ✕ Clear all filters
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Results count when filtering */}
+              {(searchQuery || filterDomain || filterExp) && (
+                <p className="text-xs text-gray-400 mt-2 px-1">
+                  {filteredCandidates.length} candidate{filteredCandidates.length !== 1 ? 's' : ''} match your search
+                </p>
+              )}
             </div>
 
         {/* No more candidates */}
-        {!candidate && candidates.length > 0 && (
+        {!candidate && filteredCandidates.length > 0 && (
           <div className="flex flex-col items-center justify-center min-h-96 px-8 text-center">
             <div className="text-5xl mb-4">🎉</div>
             <h2 className="text-xl font-bold mb-2" style={{ color: '#1E1B4B', fontFamily: 'Georgia,serif' }}>You've seen everyone!</h2>
@@ -388,7 +482,16 @@ export default function RecruiterHome() {
         )}
 
         {/* Loading */}
-        {candidates.length === 0 && (
+        {filteredCandidates.length === 0 && (searchQuery || filterDomain || filterExp) && candidates.length > 0 && (
+          <div className="flex flex-col items-center justify-center min-h-96 px-8 text-center">
+            <div className="text-5xl mb-4">🔍</div>
+            <h2 className="text-xl font-bold mb-2" style={{ color: '#1E1B4B', fontFamily: 'Georgia,serif' }}>No matches found</h2>
+            <p className="text-sm text-gray-500 mb-6">Try adjusting your search or filters.</p>
+            <button className="btn-primary py-3 px-8 w-auto rounded-full" onClick={() => { setSearchQuery(''); setFilterDomain(''); setFilterExp(''); setCurrentIdx(0) }}>Clear filters</button>
+          </div>
+        )}
+
+        {filteredCandidates.length === 0 && candidates.length === 0 && (
           <div className="flex flex-col items-center justify-center min-h-96">
             <div className="text-4xl mb-3">🔍</div>
             <p className="text-gray-500 text-sm">Finding candidates for you...</p>
@@ -401,7 +504,7 @@ export default function RecruiterHome() {
 
             {/* Counter */}
             <div className="flex items-center justify-between mb-3 px-1">
-              <p className="text-xs text-gray-400">{currentIdx + 1} of {candidates.length} candidates</p>
+              <p className="text-xs text-gray-400">{currentIdx + 1} of {filteredCandidates.length} candidates</p>
               <div className="flex gap-1">
                 {candidates.slice(0, Math.min(candidates.length, 5)).map((_, i) => (
                   <div key={i} className="h-1 w-5 rounded-full" style={{ background: i <= currentIdx ? GREEN : '#E0E7FF' }} />
