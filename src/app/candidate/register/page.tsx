@@ -155,6 +155,10 @@ function CandidateRegisterInner() {
           if (profile.title) setTitle(profile.title)
           if (profile.company) setCompany(profile.company)
           if (profile.city) setCity(profile.city)
+          if (profile.availability) setAvailability(profile.availability)
+          if (profile.notice_period) setNoticePeriod(profile.notice_period)
+          if (profile.work_preference) setWorkPreference(profile.work_preference)
+          if (profile.education) setEducation(profile.education)
           if (profile.years_exp) setYears(String(profile.years_exp))
           if (profile.domain) setDomain(profile.domain)
           if (profile.photo_url) setPhoto(profile.photo_url)
@@ -368,6 +372,10 @@ function CandidateRegisterInner() {
   // Autosave ref
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout>|null>(null)
   const [autoSaved, setAutoSaved] = useState(false)
+  const [availability, setAvailability] = useState('')
+  const [noticePeriod, setNoticePeriod] = useState('')
+  const [workPreference, setWorkPreference] = useState('')
+  const [education, setEducation] = useState('')
 
   // Autosave on field changes
   useEffect(() => {
@@ -386,6 +394,10 @@ function CandidateRegisterInner() {
       if (photo) payload.photo_url = photo
       if (lookingFor) payload.looking_for = lookingFor
       if (selectedSkills.size > 0) payload.skills = Array.from(selectedSkills)
+      if (availability) payload.availability = availability
+      if (noticePeriod) payload.notice_period = noticePeriod
+      if (workPreference) payload.work_preference = workPreference
+      if (education) payload.education = education
       await fetch('/api/candidate/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -394,7 +406,7 @@ function CandidateRegisterInner() {
       setAutoSaved(true)
       setTimeout(() => setAutoSaved(false), 2000)
     }, 3000)
-  }, [name, mobile, title, company, city, years, domain, photo, lookingFor, selectedSkills])
+  }, [name, mobile, title, company, city, years, domain, photo, lookingFor, selectedSkills, availability, noticePeriod, workPreference, education])
 
   async function saveAndExit() {
     // Get email from session if not set in state
@@ -421,6 +433,10 @@ function CandidateRegisterInner() {
         if (career?.length) exitPayload.career = career
         if (lookingFor) exitPayload.looking_for = lookingFor
         if (photo) exitPayload.photo_url = photo
+        if (availability) exitPayload.availability = availability
+        if (noticePeriod) exitPayload.notice_period = noticePeriod
+        if (workPreference) exitPayload.work_preference = workPreference
+        if (education) exitPayload.education = education
         // Only save prompts if user has actually selected some
         if (selectedPrompts.length > 0) {
           exitPayload.prompt_1_q = selectedPrompts[0]?.q || ''
@@ -576,7 +592,65 @@ function CandidateRegisterInner() {
                 <div><label className="label">City</label><input className="input" placeholder="Bengaluru" value={city} onChange={e=>setCity(e.target.value)}/></div>
                 <div><label className="label">Years exp</label><input className="input" type="number" placeholder="7" value={years} onChange={e=>setYears(e.target.value)}/></div>
               </div>
-              <button className="btn-primary py-4 mb-3" onClick={() => { if(!name||!mobile||!title||!company){setError('Please fill all required fields');return}; setError(''); setCareer(prev => { const updated = [...prev]; updated[0] = { ...updated[0], org: company, role: title }; return updated; }); setStep(5) }}>Continue →</button>
+
+              {/* Availability */}
+              <div className="mb-4">
+                <label className="label">Availability</label>
+                <div className="flex flex-wrap gap-2">
+                  {['Actively looking', 'Open to opportunities'].map(opt => (
+                    <button key={opt} type="button"
+                      onClick={() => setAvailability(opt)}
+                      className="px-3 py-2 rounded-xl text-xs font-semibold border transition-colors"
+                      style={{
+                        background: availability === opt ? '#4F46E5' : '#F9FAFB',
+                        color: availability === opt ? 'white' : '#374151',
+                        borderColor: availability === opt ? '#4F46E5' : '#E5E7EB'
+                      }}>
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Notice Period */}
+              <div className="mb-4">
+                <label className="label">Notice period</label>
+                <div className="flex flex-wrap gap-2">
+                  {['Immediate', '<30 days', '30-60 days', '60-90 days'].map(opt => (
+                    <button key={opt} type="button"
+                      onClick={() => setNoticePeriod(opt)}
+                      className="px-3 py-2 rounded-xl text-xs font-semibold border transition-colors"
+                      style={{
+                        background: noticePeriod === opt ? '#4F46E5' : '#F9FAFB',
+                        color: noticePeriod === opt ? 'white' : '#374151',
+                        borderColor: noticePeriod === opt ? '#4F46E5' : '#E5E7EB'
+                      }}>
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Work Preference */}
+              <div className="mb-6">
+                <label className="label">Work preference</label>
+                <div className="flex flex-wrap gap-2">
+                  {['Remote', 'Hybrid', 'On-site'].map(opt => (
+                    <button key={opt} type="button"
+                      onClick={() => setWorkPreference(opt)}
+                      className="px-3 py-2 rounded-xl text-xs font-semibold border transition-colors"
+                      style={{
+                        background: workPreference === opt ? '#4F46E5' : '#F9FAFB',
+                        color: workPreference === opt ? 'white' : '#374151',
+                        borderColor: workPreference === opt ? '#4F46E5' : '#E5E7EB'
+                      }}>
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+                            <button className="btn-primary py-4 mb-3" onClick={() => { if(!name||!mobile||!title||!company){setError('Please fill all required fields');return}; setError(''); setCareer(prev => { const updated = [...prev]; updated[0] = { ...updated[0], org: company, role: title }; return updated; }); setStep(5) }}>Continue →</button>
               <button className="text-sm font-semibold text-indigo-600 w-full py-3 text-center" onClick={saveAndExit}>Save & come back later</button>
             </div>
           )}
