@@ -159,6 +159,8 @@ function CandidateRegisterInner() {
           if (profile.notice_period) setNoticePeriod(profile.notice_period)
           if (profile.work_preference) setWorkPreference(profile.work_preference)
           if (profile.education) setEducation(profile.education)
+          if (profile.current_ctc) setCurrentCtc(profile.current_ctc)
+          if (profile.expected_ctc) setExpectedCtc(profile.expected_ctc)
           if (profile.years_exp) setYears(String(profile.years_exp))
           if (profile.domain) setDomain(profile.domain)
           if (profile.photo_url) setPhoto(profile.photo_url)
@@ -376,6 +378,8 @@ function CandidateRegisterInner() {
   const [noticePeriod, setNoticePeriod] = useState('')
   const [workPreference, setWorkPreference] = useState('')
   const [education, setEducation] = useState('')
+  const [currentCtc, setCurrentCtc] = useState('')
+  const [expectedCtc, setExpectedCtc] = useState('')
 
   // Autosave on field changes
   useEffect(() => {
@@ -398,6 +402,8 @@ function CandidateRegisterInner() {
       if (noticePeriod) payload.notice_period = noticePeriod
       if (workPreference) payload.work_preference = workPreference
       if (education) payload.education = education
+      if (currentCtc) payload.current_ctc = currentCtc
+      if (expectedCtc) payload.expected_ctc = expectedCtc
       await fetch('/api/candidate/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -406,7 +412,7 @@ function CandidateRegisterInner() {
       setAutoSaved(true)
       setTimeout(() => setAutoSaved(false), 2000)
     }, 3000)
-  }, [name, mobile, title, company, city, years, domain, photo, lookingFor, selectedSkills, availability, noticePeriod, workPreference, education])
+  }, [name, mobile, title, company, city, years, domain, photo, lookingFor, selectedSkills, availability, noticePeriod, workPreference, education, currentCtc, expectedCtc])
 
   async function saveAndExit() {
     // Get email from session if not set in state
@@ -437,6 +443,8 @@ function CandidateRegisterInner() {
         if (noticePeriod) exitPayload.notice_period = noticePeriod
         if (workPreference) exitPayload.work_preference = workPreference
         if (education) exitPayload.education = education
+        if (currentCtc) exitPayload.current_ctc = currentCtc
+        if (expectedCtc) exitPayload.expected_ctc = expectedCtc
         // Only save prompts if user has actually selected some
         if (selectedPrompts.length > 0) {
           exitPayload.prompt_1_q = selectedPrompts[0]?.q || ''
@@ -591,6 +599,16 @@ function CandidateRegisterInner() {
               <div className="grid grid-cols-2 gap-3 mb-6">
                 <div><label className="label">City</label><input className="input" placeholder="Bengaluru" value={city} onChange={e=>setCity(e.target.value)}/></div>
                 <div><label className="label">Years exp</label><input className="input" type="number" placeholder="7" value={years} onChange={e=>setYears(e.target.value)}/></div>
+              </div>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                  <label className="label">Current CTC <span className="text-gray-400 font-normal">(LPA)</span></label>
+                  <input className="input" type="number" placeholder="18" value={currentCtc} onChange={e=>setCurrentCtc(e.target.value)}/>
+                </div>
+                <div>
+                  <label className="label">Expected CTC <span className="text-gray-400 font-normal">(LPA)</span></label>
+                  <input className="input" type="number" placeholder="24" value={expectedCtc} onChange={e=>setExpectedCtc(e.target.value)}/>
+                </div>
               </div>
 
               {/* Availability */}
