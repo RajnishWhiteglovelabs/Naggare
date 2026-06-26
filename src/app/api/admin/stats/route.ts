@@ -43,7 +43,7 @@ export async function POST(req: Request) {
       db.from('chat_sessions').select('*', { count: 'exact', head: true }).eq('status', 'pending').lt('expires_at', now),
       db.from('candidates').select('name,email,domain,city,years_exp,status,created_at,availability,work_preference').order('created_at', { ascending: false }).limit(50),
       db.from('recruiters').select('name,email,company,title,status,created_at').order('created_at', { ascending: false }).limit(50),
-      db.from('jds').select('title,company,recruiter_email,status,created_at,expires_at').order('created_at', { ascending: false }).limit(20),
+      db.from('jds').select('*').neq('status','deleted').order('created_at', { ascending: false }).limit(20),
     ])
 
     return NextResponse.json({
