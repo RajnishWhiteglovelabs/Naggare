@@ -26,9 +26,6 @@ export async function POST(req: Request) {
       { count: totalChats },
       { count: activeChats },
       { count: expiredChats },
-      { data: candidates },
-      { data: recruiters },
-      { data: recentJds },
     ] = await Promise.all([
       db.from('candidates').select('*', { count: 'exact', head: true }),
       db.from('candidates').select('*', { count: 'exact', head: true }).eq('status', 'active'),
@@ -41,10 +38,12 @@ export async function POST(req: Request) {
       db.from('chat_sessions').select('*', { count: 'exact', head: true }),
       db.from('chat_sessions').select('*', { count: 'exact', head: true }).eq('status', 'active'),
       db.from('chat_sessions').select('*', { count: 'exact', head: true }).eq('status', 'pending').lt('expires_at', now),
-      db.from('candidates').select('name,email,domain,city,years_exp,status,created_at,availability,work_preference').order('created_at', { ascending: false }).limit(50),
-      db.from('recruiters').select('name,email,company,title,status,created_at').order('created_at', { ascending: false }).limit(50),
-      db.from('jds').select('*').neq('status','deleted').order('created_at', { ascending: false }).limit(20),
     ])
+
+    const { data: candidates } = await db.from('candidates').select('name,email,domain,city,years_exp,status,created_at,availability,work_preference').order('created_at', { ascending: false }).limit(50)
+    const { data: recruiters } = await db.from('recruiters').select('name,email,company,title,status,created_at').order('created_at', { ascending: false }).limit(50)
+    const { data: recentJds, error: jdError } = await db.from('jds').select('*').neq('status','deleted').order('created_at', { ascending: false }).limit(20)
+    if (jdError) console.error('JD fetch error:', jdError.message)
 
     return NextResponse.json({
       stats: {
