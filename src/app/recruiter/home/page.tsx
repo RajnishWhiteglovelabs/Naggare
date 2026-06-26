@@ -26,6 +26,7 @@ export default function RecruiterHome() {
   const [view, setView] = useState<'home'|'browse'|'myjds'|'profile'>('home')
   const [myJds, setMyJds] = useState<any[]>([])
   const [expandedJd, setExpandedJd] = useState<string|null>(null)
+  const [jdStats, setJdStats] = useState<any>(null)
   const [closingJd, setClosingJd] = useState<any|null>(null)
   const [toast, setToast] = useState('')
   const [toastType, setToastType] = useState<'pass'|'pursue'|'buzzer'>('pursue')
@@ -59,6 +60,11 @@ export default function RecruiterHome() {
       const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
       const { data } = await admin.from('candidates').select('*').eq('status', 'active').order('created_at', { ascending: false })
       setCandidates(data || [])
+      // Load JD stats
+      if (s.user.email) {
+        fetch('/api/recruiter/jd-stats', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: s.user.email }) })
+          .then(r => r.json()).then(setJdStats).catch(() => {})
+      }
     }
     load()
   }, [])
@@ -291,6 +297,18 @@ export default function RecruiterHome() {
 
             {/* Browse + My JDs quick actions */}
             <div className="grid grid-cols-2 gap-3 px-4 pb-4">
+              {jdStats?.summary && (
+                <div className="grid grid-cols-2 gap-2 mb-1">
+                  <div className="bg-white rounded-xl p-3 text-center border border-gray-100">
+                    <p className="text-lg font-bold" style={{color:'#4F46E5'}}>{jdStats.summary.totalInterests}</p>
+                    <p className="text-xs text-gray-400">Total Interests</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-3 text-center border border-gray-100">
+                    <p className="text-lg font-bold" style={{color:'#15803D'}}>{jdStats.summary.avgConversion}%</p>
+                    <p className="text-xs text-gray-400">Avg Conversion</p>
+                  </div>
+                </div>
+              )}
               <button onClick={()=>setView('browse')} className="py-3 rounded-2xl text-sm font-semibold text-white" style={{background:'#4F46E5'}}>👥 Browse Candidates</button>
               <button onClick={()=>setView('myjds')} className="py-3 rounded-2xl text-sm font-semibold" style={{background:'#EEF2FF',color:'#4F46E5',border:'1px solid #C7D2FE'}}>📁 My JDs</button>
             </div>
