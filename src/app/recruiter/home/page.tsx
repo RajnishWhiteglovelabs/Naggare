@@ -11,6 +11,10 @@ export default function RecruiterHome() {
   const [searchQuery, setSearchQuery] = useState('')
   const [filterDomain, setFilterDomain] = useState('')
   const [filterExp, setFilterExp] = useState('')
+  const [filterAvailability, setFilterAvailability] = useState('')
+  const [filterNotice, setFilterNotice] = useState('')
+  const [filterWork, setFilterWork] = useState('')
+  const [filterCity, setFilterCity] = useState('')
   const [showFilters, setShowFilters] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [view, setView] = useState<'home'|'browse'|'myjds'|'profile'>('home')
@@ -54,24 +58,29 @@ export default function RecruiterHome() {
   }, [])
 
   // Filtered candidates
+  const activeFilterCount = [filterDomain, filterExp, filterAvailability, filterNotice, filterWork, filterCity].filter(Boolean).length
   const filteredCandidates = candidates.filter(cand => {
     const q = searchQuery.toLowerCase()
     const matchesSearch = !q ||
       (cand.name || '').toLowerCase().includes(q) ||
-      (cand.domain || '').toLowerCase().includes(q) ||
-      (cand.current_title || '').toLowerCase().includes(q) ||
-      (cand.current_company || '').toLowerCase().includes(q) ||
+      (cand.title || '').toLowerCase().includes(q) ||
+      (cand.company || '').toLowerCase().includes(q) ||
+      (cand.city || '').toLowerCase().includes(q) ||
       (cand.skills || []).some((s: string) => s.toLowerCase().includes(q))
     const matchesDomain = !filterDomain || (cand.domain || '') === filterDomain
     const matchesExp = !filterExp || (() => {
-      const yrs = parseInt(cand.years_of_experience || cand.total_experience || '0')
+      const yrs = parseInt(cand.years_exp || cand.years_of_experience || '0')
       if (filterExp === '0-3') return yrs <= 3
       if (filterExp === '3-7') return yrs > 3 && yrs <= 7
       if (filterExp === '7-12') return yrs > 7 && yrs <= 12
       if (filterExp === '12+') return yrs > 12
       return true
     })()
-    return matchesSearch && matchesDomain && matchesExp
+    const matchesAvailability = !filterAvailability || (cand.availability || '') === filterAvailability
+    const matchesNotice = !filterNotice || (cand.notice_period || '') === filterNotice
+    const matchesWork = !filterWork || (cand.work_preference || '') === filterWork
+    const matchesCity = !filterCity || (cand.city || '').toLowerCase().includes(filterCity.toLowerCase())
+    return matchesSearch && matchesDomain && matchesExp && matchesAvailability && matchesNotice && matchesWork && matchesCity
   })
 
   function showToast(msg: string, type: 'pass'|'pursue'|'buzzer') {
@@ -411,60 +420,112 @@ export default function RecruiterHome() {
                 <button onClick={() => setShowFilters(!showFilters)}
                   className="flex-shrink-0 px-3 py-2 rounded-xl text-xs font-semibold border"
                   style={{
-                    background: (filterDomain || filterExp) ? '#4F46E5' : 'white',
-                    color: (filterDomain || filterExp) ? 'white' : '#6B7280',
-                    borderColor: (filterDomain || filterExp) ? '#4F46E5' : '#E5E7EB'
+                    background: activeFilterCount > 0 ? '#4F46E5' : 'white',
+                    color: activeFilterCount > 0 ? 'white' : '#6B7280',
+                    borderColor: activeFilterCount > 0 ? '#4F46E5' : '#E5E7EB'
                   }}>
-                  ⚙ {(filterDomain || filterExp) ? 'Filtered' : 'Filter'}
+                  ⚙ {activeFilterCount > 0 ? `${activeFilterCount} Filters` : 'Filter'}
                 </button>
               </div>
 
               {/* Filter panel */}
               {showFilters && (
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex flex-col gap-3">
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex flex-col gap-4">
+
+                  {/* Domain */}
                   <div>
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Domain</p>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Domain</p>
                     <div className="flex flex-wrap gap-1.5">
                       {['','Technology','Talent Acquisition','Finance','Sales','Marketing','HR'].map(d => (
                         <button key={d} onClick={() => { setFilterDomain(d); setCurrentIdx(0) }}
                           className="px-3 py-1 rounded-full text-xs font-semibold border"
-                          style={{
-                            background: filterDomain === d ? '#4F46E5' : '#F9FAFB',
-                            color: filterDomain === d ? 'white' : '#374151',
-                            borderColor: filterDomain === d ? '#4F46E5' : '#E5E7EB'
-                          }}>
+                          style={{background: filterDomain===d?'#4F46E5':'#F9FAFB', color: filterDomain===d?'white':'#374151', borderColor: filterDomain===d?'#4F46E5':'#E5E7EB'}}>
                           {d || 'All'}
                         </button>
                       ))}
                     </div>
                   </div>
+
+                  {/* Experience */}
                   <div>
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Experience</p>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Experience</p>
                     <div className="flex flex-wrap gap-1.5">
                       {[['','All'],['0-3','0–3 yrs'],['3-7','3–7 yrs'],['7-12','7–12 yrs'],['12+','12+ yrs']].map(([val,label]) => (
                         <button key={val} onClick={() => { setFilterExp(val); setCurrentIdx(0) }}
                           className="px-3 py-1 rounded-full text-xs font-semibold border"
-                          style={{
-                            background: filterExp === val ? '#4F46E5' : '#F9FAFB',
-                            color: filterExp === val ? 'white' : '#374151',
-                            borderColor: filterExp === val ? '#4F46E5' : '#E5E7EB'
-                          }}>
+                          style={{background: filterExp===val?'#4F46E5':'#F9FAFB', color: filterExp===val?'white':'#374151', borderColor: filterExp===val?'#4F46E5':'#E5E7EB'}}>
                           {label}
                         </button>
                       ))}
                     </div>
                   </div>
-                  {(filterDomain || filterExp) && (
-                    <button onClick={() => { setFilterDomain(''); setFilterExp(''); setCurrentIdx(0) }}
+
+                  {/* Availability */}
+                  <div>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Availability</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {['','Actively looking','Open to opportunities'].map(d => (
+                        <button key={d} onClick={() => { setFilterAvailability(d); setCurrentIdx(0) }}
+                          className="px-3 py-1 rounded-full text-xs font-semibold border"
+                          style={{background: filterAvailability===d?'#4F46E5':'#F9FAFB', color: filterAvailability===d?'white':'#374151', borderColor: filterAvailability===d?'#4F46E5':'#E5E7EB'}}>
+                          {d || 'All'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Notice Period */}
+                  <div>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Notice Period</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {['','Immediate','<30 days','30-60 days','60-90 days'].map(d => (
+                        <button key={d} onClick={() => { setFilterNotice(d); setCurrentIdx(0) }}
+                          className="px-3 py-1 rounded-full text-xs font-semibold border"
+                          style={{background: filterNotice===d?'#4F46E5':'#F9FAFB', color: filterNotice===d?'white':'#374151', borderColor: filterNotice===d?'#4F46E5':'#E5E7EB'}}>
+                          {d || 'All'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Work Preference */}
+                  <div>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Work Preference</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {['','Remote','Hybrid','On-site'].map(d => (
+                        <button key={d} onClick={() => { setFilterWork(d); setCurrentIdx(0) }}
+                          className="px-3 py-1 rounded-full text-xs font-semibold border"
+                          style={{background: filterWork===d?'#4F46E5':'#F9FAFB', color: filterWork===d?'white':'#374151', borderColor: filterWork===d?'#4F46E5':'#E5E7EB'}}>
+                          {d || 'All'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* City search */}
+                  <div>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">City</p>
+                    <input
+                      type="text"
+                      placeholder="e.g. Hyderabad, Bengaluru..."
+                      value={filterCity}
+                      onChange={e => { setFilterCity(e.target.value); setCurrentIdx(0) }}
+                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none"
+                      style={{color:'#1E1B4B'}}
+                    />
+                  </div>
+
+                  {activeFilterCount > 0 && (
+                    <button onClick={() => { setFilterDomain(''); setFilterExp(''); setFilterAvailability(''); setFilterNotice(''); setFilterWork(''); setFilterCity(''); setCurrentIdx(0) }}
                       className="text-xs text-red-500 font-semibold text-left">
-                      ✕ Clear all filters
+                      ✕ Clear all filters ({activeFilterCount})
                     </button>
                   )}
                 </div>
               )}
 
               {/* Results count when filtering */}
-              {(searchQuery || filterDomain || filterExp) && (
+              {(searchQuery || activeFilterCount > 0) && (
                 <p className="text-xs text-gray-400 mt-2 px-1">
                   {filteredCandidates.length} candidate{filteredCandidates.length !== 1 ? 's' : ''} match your search
                 </p>
@@ -487,7 +548,7 @@ export default function RecruiterHome() {
             <div className="text-5xl mb-4">🔍</div>
             <h2 className="text-xl font-bold mb-2" style={{ color: '#1E1B4B', fontFamily: 'Georgia,serif' }}>No matches found</h2>
             <p className="text-sm text-gray-500 mb-6">Try adjusting your search or filters.</p>
-            <button className="btn-primary py-3 px-8 w-auto rounded-full" onClick={() => { setSearchQuery(''); setFilterDomain(''); setFilterExp(''); setCurrentIdx(0) }}>Clear filters</button>
+            <button className="btn-primary py-3 px-8 w-auto rounded-full" onClick={() => { setSearchQuery(''); setFilterDomain(''); setFilterExp(''); setFilterAvailability(''); setFilterNotice(''); setFilterWork(''); setFilterCity(''); setCurrentIdx(0) }}>Clear filters</button>
           </div>
         )}
 
