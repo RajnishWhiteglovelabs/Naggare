@@ -195,6 +195,78 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* JOURNEY COMPARISON */}
+      <section className="px-6 py-14 max-w-lg mx-auto w-full">
+        <p className="text-xs font-bold uppercase tracking-widest mb-2 text-center" style={{color:'#4F46E5'}}>Time is your most valuable asset</p>
+        <h2 className="text-2xl font-bold text-center mb-8" style={{color:'#1E1B4B',fontFamily:'Georgia,serif'}}>3-6 weeks vs 35 minutes.</h2>
+
+        {/* Broken journey */}
+        <div className="rounded-3xl p-5 mb-4" style={{background:'#FEF2F2',border:'1px solid #FECACA'}}>
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-base">😔</span>
+            <p className="text-xs font-bold uppercase tracking-wider" style={{color:'#DC2626'}}>Current candidate journey (broken)</p>
+          </div>
+          <div className="flex flex-col gap-2.5">
+            {[
+              {step:'1', text:'Build resume', time:'2–3 hours'},
+              {step:'2', text:'Find jobs', time:'Hours of searching'},
+              {step:'3', text:'Write cover letter per application', time:'30 min each'},
+              {step:'4', text:'Fill application forms', time:'30 min each'},
+              {step:'5', text:'Wait for response', time:'Days to weeks, usually silence'},
+              {step:'6', text:'Phone screen with recruiter', time:'30–45 min just to establish basics'},
+              {step:'7', text:'Technical screen', time:'60–90 min'},
+              {step:'8', text:'More rounds', time:'Weeks'},
+            ].map((item, i) => (
+              <div key={i} className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold mt-0.5" style={{background:'#FEE2E2',color:'#DC2626'}}>
+                  {item.step}
+                </div>
+                <div className="flex-1">
+                  <span className="text-xs font-semibold" style={{color:'#7F1D1D'}}>{item.text}</span>
+                  <span className="text-xs" style={{color:'#DC2626'}}> — {item.time}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 pt-3 border-t border-red-200 text-center">
+            <p className="text-xs font-bold" style={{color:'#DC2626'}}>Total time before a real conversation:</p>
+            <p className="text-sm font-bold mt-0.5" style={{color:'#7F1D1D'}}>3–6 weeks minimum. Often never.</p>
+          </div>
+        </div>
+
+        {/* Naggare journey */}
+        <div className="rounded-3xl p-5" style={{background:'#EEF2FF',border:'1px solid #C7D2FE'}}>
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-base">✨</span>
+            <p className="text-xs font-bold uppercase tracking-wider" style={{color:'#4F46E5'}}>Naggare candidate journey</p>
+          </div>
+          <div className="flex flex-col gap-2.5">
+            {[
+              {step:'1', text:'Build profile once', time:'Under 5 minutes', done:true},
+              {step:'2', text:'Browse JDs, tap Interested', time:'1 tap', done:true},
+              {step:'3', text:'Complete Naggare Score', time:'30 minutes', done:false},
+              {step:'4', text:'Recruiter sees full signal, pursues', time:'No screening call needed', done:false},
+              {step:'5', text:'First conversation is a real interview', time:'Not a screen', done:false},
+            ].map((item, i) => (
+              <div key={i} className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold mt-0.5" style={{background:'#E0E7FF',color:'#4F46E5'}}>
+                  {item.step}
+                </div>
+                <div className="flex-1">
+                  <span className="text-xs font-semibold" style={{color:'#1E1B4B'}}>{item.text}</span>
+                  <span className="text-xs" style={{color:'#4F46E5'}}> — {item.time}</span>
+                  {item.done && <span className="ml-1 text-xs" style={{color:'#15803D'}}>✅</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 pt-3 border-t border-indigo-200 text-center">
+            <p className="text-xs font-bold" style={{color:'#4F46E5'}}>Total time before a real conversation:</p>
+            <p className="text-sm font-bold mt-0.5" style={{color:'#1E1B4B'}}>35 minutes of candidate effort. Ever.</p>
+          </div>
+        </div>
+      </section>
+
       {/* HOW IT WORKS */}
       <section className="px-6 py-14 max-w-lg mx-auto w-full" style={{background:'#F5F3FF',borderRadius:'24px',margin:'0 auto 40px',maxWidth:'480px'}}>
         <p className="text-xs font-bold uppercase tracking-widest mb-2 text-center" style={{color:'#4F46E5'}}>How Naggare works</p>
