@@ -320,6 +320,37 @@ export default function Landing() {
 
 
 
+      {/* MANIFESTO */}
+      <section className="px-6 py-14 max-w-lg mx-auto w-full">
+        <div className="rounded-3xl p-8 text-center" style={{background:'linear-gradient(160deg,#1E1B4B,#312E81)'}}>
+          <p className="text-2xl font-bold text-white mb-6 leading-snug" style={{fontFamily:'Georgia,serif'}}>
+            Being good at your job should be enough.
+          </p>
+          <div className="flex flex-col gap-3 mb-8 text-left">
+            {[
+              "You don’t need to be good at applying.",
+              "You don’t need to know how to write a resume.",
+              "You don’t need to network your way into interviews.",
+            ].map((line, i) => (
+              <div key={i} className="flex items-start gap-3">
+                <span className="mt-0.5 flex-shrink-0" style={{color:'#F87171'}}>✕</span>
+                <p className="text-sm" style={{color:'#C7D2FE'}}>{line}</p>
+              </div>
+            ))}
+          </div>
+          <div className="h-px mb-8" style={{background:'rgba(255,255,255,0.1)'}}/>
+          <p className="text-lg font-bold text-white mb-2" style={{fontFamily:'Georgia,serif'}}>
+            You just need to be good.
+          </p>
+          <p className="text-sm" style={{color:'#A5B4FC'}}>
+            Naggare proves it for you — to every recruiter on the platform.
+          </p>
+          <p className="text-xs mt-2 font-semibold uppercase tracking-wider" style={{color:'#6366F1'}}>
+            We’re the first hiring platform built on that belief.
+          </p>
+        </div>
+      </section>
+
       {/* FINAL CTA */}
       <section className="px-6 py-14 flex flex-col items-center text-center" style={{background:'linear-gradient(160deg,#4F46E5,#7C3AED)'}}>
         <h2 className="text-2xl font-bold text-white mb-2" style={{fontFamily:'Georgia,serif'}}>Ready to hire differently?</h2>
