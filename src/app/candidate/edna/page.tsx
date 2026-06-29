@@ -64,14 +64,19 @@ export default function EdnaSession() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  // Attach stream to video element
+  useEffect(() => {
+    if (cameraOn && streamRef.current && videoRef.current) {
+      videoRef.current.srcObject = streamRef.current
+      videoRef.current.play().catch(() => {})
+    }
+  }, [cameraOn])
+
   // Setup camera
   async function setupCamera() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
       streamRef.current = stream
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-      }
       setCameraOn(true)
       return stream
     } catch (e) {
@@ -122,11 +127,13 @@ export default function EdnaSession() {
   async function ednaSpeak(text: string) {
     if (!voiceMode) return
     // Strip code blocks before speaking - Edna describes code, doesn't read it
-    const spokenText = text
-      .replace(/```[\s\S]*?```/g, '... I\'ve dropped the code in the chat, take a look ...')
-      .replace(/`[^`]+`/g, '')
-      .trim()
-    if (!spokenText) return
+    // Strip code blocks before speaking
+    let spokenText = text
+    const codeBlockRegex = new RegExp('```[\\s\\S]*?```', 'g')
+    spokenText = spokenText.replace(codeBlockRegex, '... I have dropped the code in the chat, take a look ...')
+    const inlineCodeRegex = new RegExp('`[^`]+`', 'g')
+    spokenText = spokenText.replace(inlineCodeRegex, '').trim()
+        if (!spokenText) return
     setIsSpeaking(true)
     try {
       const res = await fetch('/api/edna/speak', {
