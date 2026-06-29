@@ -43,6 +43,8 @@ export default function EdnaSession() {
   const [cameraOn, setCameraOn] = useState(false)
   const [recording, setRecording] = useState(false)
   const [recordingUrl, setRecordingUrl] = useState<string | null>(null)
+  const [violations, setViolations] = useState<{type: string, time: string}[]>([])
+  const violationsRef = useRef<{type: string, time: string}[]>([])
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -63,6 +65,33 @@ export default function EdnaSession() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  // Proctoring - detect tab switches and window blur
+  useEffect(() => {
+    if (stage !== 'session') return
+
+    function logViolation(type: string) {
+      const violation = { type, time: new Date().toLocaleTimeString() }
+      violationsRef.current = [...violationsRef.current, violation]
+      setViolations(prev => [...prev, violation])
+    }
+
+    function handleVisibilityChange() {
+      if (document.hidden) logViolation('Tab switched')
+    }
+
+    function handleBlur() {
+      logViolation('Window left')
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener('blur', handleBlur)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('blur', handleBlur)
+    }
+  }, [stage])
 
 
 
@@ -314,7 +343,8 @@ export default function EdnaSession() {
           candidateEmail: user?.email,
           candidateName: user?.user_metadata?.name || user?.email?.split('@')[0],
           roleLevel,
-          recordingUrl: videoUrl
+          recordingUrl: videoUrl,
+          violations: violationsRef.current
         })
       })
       const data = await res.json()
@@ -516,6 +546,18 @@ export default function EdnaSession() {
               </div>
             )}
 
+            {violations.length > 0 && (
+              <div className="bg-white rounded-2xl p-4 border border-orange-100 shadow-sm">
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#C2410C' }}>
+                  ⚠️ Proctoring flags ({violations.length})
+                </p>
+                {violations.map((v, i) => (
+                  <p key={i} className="text-xs" style={{ color: '#6B7280' }}>{v.type} at {v.time}</p>
+                ))}
+                <p className="text-xs mt-2" style={{ color: '#9CA3AF' }}>These flags are visible to recruiters alongside your score.</p>
+              </div>
+            )}
+
             <div className="rounded-2xl p-4 text-center" style={{ background: '#EEF2FF', border: '1px solid #C7D2FE' }}>
               <p className="text-xs" style={{ color: '#4F46E5' }}>✓ Your Naggare Score is now visible to all recruiters on the platform</p>
               <p className="text-xs mt-1" style={{ color: '#6B7280' }}>Valid for 6 months · Retake anytime to improve</p>
@@ -604,6 +646,11 @@ export default function EdnaSession() {
               <div className="absolute top-1 left-1 flex items-center gap-1 px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(220,38,38,0.9)' }}>
                 <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                 <span className="text-white text-xs font-bold">REC</span>
+              </div>
+            )}
+            {violations.length > 0 && (
+              <div className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(249,115,22,0.9)' }}>
+                <span className="text-white text-xs font-bold">⚠️ {violations.length}</span>
               </div>
             )}
           </div>
