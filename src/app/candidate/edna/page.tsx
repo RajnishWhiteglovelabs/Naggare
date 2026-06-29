@@ -121,12 +121,18 @@ export default function EdnaSession() {
   // Edna speaks via ElevenLabs
   async function ednaSpeak(text: string) {
     if (!voiceMode) return
+    // Strip code blocks before speaking - Edna describes code, doesn't read it
+    const spokenText = text
+      .replace(/```[\s\S]*?```/g, '... I\'ve dropped the code in the chat, take a look ...')
+      .replace(/`[^`]+`/g, '')
+      .trim()
+    if (!spokenText) return
     setIsSpeaking(true)
     try {
       const res = await fetch('/api/edna/speak', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, voiceId: EDNA_VOICE_ID })
+        body: JSON.stringify({ text: spokenText, voiceId: EDNA_VOICE_ID })
       })
       if (res.ok) {
         const audioBlob = await res.blob()
@@ -562,19 +568,32 @@ export default function EdnaSession() {
       <div className="flex-1 flex flex-col" style={{ maxHeight: 'calc(100vh - 120px)' }}>
 
         {/* Video feed - small PiP style */}
-        {cameraOn && (
-          <div className="relative mx-4 mt-3">
+        {/* Video feed */}
+        <div className="relative mx-4 mt-3 flex justify-end">
+          <div className="relative">
             <video ref={videoRef} autoPlay muted playsInline
-              className="w-24 h-18 rounded-xl object-cover"
-              style={{ border: '2px solid rgba(255,255,255,0.2)' }} />
+              style={{
+                width: '120px',
+                height: '90px',
+                borderRadius: '12px',
+                objectFit: 'cover',
+                border: '2px solid rgba(255,255,255,0.3)',
+                background: '#000',
+                display: 'block'
+              }} />
+            {!cameraOn && (
+              <div className="absolute inset-0 flex items-center justify-center rounded-xl" style={{ background: 'rgba(0,0,0,0.8)' }}>
+                <span className="text-2xl">📷</span>
+              </div>
+            )}
             {recording && (
-              <div className="absolute top-1 right-1 flex items-center gap-1 px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(220,38,38,0.9)' }}>
+              <div className="absolute top-1 left-1 flex items-center gap-1 px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(220,38,38,0.9)' }}>
                 <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                 <span className="text-white text-xs font-bold">REC</span>
               </div>
             )}
           </div>
-        )}
+        </div>
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-3">
