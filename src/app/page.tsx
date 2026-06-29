@@ -123,6 +123,78 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* BEFORE / AFTER */}
+      <section className="px-6 py-14 max-w-lg mx-auto w-full">
+        <p className="text-xs font-bold uppercase tracking-widest mb-2 text-center" style={{color:'#4F46E5'}}>The old way vs the Naggare way</p>
+        <h2 className="text-2xl font-bold text-center mb-8" style={{color:'#1E1B4B',fontFamily:'Georgia,serif'}}>Stop applying. Start being found.</h2>
+
+        <div className="grid grid-cols-2 gap-4">
+
+          {/* BEFORE */}
+          <div className="rounded-3xl p-5" style={{background:'#FEF2F2',border:'1px solid #FECACA'}}>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-lg">😓</span>
+              <p className="text-xs font-bold uppercase tracking-wider" style={{color:'#DC2626'}}>The old way</p>
+            </div>
+            <div className="flex flex-col gap-3">
+              {[
+                {n:'50', label:'jobs applied to'},
+                {n:'5', label:'heard back from'},
+                {n:'3', label:'got screened by'},
+                {n:'1', label:'moved forward with'},
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm" style={{background:'#FEE2E2',color:'#DC2626'}}>
+                    {item.n}
+                  </div>
+                  <p className="text-xs leading-snug" style={{color:'#7F1D1D'}}>{item.label}</p>
+                </div>
+              ))}
+              <div className="mt-2 pt-3 border-t border-red-200">
+                <p className="text-xs italic" style={{color:'#DC2626'}}>Exhausting. Demoralising. Months of effort.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* AFTER */}
+          <div className="rounded-3xl p-5" style={{background:'#EEF2FF',border:'1px solid #C7D2FE'}}>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-lg">✨</span>
+              <p className="text-xs font-bold uppercase tracking-wider" style={{color:'#4F46E5'}}>The Naggare way</p>
+            </div>
+            <div className="flex flex-col gap-3">
+              {[
+                {icon:'👤', label:'Build profile once'},
+                {icon:'🤝', label:'30 min pair session'},
+                {icon:'⭐', label:'Get your Naggare Score'},
+                {icon:'📬', label:'Sit back'},
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-base" style={{background:'#E0E7FF'}}>
+                    {item.icon}
+                  </div>
+                  <p className="text-xs leading-snug" style={{color:'#1E1B4B'}}>{item.label}</p>
+                </div>
+              ))}
+              <div className="mt-2 pt-3 border-t border-indigo-200">
+                <p className="text-xs font-bold" style={{color:'#4F46E5'}}>Recruiters come to you.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Power statement */}
+        <div className="mt-6 p-5 rounded-3xl text-center" style={{background:'linear-gradient(135deg,#1E1B4B,#312E81)'}}>
+          <p className="text-sm font-bold text-white mb-1" style={{fontFamily:'Georgia,serif'}}>
+            Being good at your job should be enough.
+          </p>
+          <p className="text-xs" style={{color:'#A5B4FC'}}>
+            You don&apos;t need to be good at applying. On Naggare, your score speaks for you.
+          </p>
+        </div>
+      </section>
+
       {/* HOW IT WORKS */}
       <section className="px-6 py-14 max-w-lg mx-auto w-full" style={{background:'#F5F3FF',borderRadius:'24px',margin:'0 auto 40px',maxWidth:'480px'}}>
         <p className="text-xs font-bold uppercase tracking-widest mb-2 text-center" style={{color:'#4F46E5'}}>How Naggare works</p>
