@@ -64,30 +64,7 @@ export default function EdnaSession() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  // Setup camera
-  async function setupCamera() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      streamRef.current = stream
-      // Set video source directly
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-        await videoRef.current.play()
-      }
-      setCameraOn(true)
-      return stream
-    } catch (e) {
-      console.error('Camera error:', e)
-      // Try without video if camera fails
-      try {
-        const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true })
-        streamRef.current = audioStream
-        return audioStream
-      } catch {
-        return null
-      }
-    }
-  }
+
 
   // Start recording
   function startRecording(stream: MediaStream) {
@@ -221,14 +198,28 @@ export default function EdnaSession() {
   async function startSession() {
     setStage('session')
     setPhase(1)
-
-    // Setup camera and recording
-    const stream = await setupCamera()
-    if (stream) startRecording(stream)
-
-    await loadPhaseOpener(1)
-    startTimer(PHASES[0].duration)
+    // Camera will be set up by useEffect watching stage
   }
+
+  // Start camera AFTER session stage renders
+  useEffect(() => {
+    if (stage !== 'session') return
+    async function initCamera() {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .catch(() => navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => null))
+      if (!stream) return
+      streamRef.current = stream
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream
+        videoRef.current.play().catch(() => {})
+      }
+      setCameraOn(true)
+      startRecording(stream)
+    }
+    initCamera()
+    loadPhaseOpener(1)
+    startTimer(PHASES[0].duration)
+  }, [stage])
 
   async function loadPhaseOpener(phaseNum: number) {
     setLoading(true)
