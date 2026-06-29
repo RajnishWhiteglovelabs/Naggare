@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages, candidateEmail, candidateName, roleLevel } = await req.json()
+    const { messages, candidateEmail, candidateName, roleLevel, recordingUrl } = await req.json()
 
     const transcript = messages.map((m: any) => {
       const speaker = m.role === 'user' ? candidateName : 'Edna'
@@ -58,6 +58,7 @@ export async function POST(req: NextRequest) {
       summary: scores.summary,
       role_signal: scores.role_signal,
       transcript,
+      recording_url: recordingUrl || null,
       valid_until: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString(),
       created_at: new Date().toISOString()
     }, { onConflict: 'candidate_email,role_level' })
