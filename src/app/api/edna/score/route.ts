@@ -5,32 +5,27 @@ export async function POST(req: NextRequest) {
   try {
     const { messages, candidateEmail, candidateName, roleLevel } = await req.json()
 
-    const transcript = messages.map((m: any) => `${m.role === 'user' ? candidateName : 'Edna'}: ${m.content}`).join('
+    const transcript = messages.map((m: any) => {
+      const speaker = m.role === 'user' ? candidateName : 'Edna'
+      return speaker + ': ' + m.content
+    }).join('\n\n')
 
-')
-
-    const scoringPrompt = `You are evaluating a software engineering pair programming session. 
-    
-The candidate (${candidateName}) was pairing with Edna (AI engineer) on:
-1. Code refactoring - a rate limiting service with bugs
-2. System design - a notification service
-
-Here is the full transcript:
-
-${transcript}
-
-Evaluate the candidate on these dimensions. Return ONLY valid JSON, no other text:
-
-{
-  "refactoring_score": <0-100>,
-  "design_score": <0-100>,
-  "overall_score": <0-100>,
-  "strengths": ["<strength 1>", "<strength 2>", "<strength 3>"],
-  "watch_areas": ["<area 1>", "<area 2>"],
-  "summary": "<2-3 sentence narrative summary for recruiter>",
-  "role_signal": "<one of: Ready for ${roleLevel}, Stretch for ${roleLevel}, Below ${roleLevel}>",
-  "collaboration_score": <0-100>
-}`
+    const scoringPrompt = 'You are evaluating a software engineering pair programming session.\n\n' +
+      'The candidate (' + candidateName + ') was pairing with Edna (AI engineer) on:\n' +
+      '1. Code refactoring - a rate limiting service with bugs\n' +
+      '2. System design - a notification service\n\n' +
+      'Here is the full transcript:\n\n' + transcript + '\n\n' +
+      'Evaluate the candidate on these dimensions. Return ONLY valid JSON, no other text:\n\n' +
+      '{\n' +
+      '  "refactoring_score": <0-100>,\n' +
+      '  "design_score": <0-100>,\n' +
+      '  "overall_score": <0-100>,\n' +
+      '  "strengths": ["<strength 1>", "<strength 2>", "<strength 3>"],\n' +
+      '  "watch_areas": ["<area 1>", "<area 2>"],\n' +
+      '  "summary": "<2-3 sentence narrative summary for recruiter>",\n' +
+      '  "role_signal": "<one of: Ready for ' + roleLevel + ', Stretch for ' + roleLevel + ', Below ' + roleLevel + '>",\n' +
+      '  "collaboration_score": <0-100>\n' +
+      '}'
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -50,7 +45,6 @@ Evaluate the candidate on these dimensions. Return ONLY valid JSON, no other tex
     const raw = data.content?.[0]?.text || '{}'
     const scores = JSON.parse(raw.replace(/```json|```/g, '').trim())
 
-    // Save to DB
     const db = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
     await db.from('naggare_scores').upsert({
       candidate_email: candidateEmail,
