@@ -64,24 +64,28 @@ export default function EdnaSession() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  // Attach stream to video element
-  useEffect(() => {
-    if (cameraOn && streamRef.current && videoRef.current) {
-      videoRef.current.srcObject = streamRef.current
-      videoRef.current.play().catch(() => {})
-    }
-  }, [cameraOn])
-
   // Setup camera
   async function setupCamera() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
       streamRef.current = stream
+      // Set video source directly
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream
+        await videoRef.current.play()
+      }
       setCameraOn(true)
       return stream
     } catch (e) {
       console.error('Camera error:', e)
-      return null
+      // Try without video if camera fails
+      try {
+        const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true })
+        streamRef.current = audioStream
+        return audioStream
+      } catch {
+        return null
+      }
     }
   }
 
@@ -127,12 +131,24 @@ export default function EdnaSession() {
   async function ednaSpeak(text: string) {
     if (!voiceMode) return
     // Strip code blocks before speaking - Edna describes code, doesn't read it
-    // Strip code blocks before speaking
-    let spokenText = text
-    const codeBlockRegex = new RegExp('```[\\s\\S]*?```', 'g')
-    spokenText = spokenText.replace(codeBlockRegex, '... I have dropped the code in the chat, take a look ...')
-    const inlineCodeRegex = new RegExp('`[^`]+`', 'g')
-    spokenText = spokenText.replace(inlineCodeRegex, '').trim()
+    // Strip code blocks before speaking - split approach avoids regex issues
+    let spokenText = ''
+    let inCodeBlock = false
+    let foundCode = false
+    for (const line of text.split('\n')) {
+      if (line.startsWith('```')) {
+        inCodeBlock = !inCodeBlock
+        if (inCodeBlock) foundCode = true
+        continue
+      }
+      if (!inCodeBlock) {
+        spokenText += line + ' '
+      }
+    }
+    if (foundCode) {
+      spokenText = spokenText.trim() + ' I have dropped the code in the chat for you to look at.'
+    }
+    spokenText = spokenText.trim()
         if (!spokenText) return
     setIsSpeaking(true)
     try {
