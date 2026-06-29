@@ -33,7 +33,7 @@ export default function EdnaSession() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: any } }) => {
       if (!session?.user) { router.push('/signin'); return }
       setUser(session.user)
     })
