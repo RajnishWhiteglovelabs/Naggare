@@ -165,7 +165,7 @@ export default function Landing() {
             <div className="flex flex-col gap-3">
               {[
                 {icon:'👤', label:'Build profile once'},
-                {icon:'🤝', label:'30 min pair session'},
+                {icon:'💻', label:'18 min session with Edna — show your skills'},
                 {icon:'⭐', label:'Get your Naggare Score'},
                 {icon:'📬', label:'Sit back'},
               ].map((item, i) => (
@@ -244,7 +244,7 @@ export default function Landing() {
             {[
               {step:'1', text:'Build profile once', time:'Under 5 minutes', done:true},
               {step:'2', text:'Browse JDs, tap Interested', time:'1 tap', done:true},
-              {step:'3', text:'Complete Naggare Score', time:'30 minutes', done:false},
+              {step:'3', text:'18 min session with Edna', time:'8 min refactoring + 10 min design', done:false},
               {step:'4', text:'Recruiter sees full signal, pursues', time:'No screening call needed', done:false},
               {step:'5', text:'First conversation is a real interview', time:'Not a screen', done:false},
             ].map((item, i) => (
