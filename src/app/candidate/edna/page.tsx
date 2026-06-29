@@ -373,10 +373,19 @@ export default function EdnaSession() {
               style={{
                 background: msg.role === 'user' ? 'linear-gradient(135deg,#4F46E5,#7C3AED)' : undefined,
                 color: msg.role === 'user' ? 'white' : '#374151',
-                whiteSpace: 'pre-wrap',
-                fontFamily: msg.content.includes('```') ? 'monospace' : 'Raleway,sans-serif'
               }}>
-              {msg.content}
+              {msg.content.split(/(```[\s\S]*?```)/g).map((part: string, i: number) => {
+                if (part.startsWith('```')) {
+                  const code = part.replace(/```\w*\n?/, '').replace(/```$/, '')
+                  return (
+                    <pre key={i} className="rounded-xl p-3 text-xs overflow-x-auto my-2"
+                      style={{background:'#1E1B4B',color:'#C7D2FE',fontFamily:'monospace',whiteSpace:'pre-wrap'}}>
+                      {code}
+                    </pre>
+                  )
+                }
+                return <span key={i} style={{whiteSpace:'pre-wrap'}}>{part}</span>
+              })}
             </div>
           </div>
         ))}
