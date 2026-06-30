@@ -57,33 +57,6 @@ export default function Landing() {
         </button>
       </nav>
 
-      {/* SCROLLING FOUNDER STRIP */}
-      <div className="overflow-hidden py-2.5 border-b border-indigo-100" style={{background:'#EEF2FF'}}>
-        <style>{`
-          @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-          }
-          .marquee-track {
-            display: flex;
-            width: max-content;
-            animation: marquee 28s linear infinite;
-          }
-          .marquee-track:hover { animation-play-state: paused; }
-        `}</style>
-        <div className="marquee-track">
-          {[0,1].map(copy => (
-            <div key={copy} className="flex items-center gap-8 px-6" style={{whiteSpace:'nowrap'}}>
-              <span className="text-xs font-semibold" style={{color:'#4F46E5'}}>
-                ✦ &ldquo;22 years in Talent Acquisition taught me one thing — the best hires happen when both sides are honest about what they want. Naggare is built on that belief.&rdquo;
-              </span>
-              <span className="text-xs font-bold" style={{color:'#7C3AED'}}>— Rajnish Alexander, Founder</span>
-              <span className="text-xs" style={{color:'#C7D2FE'}}>✦</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* HERO */}
       <section className="flex flex-col items-center text-center px-6 pt-16 pb-12" style={{background:'linear-gradient(160deg,#EEF2FF 0%,#F5F3FF 50%,#ffffff 100%)'}}>
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 text-xs font-semibold tracking-wider uppercase"
@@ -319,6 +292,25 @@ export default function Landing() {
       </section>
 
 
+
+      {/* FOUNDER NOTE */}
+      <section className="px-6 py-10 max-w-lg mx-auto w-full">
+        <div className="p-6 rounded-3xl" style={{background:'linear-gradient(160deg,#1E1B4B,#312E81)'}}>
+          <p className="text-sm leading-relaxed italic mb-4" style={{color:'#C7D2FE'}}>
+            &ldquo;22 years in Talent Acquisition taught me one thing — the best hires happen when both sides are honest about what they want. Naggare is built on that belief.&rdquo;
+          </p>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+              style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
+              RA
+            </div>
+            <div>
+              <p className="text-sm font-bold text-white">Rajnish Alexander</p>
+              <p className="text-xs" style={{color:'#A5B4FC'}}>Founder, Naggare</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* MANIFESTO */}
       <section className="px-6 py-14 max-w-lg mx-auto w-full">
