@@ -666,55 +666,65 @@ export default function Home() {
           {toast}
         </div>
       )}
-      {/* RECRUITER PROFILE MODAL - Bumble style */}
+      {/* RECRUITER PROFILE MODAL - Bumble card style */}
       {viewRecruiter && (
-        <div className="fixed inset-0 z-50 flex flex-col" style={{fontFamily:'Raleway,sans-serif'}}>
-          {/* Full screen photo hero */}
-          <div className="relative flex-shrink-0" style={{height:'60vh',minHeight:'360px'}}>
-            {viewRecruiter.photo_url
-              ? <img src={viewRecruiter.photo_url} className="absolute inset-0 w-full h-full object-cover" style={{objectPosition:'center 30%'}} alt={viewRecruiter.name}/>
-              : <div className="absolute inset-0 flex items-center justify-center" style={{background:'linear-gradient(160deg,#4F46E5,#7C3AED)'}}>
-                  <span className="text-white font-bold" style={{fontSize:'80px'}}>{viewRecruiter.name?.split(' ').map((n:string)=>n[0]).join('').slice(0,2)}</span>
+        <div className="fixed inset-0 z-50 overflow-y-auto" style={{background:'#F1F0FB',fontFamily:'Raleway,sans-serif'}}>
+          {/* X close button top right */}
+          <button onClick={() => setViewRecruiter(null)}
+            className="fixed top-4 right-4 z-10 w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg"
+            style={{background:'rgba(0,0,0,0.5)',backdropFilter:'blur(8px)'}}>
+            ✕
+          </button>
+
+          {/* Photo card with rounded corners and margin */}
+          <div className="px-4 pt-4 pb-2">
+            <div className="relative rounded-3xl overflow-hidden" style={{height:'75vw',maxHeight:'520px',minHeight:'360px'}}>
+              {viewRecruiter.photo_url
+                ? <img src={viewRecruiter.photo_url} className="absolute inset-0 w-full h-full object-cover" style={{objectPosition:'center 20%'}} alt={viewRecruiter.name}/>
+                : <div className="absolute inset-0 flex items-center justify-center" style={{background:'linear-gradient(160deg,#4F46E5,#7C3AED)'}}>
+                    <span className="text-white font-bold" style={{fontSize:'80px'}}>{viewRecruiter.name?.split(' ').map((n:string)=>n[0]).join('').slice(0,2)}</span>
+                  </div>
+              }
+              {/* Gradient overlay */}
+              <div className="absolute inset-0" style={{background:'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)'}}/>
+              {/* Verified badge + name at bottom */}
+              <div className="absolute bottom-0 left-0 right-0 px-5 pb-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-white" style={{background:'rgba(0,0,0,0.4)',backdropFilter:'blur(8px)'}}>
+                    ✓ On Naggare
+                  </span>
                 </div>
-            }
-            {/* Gradient overlay */}
-            <div className="absolute inset-0" style={{background:'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.4) 100%)'}}/>
-            {/* Back button */}
-            <button onClick={() => setViewRecruiter(null)}
-              className="absolute top-4 left-4 flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-semibold text-white"
-              style={{background:'rgba(0,0,0,0.4)',backdropFilter:'blur(8px)'}}>
-              ← Back
-            </button>
-            {/* Name overlay at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 px-5 pb-5">
-              <p className="text-3xl font-bold text-white mb-1" style={{fontFamily:'Georgia,serif'}}>{viewRecruiter.name}</p>
-              <p className="text-base font-semibold" style={{color:'#C7D2FE'}}>{viewRecruiter.title}</p>
-              <p className="text-sm" style={{color:'rgba(255,255,255,0.7)'}}>{viewRecruiter.company}</p>
+                <p className="text-3xl font-bold text-white" style={{fontFamily:'Georgia,serif'}}>{viewRecruiter.name}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-sm" style={{color:'rgba(255,255,255,0.85)'}}>💼 {viewRecruiter.title}</span>
+                </div>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-sm" style={{color:'rgba(255,255,255,0.7)'}}>🏢 {viewRecruiter.company}</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Scrollable content below */}
-          <div className="flex-1 overflow-y-auto" style={{background:'#F1F0FB'}}>
-            <div className="px-4 py-4 flex flex-col gap-3">
-              {viewRecruiter.looking_for && (
-                <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                  <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{color:'#4F46E5'}}>Hiring philosophy</p>
-                  <p className="text-sm leading-relaxed" style={{color:'#374151'}}>{viewRecruiter.looking_for}</p>
-                </div>
-              )}
-              {viewRecruiter.skills?.length > 0 && (
-                <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                  <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{color:'#4F46E5'}}>Skills they hire for · {viewRecruiter.skills.length}</p>
-                  <div className="flex flex-wrap gap-1.5">{viewRecruiter.skills.map((s:string) => <span key={s} className="tag">{s}</span>)}</div>
-                </div>
-              )}
-              {[{q:viewRecruiter.prompt_1_q,a:viewRecruiter.prompt_1_a},{q:viewRecruiter.prompt_2_q,a:viewRecruiter.prompt_2_a}].filter((p:any)=>p.q&&p.a).map((p:any,i:number) => (
-                <div key={i} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                  <p className="text-xs font-bold mb-2" style={{color:'#4F46E5'}}>{p.q}</p>
-                  <p className="text-sm leading-relaxed" style={{color:'#374151'}}>{p.a}</p>
-                </div>
-              ))}
-            </div>
+          {/* Content below card */}
+          <div className="px-4 py-3 flex flex-col gap-3 pb-8">
+            {viewRecruiter.looking_for && (
+              <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{color:'#4F46E5'}}>Hiring philosophy</p>
+                <p className="text-sm leading-relaxed" style={{color:'#374151'}}>{viewRecruiter.looking_for}</p>
+              </div>
+            )}
+            {viewRecruiter.skills?.length > 0 && (
+              <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{color:'#4F46E5'}}>Domains they hire for · {viewRecruiter.skills.length}</p>
+                <div className="flex flex-wrap gap-1.5">{viewRecruiter.skills.map((s:string) => <span key={s} className="tag">{s}</span>)}</div>
+              </div>
+            )}
+            {[{q:viewRecruiter.prompt_1_q,a:viewRecruiter.prompt_1_a},{q:viewRecruiter.prompt_2_q,a:viewRecruiter.prompt_2_a}].filter((p:any)=>p.q&&p.a).map((p:any,i:number) => (
+              <div key={i} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                <p className="text-xs font-bold mb-2" style={{color:'#4F46E5'}}>{p.q}</p>
+                <p className="text-sm leading-relaxed" style={{color:'#374151'}}>{p.a}</p>
+              </div>
+            ))}
           </div>
         </div>
       )}
