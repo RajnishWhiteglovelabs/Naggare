@@ -682,7 +682,7 @@ export default function Home() {
                   style={{background:'linear-gradient(160deg,#4F46E5,#7C3AED)'}}>
                   <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg mb-3 flex items-center justify-center text-white font-bold text-2xl"
                     style={{background:'rgba(255,255,255,0.2)'}}>
-                    {recruiter?.photo_url
+                    {viewRecruiter?.photo_url
                       ? <img src={viewRecruiter.photo_url} className="w-full h-full object-cover" alt={viewRecruiter.name}/>
                       : <span>{viewRecruiter.name?.split(' ').map((n:string)=>n[0]).join('').slice(0,2).toUpperCase()}</span>}
                   </div>
@@ -751,7 +751,7 @@ export default function Home() {
               <div className="flex flex-col items-center text-center">
                 <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg mb-3 flex items-center justify-center text-white font-bold text-2xl"
                   style={{background:'rgba(255,255,255,0.2)'}}>
-                  {recruiter?.photo_url
+                  {viewRecruiter?.photo_url
                     ? <img src={viewRecruiter.photo_url} className="w-full h-full object-cover" alt={viewRecruiter.name}/>
                     : <span>{viewRecruiter.name?.split(' ').map((n:string)=>n[0]).join('').slice(0,2).toUpperCase()}</span>}
                 </div>
