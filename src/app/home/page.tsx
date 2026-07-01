@@ -21,6 +21,7 @@ export default function Home() {
   const [metrics, setMetrics] = useState<any>(null)
   const [viewRecruiter, setViewRecruiter] = useState<any|null>(null)
   const [recruiterProfiles, setRecruiterProfiles] = useState<Record<string,any>>({})
+  const [pdfLoading, setPdfLoading] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -76,6 +77,32 @@ export default function Home() {
   function showToast(msg: string) {
     setToast(msg)
     setTimeout(() => setToast(''), 3000)
+  }
+
+  async function downloadProfilePdf() {
+    if (!user?.email) return
+    try {
+      setPdfLoading(true)
+      const res = await fetch('/api/candidate/pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: user.email }),
+      })
+      if (!res.ok) { showToast('Could not generate PDF'); return }
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${(user.name || 'profile').replace(/[^a-z0-9]+/gi, '_')}_Naggare.pdf`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+    } catch {
+      showToast('Could not generate PDF')
+    } finally {
+      setPdfLoading(false)
+    }
   }
 
   async function signOut() {
@@ -638,8 +665,13 @@ export default function Home() {
               </div>
 
               {/* Edit button */}
-              <div className="px-4 mt-5">
+              <div className="px-4 mt-5 flex flex-col gap-2">
                 <button className="btn-outline py-3 text-sm w-full" onClick={() => router.push('/candidate/register?edit=true')}>✏️ Edit profile</button>
+                <button className="py-3 text-sm w-full rounded-2xl font-semibold text-white disabled:opacity-60"
+                  style={{background:'#4F46E5'}} disabled={pdfLoading} onClick={downloadProfilePdf}>
+                  {pdfLoading ? 'Generating…' : '⬇ Download profile PDF'}
+                </button>
+                <p className="text-xs text-center text-gray-400">ATS-friendly · ready to upload to any recruiter system</p>
               </div>
             </div>
           </div>
