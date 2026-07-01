@@ -248,7 +248,25 @@ export default function Home() {
                       <span className="px-2 py-1 rounded-full text-xs font-semibold" style={{background:'#4F46E5',color:'white'}}>Technology</span>
                       {jd.work_style && <span className="px-2 py-1 rounded-full text-xs font-semibold" style={{background:'#ECFDF5',color:'#065F46',border:'1px solid #6EE7B7'}}>{jd.work_style}</span>}
                     </div>
-                    <div className="flex gap-3 mb-3">
+                                      {/* Recruiter mini card at top */}
+                      {recruiterProfiles[jd.recruiter_email] && (
+                        <button onClick={() => setViewRecruiter(recruiterProfiles[jd.recruiter_email])}
+                          className="w-full flex items-center gap-3 p-3 rounded-2xl mb-3"
+                          style={{background:'#EEF2FF',border:'1px solid #C7D2FE'}}>
+                          {recruiterProfiles[jd.recruiter_email].photo_url
+                            ? <img src={recruiterProfiles[jd.recruiter_email].photo_url} className="w-8 h-8 rounded-full object-cover flex-shrink-0" alt={recruiterProfiles[jd.recruiter_email].name}/>
+                            : <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
+                                {recruiterProfiles[jd.recruiter_email].name?.split(' ').map((n:string)=>n[0]).join('').slice(0,2)}
+                              </div>
+                          }
+                          <div className="flex-1 text-left min-w-0">
+                            <p className="text-xs font-bold truncate" style={{color:'#1E1B4B'}}>{recruiterProfiles[jd.recruiter_email].name}</p>
+                            <p className="text-xs truncate" style={{color:'#6B7280'}}>{recruiterProfiles[jd.recruiter_email].title} · {recruiterProfiles[jd.recruiter_email].company}</p>
+                          </div>
+                          <p className="text-xs font-semibold flex-shrink-0" style={{color:'#4F46E5'}}>View →</p>
+                        </button>
+                      )}
+    <div className="flex gap-3 mb-3">
                       <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>{ini}</div>
                       <div>
                         <p className="font-bold text-lg" style={{color:'#1E1B4B'}}>{jd.title}</p>
@@ -385,7 +403,25 @@ export default function Home() {
                       <span className="px-2 py-1 rounded-full text-xs font-semibold" style={{background:'#4F46E5',color:'white'}}>Technology</span>
                       {jd.work_style && <span className="px-2 py-1 rounded-full text-xs font-semibold" style={{background:'#ECFDF5',color:'#065F46',border:'1px solid #6EE7B7'}}>{jd.work_style}</span>}
                     </div>
-                    <div className="flex gap-3 mb-3">
+                                      {/* Recruiter mini card at top */}
+                      {recruiterProfiles[jd.recruiter_email] && (
+                        <button onClick={() => setViewRecruiter(recruiterProfiles[jd.recruiter_email])}
+                          className="w-full flex items-center gap-3 p-3 rounded-2xl mb-3"
+                          style={{background:'#EEF2FF',border:'1px solid #C7D2FE'}}>
+                          {recruiterProfiles[jd.recruiter_email].photo_url
+                            ? <img src={recruiterProfiles[jd.recruiter_email].photo_url} className="w-8 h-8 rounded-full object-cover flex-shrink-0" alt={recruiterProfiles[jd.recruiter_email].name}/>
+                            : <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
+                                {recruiterProfiles[jd.recruiter_email].name?.split(' ').map((n:string)=>n[0]).join('').slice(0,2)}
+                              </div>
+                          }
+                          <div className="flex-1 text-left min-w-0">
+                            <p className="text-xs font-bold truncate" style={{color:'#1E1B4B'}}>{recruiterProfiles[jd.recruiter_email].name}</p>
+                            <p className="text-xs truncate" style={{color:'#6B7280'}}>{recruiterProfiles[jd.recruiter_email].title} · {recruiterProfiles[jd.recruiter_email].company}</p>
+                          </div>
+                          <p className="text-xs font-semibold flex-shrink-0" style={{color:'#4F46E5'}}>View →</p>
+                        </button>
+                      )}
+    <div className="flex gap-3 mb-3">
                       <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>{ini}</div>
                       <div>
                         <p className="font-bold text-lg" style={{color:'#1E1B4B'}}>{jd.title}</p>
