@@ -8,7 +8,21 @@ export async function captureCardToPdf(node: HTMLElement, filename: string) {
   // Wait for any images (photo) to finish loading before capture.
   const imgs = Array.from(node.querySelectorAll('img')) as HTMLImageElement[]
   await Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise<void>(res => { img.onload = () => res(); img.onerror = () => res() })))
-  const canvas = await html2canvas(node, { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false })
+  // Capture the FULL card — pass explicit dimensions so tall / scrolled / off-screen nodes aren't clipped.
+  const width = node.scrollWidth
+  const height = node.scrollHeight
+  const canvas = await html2canvas(node, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#ffffff',
+    logging: false,
+    width,
+    height,
+    windowWidth: width,
+    windowHeight: height,
+    scrollX: 0,
+    scrollY: 0,
+  })
   const imgData = canvas.toDataURL('image/png')
   const w = canvas.width / 2, h = canvas.height / 2
   const pdf = new jsPDF({ orientation: h >= w ? 'portrait' : 'landscape', unit: 'pt', format: [w, h] })
