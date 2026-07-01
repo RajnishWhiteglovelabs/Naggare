@@ -924,9 +924,9 @@ export default function RecruiterHome() {
                   </div>
                 )}
                 <div className="grid grid-cols-2 gap-3 mt-2">
-                  <button onClick={() => { handleAction('pass'); setExpandedCandidate(null) }}
+                  <button onClick={() => { takeAction('pass'); setExpandedCandidate(null) }}
                     className="py-3 rounded-2xl text-sm font-semibold border" style={{borderColor:'#E5E7EB',color:'#6B7280'}}>Pass</button>
-                  <button onClick={() => { handleAction('pursue'); setExpandedCandidate(null) }}
+                  <button onClick={() => { takeAction('pursue'); setExpandedCandidate(null) }}
                     className="py-3 rounded-2xl text-sm font-semibold text-white" style={{background:'#15803D'}}>Pursue →</button>
                 </div>
               </div>
