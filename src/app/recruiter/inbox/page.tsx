@@ -2,6 +2,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
+import CandidateProfileCard from '@/components/CandidateProfileCard'
 
 interface Message {
   id: string
@@ -29,6 +30,9 @@ function RecruiterInboxInner() {
   const [sessions, setSessions] = useState<Session[]>([])
   const [loading, setLoading] = useState(true)
   const [candidates, setCandidates] = useState<Record<string, {name:string, photo_url:string|null}>>({})
+  const [candidateProfiles, setCandidateProfiles] = useState<Record<string, any>>({})
+  const [candidateScores, setCandidateScores] = useState<Record<string, any>>({})
+  const [viewCandidate, setViewCandidate] = useState<any|null>(null)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }: { data: { session: { user: { email: string } } | null } }) => {
@@ -49,15 +53,32 @@ function RecruiterInboxInner() {
     if (emails.length > 0) {
       const { data: cands } = await supabase
         .from('candidates')
-        .select('email, name, photo_url')
+        .select('*')
         .in('email', emails)
       if (cands) {
         const map: Record<string, {name:string, photo_url:string|null}> = {}
-        cands.forEach((c: {email:string, name:string, photo_url:string|null}) => { map[c.email] = { name: c.name, photo_url: c.photo_url } })
+        const full: Record<string, any> = {}
+        cands.forEach((c: any) => { map[c.email] = { name: c.name, photo_url: c.photo_url }; full[c.email] = c })
         setCandidates(map)
+        setCandidateProfiles(full)
+      }
+      // Naggare scores — same fetch as recruiter home browse
+      const { data: scores } = await supabase
+        .from('naggare_scores')
+        .select('candidate_email,overall_score,role_level,role_signal,valid_until')
+        .in('candidate_email', emails)
+      if (scores) {
+        const scoreMap: Record<string, any> = {}
+        ;(scores as any[]).forEach((s: any) => { scoreMap[s.candidate_email] = s })
+        setCandidateScores(scoreMap)
       }
     }
     setLoading(false)
+  }
+
+  function openProfile(session: Session) {
+    const cand = candidateProfiles[session.candidate_email] || candidates[session.candidate_email]
+    if (cand) setViewCandidate(cand)
   }
 
   function getLastMessage(session: Session) {
@@ -130,7 +151,8 @@ function RecruiterInboxInner() {
             return (
               <div key={session.id} onClick={() => openChat(session)}
                 className="flex items-center gap-3 px-4 py-4 cursor-pointer hover:bg-gray-50 transition-colors">
-                <div className="w-11 h-11 rounded-full flex-shrink-0 overflow-hidden"
+                <div onClick={(e) => { e.stopPropagation(); openProfile(session) }}
+                  className="w-11 h-11 rounded-full flex-shrink-0 overflow-hidden cursor-pointer"
                   style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
                   {photo
                     ? <img src={photo} className="w-full h-full object-cover" alt={name} />
@@ -139,7 +161,8 @@ function RecruiterInboxInner() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-0.5">
-                    <p className="font-semibold text-sm text-gray-900 truncate">{name}</p>
+                    <p onClick={(e) => { e.stopPropagation(); openProfile(session) }}
+                      className="font-semibold text-sm text-gray-900 truncate cursor-pointer hover:underline">{name}</p>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       {timeLeft && <span className="text-xs text-amber-600">{timeLeft}</span>}
                       {unread > 0 && (
@@ -155,6 +178,14 @@ function RecruiterInboxInner() {
             )
           })}
         </div>
+      )}
+
+      {viewCandidate && (
+        <CandidateProfileCard
+          candidate={viewCandidate}
+          score={candidateScores[viewCandidate.email]}
+          onClose={() => setViewCandidate(null)}
+        />
       )}
     </div>
   )

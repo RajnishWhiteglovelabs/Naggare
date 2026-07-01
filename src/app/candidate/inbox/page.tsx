@@ -2,6 +2,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
+import RecruiterProfileCard from '@/components/RecruiterProfileCard'
 
 interface Message {
   id: string
@@ -30,6 +31,8 @@ function CandidateInboxInner() {
   const [email, setEmail] = useState('')
   const [sessions, setSessions] = useState<Session[]>([])
   const [loading, setLoading] = useState(true)
+  const [recruiterProfiles, setRecruiterProfiles] = useState<Record<string, any>>({})
+  const [viewRecruiter, setViewRecruiter] = useState<any|null>(null)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }: { data: { session: { user: { email: string } } | null } }) => {
@@ -44,7 +47,29 @@ function CandidateInboxInner() {
     const res = await fetch(`/api/chat/sessions?email=${encodeURIComponent(userEmail)}`)
     const data = await res.json()
     setSessions(data || [])
+
+    // Load full recruiter profiles so tapping a name/photo opens the same card as candidate home
+    const recruiterEmails = [...new Set((data || []).map((s: Session) => s.recruiter_email).filter(Boolean))]
+    if (recruiterEmails.length > 0) {
+      const { data: recs } = await supabase
+        .from('recruiters')
+        .select('email,name,title,company,photo_url,looking_for,skills,prompt_1_q,prompt_1_a,prompt_2_q,prompt_2_a')
+        .in('email', recruiterEmails)
+      if (recs) {
+        const map: Record<string, any> = {}
+        ;(recs as any[]).forEach((r: any) => { map[r.email] = r })
+        setRecruiterProfiles(map)
+      }
+    }
     setLoading(false)
+  }
+
+  function openProfile(session: Session) {
+    const rec = recruiterProfiles[session.recruiter_email] || {
+      name: session.recruiter_name || session.recruiter_email,
+      photo_url: session.recruiter_photo,
+    }
+    setViewRecruiter(rec)
   }
 
   function getLastMessage(session: Session) {
@@ -118,6 +143,7 @@ function CandidateInboxInner() {
             return (
               <div key={session.id} onClick={() => openChat(session)}
                 className="flex items-center gap-3 px-4 py-4 cursor-pointer hover:bg-gray-50 transition-colors">
+                <div onClick={(e) => { e.stopPropagation(); openProfile(session) }} className="flex-shrink-0 cursor-pointer">
                 {session.recruiter_photo ? (
                   <img src={session.recruiter_photo} alt={initials}
                     className="w-11 h-11 rounded-full object-cover flex-shrink-0" />
@@ -127,9 +153,11 @@ function CandidateInboxInner() {
                     {initials}
                   </div>
                 )}
+                </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-0.5">
-                    <p className="font-semibold text-sm text-gray-900 truncate">{session.recruiter_name || session.recruiter_email}</p>
+                    <p onClick={(e) => { e.stopPropagation(); openProfile(session) }}
+                      className="font-semibold text-sm text-gray-900 truncate cursor-pointer hover:underline">{session.recruiter_name || session.recruiter_email}</p>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       {timeLeft && <span className="text-xs text-amber-600">{timeLeft}</span>}
                       {unread > 0 && (
@@ -145,6 +173,10 @@ function CandidateInboxInner() {
             )
           })}
         </div>
+      )}
+
+      {viewRecruiter && (
+        <RecruiterProfileCard recruiter={viewRecruiter} onClose={() => setViewRecruiter(null)} />
       )}
     </div>
   )
