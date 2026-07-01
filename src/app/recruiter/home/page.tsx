@@ -1,8 +1,8 @@
 'use client'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
-import CandidateProfileCard, { CandidateCardVisual, captureCardToPdf } from '@/components/CandidateProfileCard'
+import CandidateProfileCard, { downloadCandidatePdf } from '@/components/CandidateProfileCard'
 
 export default function RecruiterHome() {
   const router = useRouter()
@@ -29,9 +29,7 @@ export default function RecruiterHome() {
   const [expandedJd, setExpandedJd] = useState<string|null>(null)
   const [expandedCandidate, setExpandedCandidate] = useState<any|null>(null)
   const [candidateScores, setCandidateScores] = useState<Record<string,any>>({})
-  const [dlCandidate, setDlCandidate] = useState<any|null>(null)
   const [dlBusy, setDlBusy] = useState<string|null>(null)
-  const dlRef = useRef<HTMLDivElement>(null)
   const [jdStats, setJdStats] = useState<any>(null)
   const [closingJd, setClosingJd] = useState<any|null>(null)
   const [toast, setToast] = useState('')
@@ -145,17 +143,12 @@ export default function RecruiterHome() {
   async function downloadProfile(candidate: any) {
     try {
       setDlBusy(candidate.email)
-      setDlCandidate(candidate)
-      // Let the hidden card render, then capture it as a WYSIWYG PDF.
-      await new Promise(r => setTimeout(r, 350))
-      if (!dlRef.current) throw new Error('render failed')
-      await captureCardToPdf(dlRef.current, `${(candidate.name || 'candidate').replace(/[^a-z0-9]+/gi, '_')}_Naggare.pdf`)
+      await downloadCandidatePdf(candidate)
     } catch {
       setToast('Could not generate PDF')
       setTimeout(() => setToast(''), 2500)
     } finally {
       setDlBusy(null)
-      setDlCandidate(null)
     }
   }
 
@@ -888,13 +881,6 @@ export default function RecruiterHome() {
             onPass={() => { takeAction('pass'); setExpandedCandidate(null) }}
             onPursue={() => { takeAction('pursue'); setExpandedCandidate(null) }}
           />
-        )}
-
-        {/* Hidden card rendered off-screen only to capture a WYSIWYG PDF for download */}
-        {dlCandidate && (
-          <div aria-hidden style={{position:'fixed', left:'-10000px', top:0, width:'396px', pointerEvents:'none'}}>
-            <CandidateCardVisual candidate={dlCandidate} score={candidateScores[dlCandidate.email]} innerRef={dlRef} />
-          </div>
         )}
 
         {/* MY JDS VIEW */}

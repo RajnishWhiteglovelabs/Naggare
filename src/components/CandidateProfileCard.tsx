@@ -1,37 +1,25 @@
 'use client'
-import { useState, useRef, type Ref } from 'react'
+import { useState } from 'react'
 
-// Shared: capture a rendered card node to a WYSIWYG PDF (same visual as on screen).
-export async function captureCardToPdf(node: HTMLElement, filename: string) {
-  const html2canvas = (await import('html2canvas-pro')).default
-  const { jsPDF } = await import('jspdf')
-  // Wait for any images (photo) to finish loading before capture.
-  const imgs = Array.from(node.querySelectorAll('img')) as HTMLImageElement[]
-  await Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise<void>(res => { img.onload = () => res(); img.onerror = () => res() })))
-  // Capture the FULL card — pass explicit dimensions so tall / scrolled / off-screen nodes aren't clipped.
-  const width = node.scrollWidth
-  const height = node.scrollHeight
-  const canvas = await html2canvas(node, {
-    scale: 2,
-    useCORS: true,
-    backgroundColor: '#ffffff',
-    logging: false,
-    width,
-    height,
-    windowWidth: width,
-    windowHeight: height,
-    scrollX: 0,
-    scrollY: 0,
+async function downloadCandidatePdf(candidate: any) {
+  const res = await fetch('/api/candidate/pdf', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: candidate.email }),
   })
-  const imgData = canvas.toDataURL('image/png')
-  const w = canvas.width / 2, h = canvas.height / 2
-  const pdf = new jsPDF({ orientation: h >= w ? 'portrait' : 'landscape', unit: 'pt', format: [w, h] })
-  pdf.addImage(imgData, 'PNG', 0, 0, w, h)
-  pdf.save(filename)
+  if (!res.ok) throw new Error('failed')
+  const blob = await res.blob()
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${(candidate.name || 'candidate').replace(/[^a-z0-9]+/gi, '_')}_Naggare.pdf`
+  document.body.appendChild(a); a.click(); a.remove()
+  URL.revokeObjectURL(url)
 }
+export { downloadCandidatePdf }
 
-// The pure visual card (rounded card with hero + sections). Reused by the modal and by hidden capture.
-export function CandidateCardVisual({ candidate, score, innerRef }: { candidate: any; score?: any; innerRef?: Ref<HTMLDivElement> }) {
+// On-screen card visual (photo hero + sections). Used by the modal below.
+export function CandidateCardVisual({ candidate, score }: { candidate: any; score?: any }) {
   const initials = candidate.name?.split(' ').map((n:string)=>n[0]).join('').slice(0,2).toUpperCase()
   const meta = [candidate.company, candidate.city, candidate.years_exp ? candidate.years_exp + ' yrs' : null].filter(Boolean).join(' · ')
   const prompts = [
@@ -40,11 +28,10 @@ export function CandidateCardVisual({ candidate, score, innerRef }: { candidate:
     { q: candidate.prompt_3_q, a: candidate.prompt_3_a },
   ].filter(p => p.q && p.a)
   return (
-    <div ref={innerRef} className="rounded-3xl overflow-hidden shadow-xl" style={{border:'1px solid #E0E7FF',background:'#fff'}}>
-      {/* Photo hero */}
+    <div className="rounded-3xl overflow-hidden shadow-xl" style={{border:'1px solid #E0E7FF',background:'#fff'}}>
       <div className="relative" style={{height:'340px'}}>
         {candidate.photo_url
-          ? <img src={candidate.photo_url} crossOrigin="anonymous" className="absolute inset-0 w-full h-full object-cover" alt={candidate.name}/>
+          ? <img src={candidate.photo_url} className="absolute inset-0 w-full h-full object-cover" alt={candidate.name}/>
           : <div className="absolute inset-0 flex items-center justify-center" style={{background:'linear-gradient(160deg,#4F46E5,#7C3AED)'}}>
               <span className="text-white font-bold text-5xl">{initials}</span>
             </div>}
@@ -65,7 +52,6 @@ export function CandidateCardVisual({ candidate, score, innerRef }: { candidate:
         </div>
       </div>
 
-      {/* Availability / CTC chips */}
       {(candidate.availability||candidate.notice_period||candidate.work_preference||candidate.current_ctc||candidate.expected_ctc) && (
         <div className="p-4 border-b border-gray-100 bg-white flex flex-wrap gap-2">
           {candidate.availability && <span className="px-2.5 py-1 rounded-full text-xs font-semibold" style={{background:'#EEF2FF',color:'#4F46E5'}}>{candidate.availability}</span>}
@@ -76,7 +62,6 @@ export function CandidateCardVisual({ candidate, score, innerRef }: { candidate:
         </div>
       )}
 
-      {/* Naggare Score */}
       {score && (
         <div className="p-4 border-b border-gray-100 bg-white">
           <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{color:'#4F46E5'}}>Naggare Score · {score.role_level}</p>
@@ -90,7 +75,6 @@ export function CandidateCardVisual({ candidate, score, innerRef }: { candidate:
         </div>
       )}
 
-      {/* Skills */}
       {candidate.skills?.length > 0 && (
         <div className="p-4 border-b border-gray-100 bg-white">
           <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{color:'#4F46E5'}}>Skills · {candidate.skills.length}</p>
@@ -98,7 +82,6 @@ export function CandidateCardVisual({ candidate, score, innerRef }: { candidate:
         </div>
       )}
 
-      {/* Looking for */}
       {candidate.looking_for && (
         <div className={"p-4 bg-white" + (prompts.length ? " border-b border-gray-100" : "")}>
           <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{color:'#4F46E5'}}>What they&apos;re looking for</p>
@@ -106,7 +89,6 @@ export function CandidateCardVisual({ candidate, score, innerRef }: { candidate:
         </div>
       )}
 
-      {/* In their own words (prompts) */}
       {prompts.length > 0 && (
         <div className="p-4 bg-white">
           <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{color:'#4F46E5'}}>In their own words</p>
@@ -122,7 +104,6 @@ export function CandidateCardVisual({ candidate, score, innerRef }: { candidate:
   )
 }
 
-// Full-screen modal (recruiter inbox tap, or wherever a viewable card + download is needed).
 export default function CandidateProfileCard({
   candidate, score, onClose, onPass, onPursue,
 }: {
@@ -130,14 +111,13 @@ export default function CandidateProfileCard({
 }) {
   if (!candidate) return null
   const showActions = !!onPass && !!onPursue
-  const cardRef = useRef<HTMLDivElement>(null)
   const [pdfLoading, setPdfLoading] = useState(false)
   const [pdfError, setPdfError] = useState(false)
   async function downloadPdf() {
-    if (!cardRef.current) return
+    if (!candidate?.email) return
     try {
       setPdfError(false); setPdfLoading(true)
-      await captureCardToPdf(cardRef.current, `${(candidate.name || 'candidate').replace(/[^a-z0-9]+/gi, '_')}_Naggare.pdf`)
+      await downloadCandidatePdf(candidate)
     } catch {
       setPdfError(true); setTimeout(() => setPdfError(false), 3000)
     } finally { setPdfLoading(false) }
@@ -150,7 +130,7 @@ export default function CandidateProfileCard({
         <h2 className="text-base font-bold">Candidate Profile</h2>
       </div>
       <div style={{maxWidth:'420px',margin:'0 auto',paddingBottom:'80px',paddingTop:'16px',paddingLeft:'12px',paddingRight:'12px'}}>
-        <CandidateCardVisual candidate={candidate} score={score} innerRef={cardRef} />
+        <CandidateCardVisual candidate={candidate} score={score} />
 
         <button onClick={downloadPdf} disabled={pdfLoading}
           className="w-full mt-4 py-3 rounded-2xl text-sm font-semibold border disabled:opacity-60"
