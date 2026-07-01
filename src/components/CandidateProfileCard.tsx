@@ -1,4 +1,5 @@
 'use client'
+import { useState } from 'react'
 
 // Shared candidate profile card — single source of truth.
 // Same shell/style as RecruiterProfileCard (centred phone-width column, rounded card, divided sections).
@@ -21,6 +22,37 @@ export default function CandidateProfileCard({
   const showActions = !!onPass && !!onPursue
   const initials = candidate.name?.split(' ').map((n:string)=>n[0]).join('').slice(0,2).toUpperCase()
   const meta = [candidate.company, candidate.city, candidate.years_exp ? candidate.years_exp + ' yrs' : null].filter(Boolean).join(' · ')
+
+  const [pdfLoading, setPdfLoading] = useState(false)
+  const [pdfError, setPdfError] = useState(false)
+  async function downloadPdf() {
+    if (!candidate?.email) return
+    try {
+      setPdfError(false)
+      setPdfLoading(true)
+      const res = await fetch('/api/candidate/pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: candidate.email }),
+      })
+      if (!res.ok) throw new Error('failed')
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${(candidate.name || 'candidate').replace(/[^a-z0-9]+/gi, '_')}_Naggare.pdf`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+    } catch {
+      setPdfError(true)
+      setTimeout(() => setPdfError(false), 3000)
+    } finally {
+      setPdfLoading(false)
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto" style={{background:'#f5f5f5',fontFamily:'Raleway,sans-serif'}}>
       {/* Top bar */}
@@ -97,9 +129,17 @@ export default function CandidateProfileCard({
           )}
         </div>
 
+        {/* Download PDF — for recruiters to upload into their ATS */}
+        <button onClick={downloadPdf} disabled={pdfLoading}
+          className="w-full mt-4 py-3 rounded-2xl text-sm font-semibold border disabled:opacity-60"
+          style={{borderColor:'#C7D2FE',color:'#4F46E5',background:'#fff'}}>
+          {pdfLoading ? 'Generating…' : '⬇ Download profile PDF'}
+        </button>
+        {pdfError && <p className="text-xs text-center mt-2" style={{color:'#DC2626'}}>Couldn&apos;t generate PDF — try again</p>}
+
         {/* Actions (browse only) */}
         {showActions && (
-          <div className="grid grid-cols-2 gap-3 mt-4">
+          <div className="grid grid-cols-2 gap-3 mt-3">
             <button onClick={onPass}
               className="py-3 rounded-2xl text-sm font-semibold border" style={{borderColor:'#E5E7EB',color:'#6B7280',background:'#fff'}}>Pass</button>
             <button onClick={onPursue}
