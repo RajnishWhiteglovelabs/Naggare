@@ -672,7 +672,7 @@ export default function Home() {
           {/* Full screen photo hero */}
           <div className="relative flex-shrink-0" style={{height:'60vh',minHeight:'360px'}}>
             {viewRecruiter.photo_url
-              ? <img src={viewRecruiter.photo_url} className="absolute inset-0 w-full h-full object-cover" alt={viewRecruiter.name}/>
+              ? <img src={viewRecruiter.photo_url} className="absolute inset-0 w-full h-full object-cover object-top" alt={viewRecruiter.name}/>
               : <div className="absolute inset-0 flex items-center justify-center" style={{background:'linear-gradient(160deg,#4F46E5,#7C3AED)'}}>
                   <span className="text-white font-bold" style={{fontSize:'80px'}}>{viewRecruiter.name?.split(' ').map((n:string)=>n[0]).join('').slice(0,2)}</span>
                 </div>
