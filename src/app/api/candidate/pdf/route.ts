@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { PDFDocument, StandardFonts, rgb, PDFPage, PDFFont } from 'pdf-lib'
+import { PDFDocument, StandardFonts, rgb, PDFPage, PDFFont, PDFImage } from 'pdf-lib'
 
 export const runtime = 'nodejs'
 
@@ -18,6 +18,11 @@ function ascii(s?: string | null): string {
     .split('')
     .map(ch => { const cc = ch.charCodeAt(0); return (cc > 0xFF || (cc >= 0x80 && cc <= 0x9F)) ? '' : ch })
     .join('')
+}
+
+function roundedRect(w: number, h: number, r: number): string {
+  r = Math.min(r, h / 2, w / 2)
+  return `M ${r} 0 H ${w - r} A ${r} ${r} 0 0 1 ${w} ${r} V ${h - r} A ${r} ${r} 0 0 1 ${w - r} ${h} H ${r} A ${r} ${r} 0 0 1 0 ${h - r} V ${r} A ${r} ${r} 0 0 1 ${r} 0 Z`
 }
 
 export async function POST(req: NextRequest) {
@@ -41,92 +46,116 @@ export async function POST(req: NextRequest) {
     const font = await doc.embedFont(StandardFonts.Helvetica)
     const bold = await doc.embedFont(StandardFonts.HelveticaBold)
 
-    const W = 595.28, H = 841.89, margin = 56, maxW = W - margin * 2
-    const indigo = rgb(0.31, 0.275, 0.898)
-    const dark = rgb(0.117, 0.106, 0.294)
-    const gray = rgb(0.42, 0.45, 0.5)
-    const body = rgb(0.13, 0.15, 0.16)
-    const rule = rgb(0.85, 0.87, 0.95)
+    // Photo (fetched server-side — no browser CORS to worry about). jpg/png only; anything else is skipped.
+    let photoImg: PDFImage | null = null
+    if (c.photo_url) {
+      try {
+        const r = await fetch(c.photo_url)
+        if (r.ok) {
+          const ct = (r.headers.get('content-type') || '').toLowerCase()
+          const buf = new Uint8Array(await r.arrayBuffer())
+          if (ct.includes('png') || (buf[0] === 0x89 && buf[1] === 0x50)) photoImg = await doc.embedPng(buf)
+          else if (ct.includes('jpg') || ct.includes('jpeg') || (buf[0] === 0xFF && buf[1] === 0xD8)) photoImg = await doc.embedJpg(buf)
+        }
+      } catch { /* leave photoImg null */ }
+    }
+
+    const W = 595.28, H = 841.89, M = 48
+    const indigo = rgb(0.31, 0.275, 0.898), indigoDk = rgb(0.216, 0.188, 0.639), dark = rgb(0.117, 0.106, 0.294)
+    const gray = rgb(0.42, 0.45, 0.5), bodyc = rgb(0.22, 0.25, 0.28), rule = rgb(0.90, 0.91, 0.96)
+    const lav = rgb(0.933, 0.949, 1), softwhite = rgb(0.85, 0.87, 0.98), white = rgb(1, 1, 1)
 
     let page: PDFPage = doc.addPage([W, H])
-    let y = H - margin
+    let y = H
 
-    function ensure(need: number) {
-      if (y - need < margin) { page = doc.addPage([W, H]); y = H - margin }
+    // ---------- HEADER BAND ----------
+    const bandH = 150
+    page.drawRectangle({ x: 0, y: H - bandH, width: W, height: bandH, color: indigo })
+    let photoBlock = 0
+    if (photoImg) {
+      const pw = 92, ph = 112
+      const px = W - M - pw, py = H - bandH + (bandH - ph) / 2
+      page.drawRectangle({ x: px - 3, y: py - 3, width: pw + 6, height: ph + 6, color: white })
+      page.drawImage(photoImg, { x: px, y: py, width: pw, height: ph })
+      photoBlock = pw + 14
     }
-    function wrap(text: string, f: PDFFont, size: number): string[] {
-      const words = ascii(text).replace(/\s+/g, ' ').trim().split(' ').filter(Boolean)
-      const lines: string[] = []
-      let cur = ''
+    const availName = (photoBlock ? W - M - photoBlock : W - 2 * M) - M
+    let nameSize = 23
+    while (bold.widthOfTextAtSize(ascii(c.name) || 'Candidate', nameSize) > availName && nameSize > 15) nameSize -= 1
+    page.drawText(ascii(c.name) || 'Candidate', { x: M, y: H - 46, size: nameSize, font: bold, color: white })
+    const role = [c.title, c.company].filter(Boolean).map(ascii).join('  \u00B7  ')
+    if (role) page.drawText(role, { x: M, y: H - 68, size: 11.5, font: bold, color: softwhite })
+    const meta = [c.city, c.years_exp ? c.years_exp + ' yrs experience' : null, c.email, c.phone]
+      .filter(Boolean).map(ascii).join('    |    ')
+    if (meta) page.drawText(meta, { x: M, y: H - 84, size: 8.5, font, color: rgb(0.8, 0.82, 0.95) })
+    if (score) {
+      const label = `NAGGARE SCORE  ${score.overall_score}` + (score.role_level ? `  \u00B7  ${ascii(score.role_level)}` : '')
+      const ph = 22, pw = bold.widthOfTextAtSize(label, 9) + 24, pillTop = H - 98
+      page.drawSvgPath(roundedRect(pw, ph, 11), { x: M, y: pillTop, color: white })
+      page.drawText(label, { x: M + 12, y: pillTop - ph / 2 - 3, size: 9, font: bold, color: indigo })
+    }
+
+    // ---------- BODY ----------
+    y = H - bandH - 30
+    function ensure(need: number): boolean {
+      if (y - need < M) { page = doc.addPage([W, H]); y = H - M; return true }
+      return false
+    }
+    function wrap(t: string, f: PDFFont, size: number, maxW: number): string[] {
+      const words = ascii(t).replace(/\s+/g, ' ').trim().split(' ').filter(Boolean)
+      const L: string[] = []; let cur = ''
       for (const w of words) {
         const test = cur ? cur + ' ' + w : w
-        if (f.widthOfTextAtSize(test, size) > maxW && cur) { lines.push(cur); cur = w }
-        else cur = test
+        if (f.widthOfTextAtSize(test, size) > maxW && cur) { L.push(cur); cur = w } else cur = test
       }
-      if (cur) lines.push(cur)
-      return lines.length ? lines : ['']
+      if (cur) L.push(cur)
+      return L.length ? L : ['']
     }
-    function text(t: string, o: { f?: PDFFont; size?: number; color?: any; gap?: number } = {}) {
-      const f = o.f || font, size = o.size ?? 10.5, color = o.color || body, gap = o.gap ?? 4
-      for (const ln of wrap(t, f, size)) {
-        ensure(size + gap)
-        page.drawText(ln, { x: margin, y: y - size, size, font: f, color })
-        y -= size + gap
+    function section(t: string) {
+      y -= 6; ensure(24)
+      page.drawText(ascii(t).toUpperCase(), { x: M, y: y - 10, size: 9.5, font: bold, color: indigo })
+      y -= 15
+      page.drawLine({ start: { x: M, y }, end: { x: W - M, y }, thickness: 0.6, color: rule })
+      y -= 12
+    }
+    function para(t: string) {
+      const maxW = W - 2 * M
+      for (const ln of wrap(t, font, 10.5, maxW)) { ensure(15); page.drawText(ln, { x: M, y: y - 10, size: 10.5, font, color: bodyc }); y -= 15 }
+    }
+    function pills(items: { text: string; bg: any; fg: any; br?: any }[]) {
+      let x = M; const ph = 22, gap = 8, size = 9
+      for (const it of items) {
+        const label = ascii(it.text); const pw = font.widthOfTextAtSize(label, size) + 22
+        if (x + pw > W - M) { x = M; y -= ph + gap }
+        if (ensure(ph)) x = M
+        page.drawSvgPath(roundedRect(pw, ph, 11), { x, y, color: it.bg, borderColor: it.br || undefined, borderWidth: it.br ? 0.6 : 0 })
+        page.drawText(label, { x: x + 11, y: y - ph / 2 - 3, size, font: bold, color: it.fg })
+        x += pw + gap
       }
-    }
-    function section(title: string) {
-      y -= 10
-      ensure(20)
-      page.drawText(ascii(title).toUpperCase(), { x: margin, y: y - 9, size: 9, font: bold, color: indigo })
-      y -= 13
-      page.drawLine({ start: { x: margin, y }, end: { x: W - margin, y }, thickness: 0.5, color: rule })
-      y -= 9
+      y -= ph + 6
     }
 
-    // Header
-    page.drawText(ascii(c.name) || 'Candidate', { x: margin, y: y - 20, size: 20, font: bold, color: dark })
-    y -= 27
-    const sub = [c.title, c.company].filter(Boolean).map(ascii).join('  \u00B7  ')
-    if (sub) { page.drawText(sub, { x: margin, y: y - 12, size: 11, font, color: indigo }); y -= 17 }
-    const meta = [c.city, c.years_exp ? c.years_exp + ' yrs experience' : null, c.email, c.phone]
-      .filter(Boolean).map(ascii).join('   |   ')
-    if (meta) { page.drawText(meta, { x: margin, y: y - 10, size: 9, font, color: gray }); y -= 14 }
+    if (c.looking_for) { section("What I'm looking for"); para(c.looking_for) }
 
-    // Naggare Score
-    if (score) {
+    const details: { text: string; bg: any; fg: any; br?: any }[] = []
+    if (c.availability) details.push({ text: c.availability, bg: lav, fg: indigo })
+    if (c.notice_period) details.push({ text: 'Notice: ' + c.notice_period, bg: rgb(0.941, 0.992, 0.957), fg: rgb(0.082, 0.502, 0.239) })
+    if (c.work_preference) details.push({ text: c.work_preference, bg: rgb(1, 0.969, 0.918), fg: rgb(0.761, 0.255, 0.047) })
+    if (c.current_ctc) details.push({ text: 'Current: Rs. ' + c.current_ctc + ' LPA', bg: rgb(0.976, 0.98, 0.984), fg: rgb(0.29, 0.33, 0.39), br: rgb(0.9, 0.91, 0.94) })
+    if (c.expected_ctc) details.push({ text: 'Expected: Rs. ' + c.expected_ctc + ' LPA', bg: rgb(0.976, 0.98, 0.984), fg: rgb(0.29, 0.33, 0.39), br: rgb(0.9, 0.91, 0.94) })
+    if (details.length) { section('Details'); pills(details) }
+
+    if (score && score.role_signal) {
       section('Naggare Score')
-      text(`Overall: ${score.overall_score} / 100  \u00B7  ${ascii(score.role_level)}`, { f: bold, size: 11, color: dark, gap: 3 })
-      if (score.role_signal) text(score.role_signal, { size: 10, color: body })
-      if (score.valid_until) text('Valid until ' + new Date(score.valid_until).toLocaleDateString('en-IN'), { size: 8.5, color: gray })
+      para(`${score.overall_score} / 100  \u00B7  ${ascii(score.role_signal)}` + (score.valid_until ? `  \u00B7  valid until ${new Date(score.valid_until).toLocaleDateString('en-IN')}` : ''))
     }
 
-    // Details
-    const details = [
-      c.availability ? `Availability: ${ascii(c.availability)}` : null,
-      c.notice_period ? `Notice period: ${ascii(c.notice_period)}` : null,
-      c.work_preference ? `Work preference: ${ascii(c.work_preference)}` : null,
-      c.current_ctc ? `Current CTC: Rs. ${c.current_ctc} LPA` : null,
-      c.expected_ctc ? `Expected CTC: Rs. ${c.expected_ctc} LPA` : null,
-    ].filter(Boolean) as string[]
-    if (details.length) {
-      section('Details')
-      for (const d of details) text(d, { size: 10, color: body, gap: 3 })
-    }
-
-    // What I'm looking for
-    if (c.looking_for) {
-      section("What I'm looking for")
-      text(c.looking_for, { size: 10.5, color: body, gap: 4 })
-    }
-
-    // Skills
     if (Array.isArray(c.skills) && c.skills.length) {
       section(`Skills (${c.skills.length})`)
-      text(c.skills.map(ascii).filter(Boolean).join(', '), { size: 10.5, color: body, gap: 4 })
+      pills(c.skills.map((s: string) => ({ text: s, bg: lav, fg: indigoDk })))
     }
 
-    // Footer on last page
-    page.drawText('Generated via Naggare  \u00B7  naggare.com', { x: margin, y: 32, size: 8, font, color: gray })
+    page.drawText('Generated via Naggare  \u00B7  naggare.com', { x: M, y: 30, size: 8, font, color: gray })
 
     const bytes = await doc.save()
     const filename = `${ascii(c.name || 'candidate').replace(/[^a-z0-9]+/gi, '_')}_Naggare.pdf`
