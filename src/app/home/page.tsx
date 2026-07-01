@@ -341,27 +341,6 @@ export default function Home() {
                       })}
                     </div>
                   )}
-                  {/* Meet the recruiter */}
-                  {recruiterProfiles[jd.recruiter_email] && (
-                    <div className="px-4 pb-3">
-                      <button onClick={() => setViewRecruiter(recruiterProfiles[jd.recruiter_email])}
-                        className="w-full flex items-center gap-3 p-3 rounded-2xl border border-gray-100"
-                        style={{background:'#F9FAFB'}}>
-                        {recruiterProfiles[jd.recruiter_email].photo_url
-                          ? <img src={recruiterProfiles[jd.recruiter_email].photo_url} className="w-9 h-9 rounded-full object-cover flex-shrink-0" alt={recruiterProfiles[jd.recruiter_email].name}/>
-                          : <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
-                              {recruiterProfiles[jd.recruiter_email].name?.split(' ').map((n:string)=>n[0]).join('').slice(0,2)}
-                            </div>
-                        }
-                        <div className="flex-1 text-left">
-                          <p className="text-xs font-bold" style={{color:'#1E1B4B'}}>{recruiterProfiles[jd.recruiter_email].name}</p>
-                          <p className="text-xs" style={{color:'#6B7280'}}>{recruiterProfiles[jd.recruiter_email].title} · {recruiterProfiles[jd.recruiter_email].company}</p>
-                        </div>
-                        <p className="text-xs font-semibold" style={{color:'#4F46E5'}}>View →</p>
-                      </button>
-                    </div>
-                  )}
-
                   <div className="flex gap-2 p-4">
                     <button className="flex-1 py-3 rounded-full border border-gray-200 text-sm font-semibold text-gray-500" onClick={()=>{setSwipedLeft(prev=>new Set([...prev,jd.id]));showToast('Passed')}}>Not Interested</button>
                     <button className="flex-1 py-3 rounded-full text-white text-sm font-semibold" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}} onClick={()=>{ setSwipedRight(prev=>new Set([...prev,jd.id]));
@@ -499,27 +478,6 @@ export default function Home() {
                       })}
                     </div>
                   )}
-                  {/* Meet the recruiter */}
-                  {recruiterProfiles[jd.recruiter_email] && (
-                    <div className="px-4 pb-3">
-                      <button onClick={() => setViewRecruiter(recruiterProfiles[jd.recruiter_email])}
-                        className="w-full flex items-center gap-3 p-3 rounded-2xl border border-gray-100"
-                        style={{background:'#F9FAFB'}}>
-                        {recruiterProfiles[jd.recruiter_email].photo_url
-                          ? <img src={recruiterProfiles[jd.recruiter_email].photo_url} className="w-9 h-9 rounded-full object-cover flex-shrink-0" alt={recruiterProfiles[jd.recruiter_email].name}/>
-                          : <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}}>
-                              {recruiterProfiles[jd.recruiter_email].name?.split(' ').map((n:string)=>n[0]).join('').slice(0,2)}
-                            </div>
-                        }
-                        <div className="flex-1 text-left">
-                          <p className="text-xs font-bold" style={{color:'#1E1B4B'}}>{recruiterProfiles[jd.recruiter_email].name}</p>
-                          <p className="text-xs" style={{color:'#6B7280'}}>{recruiterProfiles[jd.recruiter_email].title} · {recruiterProfiles[jd.recruiter_email].company}</p>
-                        </div>
-                        <p className="text-xs font-semibold" style={{color:'#4F46E5'}}>View →</p>
-                      </button>
-                    </div>
-                  )}
-
                   <div className="flex gap-2 p-4">
                     <button className="flex-1 py-3 rounded-full border border-gray-200 text-sm font-semibold text-gray-500" onClick={()=>{setSwipedLeft(prev=>new Set([...prev,jd.id]));showToast('Passed')}}>Not Interested</button>
                     <button className="flex-1 py-3 rounded-full text-white text-sm font-semibold" style={{background:'linear-gradient(135deg,#4F46E5,#7C3AED)'}} onClick={()=>{ setSwipedRight(prev=>new Set([...prev,jd.id]));
