@@ -24,6 +24,10 @@ function fmtDate(d?: string): string {
   return p[0]
 }
 
+
+// Pre-rendered transparent->black vertical gradient (smooth, no banding) for the hero overlay.
+const HERO_GRADIENT_B64 = 'iVBORw0KGgoAAAANSUhEUgAAAAQAAAIACAQAAAAP9gXKAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAD/h4/MvwAAAAd0SU1FB+oHAQUwBzZ+SIoAAABPSURBVFjD7ZAxCgAgDMSu4v/f7KDuOggG0kmKgTTJmkrNR9ubfrC5+ozGQaqGQuAgVUMhcJCqoRA4SNVQCBykaigEDlI1lJd+hYNUDfUCH8LZBod4pQ9aAAAAAElFTkSuQmCC'
+
 export async function POST(req: NextRequest) {
   try {
     const { email } = await req.json()
@@ -78,10 +82,12 @@ export async function POST(req: NextRequest) {
       page.drawText(initials, { x: (W - iw) / 2, y: H - heroH / 2 - 20, size: 60, font: serif, color: white, opacity: 0.85 })
     }
     page.drawRectangle({ x: 0, y: 0, width: W, height: H - heroH, color: white })
-    const band = 175
-    for (let i = 0; i < 20; i++) {
-      const t = i / 19
-      page.drawRectangle({ x: 0, y: H - heroH + (band * (1 - t)) - band / 20 + (heroH - band), width: W, height: band / 20 + 0.6, color: rgb(0, 0, 0), opacity: 0.05 + 0.7 * t })
+    // Smooth gradient overlay (embedded PNG) so the top of the photo stays clean and the name stays legible.
+    try {
+      const grad = await doc.embedPng(Buffer.from(HERO_GRADIENT_B64, 'base64'))
+      page.drawImage(grad, { x: 0, y: H - heroH, width: W, height: heroH * 0.62 })
+    } catch {
+      page.drawRectangle({ x: 0, y: H - heroH, width: W, height: 110, color: rgb(0, 0, 0), opacity: 0.5 })
     }
     page.drawText(ascii(c.name) || 'Candidate', { x: M, y: H - heroH + 58, size: 26, font: serif, color: white })
     if (c.title) page.drawText(ascii(c.title).toUpperCase(), { x: M, y: H - heroH + 40, size: 11, font: bold, color: rgb(0.85, 0.87, 0.98) })
