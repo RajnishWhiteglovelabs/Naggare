@@ -26,6 +26,8 @@ export default function RecruiterHome() {
   const [view, setView] = useState<'home'|'browse'|'myjds'|'profile'>('home')
   const [myJds, setMyJds] = useState<any[]>([])
   const [expandedJd, setExpandedJd] = useState<string|null>(null)
+  const [expandedCandidate, setExpandedCandidate] = useState<any|null>(null)
+  const [candidateScores, setCandidateScores] = useState<Record<string,any>>({})
   const [jdStats, setJdStats] = useState<any>(null)
   const [closingJd, setClosingJd] = useState<any|null>(null)
   const [toast, setToast] = useState('')
@@ -60,6 +62,16 @@ export default function RecruiterHome() {
       const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
       const { data } = await admin.from('candidates').select('*').eq('status', 'active').order('created_at', { ascending: false })
       setCandidates(data || [])
+      // Fetch Naggare scores
+      if (data && data.length > 0) {
+        const emails = (data as any[]).map((d: any) => d.email)
+        const { data: scores } = await admin.from('naggare_scores').select('candidate_email,overall_score,role_level,role_signal,valid_until').in('candidate_email', emails)
+        if (scores) {
+          const scoreMap: Record<string,any> = {}
+          ;(scores as any[]).forEach((s: any) => { scoreMap[s.candidate_email] = s })
+          setCandidateScores(scoreMap)
+        }
+      }
       // Load JD stats
       if (session?.user?.email) {
         fetch('/api/recruiter/jd-stats', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: session.user.email }) })
@@ -715,11 +727,21 @@ export default function RecruiterHome() {
                 )}
                 {/* Name overlay */}
                 <div className="absolute bottom-0 left-0 right-0 p-5">
-                  <p className="text-2xl font-bold text-white mb-0.5" style={{ fontFamily: 'Georgia,serif' }}>{candidate.name}</p>
-                  <p className="text-sm font-semibold" style={{ color: 'rgba(255,255,255,0.85)' }}>{candidate.title}</p>
-                  <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.65)' }}>
-                    {candidate.company}{candidate.city ? ' · ' + candidate.city : ''}{candidate.years_exp ? ' · ' + candidate.years_exp + ' yrs' : ''}
-                  </p>
+                  <div className="flex items-end justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-2xl font-bold text-white mb-0.5" style={{ fontFamily: 'Georgia,serif' }}>{candidate.name}</p>
+                      <p className="text-sm font-semibold" style={{ color: 'rgba(255,255,255,0.85)' }}>{candidate.title}</p>
+                      <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.65)' }}>
+                        {candidate.company}{candidate.city ? ' · ' + candidate.city : ''}{candidate.years_exp ? ' · ' + candidate.years_exp + ' yrs' : ''}
+                      </p>
+                    </div>
+                    {candidateScores[candidate.email] && (
+                      <div className="flex flex-col items-center px-2.5 py-2 rounded-xl flex-shrink-0" style={{background:'rgba(255,255,255,0.2)'}}>
+                        <p className="text-xl font-bold text-white">{candidateScores[candidate.email].overall_score}</p>
+                        <p className="text-xs" style={{color:'#C7D2FE'}}>Score</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -768,6 +790,15 @@ export default function RecruiterHome() {
                     )}
                   </div>
                 )}
+
+                {/* View full profile */}
+                <div className="px-5 py-3 border-b border-gray-100">
+                  <button onClick={() => setExpandedCandidate(candidate)}
+                    className="w-full py-2 rounded-xl text-xs font-semibold"
+                    style={{background:'#EEF2FF', color:'#4F46E5'}}>
+                    View full profile →
+                  </button>
+                </div>
 
                 {/* Skills */}
                 {candidate.skills?.length > 0 && (
@@ -824,6 +855,82 @@ export default function RecruiterHome() {
             </div>
           </div>
         )}
+          </div>
+        )}
+
+        {/* CANDIDATE EXPANDED MODAL */}
+        {expandedCandidate && (
+          <div className="fixed inset-0 z-50 flex flex-col" style={{background:'#F1F0FB',fontFamily:'Raleway,sans-serif'}}>
+            <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-100">
+              <button onClick={() => setExpandedCandidate(null)} className="text-sm font-semibold" style={{color:'#4F46E5'}}>← Back</button>
+              <p className="text-sm font-bold" style={{color:'#1E1B4B'}}>Candidate Profile</p>
+              <div style={{width:'60px'}}/>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              <div className="relative" style={{height:'280px'}}>
+                {expandedCandidate.photo_url
+                  ? <img src={expandedCandidate.photo_url} className="absolute inset-0 w-full h-full object-cover" alt={expandedCandidate.name}/>
+                  : <div className="absolute inset-0 flex items-center justify-center" style={{background:'linear-gradient(160deg,#4F46E5,#7C3AED)'}}>
+                      <span className="text-white font-bold text-5xl">{expandedCandidate.name?.split(' ').map((n:string)=>n[0]).join('').slice(0,2)}</span>
+                    </div>}
+                <div className="absolute inset-0" style={{background:'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%)'}}/>
+                <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xl font-bold text-white" style={{fontFamily:'Georgia,serif'}}>{expandedCandidate.name}</p>
+                    <p className="text-sm" style={{color:'#C7D2FE'}}>{expandedCandidate.title}</p>
+                    <p className="text-xs mt-0.5" style={{color:'rgba(255,255,255,0.65)'}}>{expandedCandidate.company}{expandedCandidate.city?' · '+expandedCandidate.city:''}{expandedCandidate.years_exp?' · '+expandedCandidate.years_exp+' yrs':''}</p>
+                  </div>
+                  {candidateScores[expandedCandidate.email] && (
+                    <div className="flex flex-col items-center px-3 py-2 rounded-2xl flex-shrink-0" style={{background:'rgba(255,255,255,0.2)'}}>
+                      <p className="text-3xl font-bold text-white">{candidateScores[expandedCandidate.email].overall_score}</p>
+                      <p className="text-xs font-bold" style={{color:'#C7D2FE'}}>Naggare Score</p>
+                      <p className="text-xs" style={{color:'rgba(255,255,255,0.6)'}}>{candidateScores[expandedCandidate.email].role_level}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="px-4 py-4 flex flex-col gap-3">
+                {(expandedCandidate.availability||expandedCandidate.notice_period||expandedCandidate.work_preference||expandedCandidate.current_ctc||expandedCandidate.expected_ctc) && (
+                  <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex flex-wrap gap-2">
+                    {expandedCandidate.availability && <span className="px-2.5 py-1 rounded-full text-xs font-semibold" style={{background:'#EEF2FF',color:'#4F46E5'}}>{expandedCandidate.availability}</span>}
+                    {expandedCandidate.notice_period && <span className="px-2.5 py-1 rounded-full text-xs font-semibold" style={{background:'#F0FDF4',color:'#15803D'}}>⏱ {expandedCandidate.notice_period}</span>}
+                    {expandedCandidate.work_preference && <span className="px-2.5 py-1 rounded-full text-xs font-semibold" style={{background:'#FFF7ED',color:'#C2410C'}}>🏠 {expandedCandidate.work_preference}</span>}
+                    {expandedCandidate.current_ctc && <span className="px-2.5 py-1 rounded-full text-xs font-semibold" style={{background:'#F9FAFB',color:'#374151'}}>Current: ₹{expandedCandidate.current_ctc}L</span>}
+                    {expandedCandidate.expected_ctc && <span className="px-2.5 py-1 rounded-full text-xs font-semibold" style={{background:'#F9FAFB',color:'#374151'}}>Expected: ₹{expandedCandidate.expected_ctc}L</span>}
+                  </div>
+                )}
+                {candidateScores[expandedCandidate.email] && (
+                  <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                    <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{color:'#4F46E5'}}>Naggare Score · {candidateScores[expandedCandidate.email].role_level}</p>
+                    <div className="flex items-center gap-4">
+                      <p className="text-4xl font-bold" style={{color:'#4F46E5'}}>{candidateScores[expandedCandidate.email].overall_score}</p>
+                      <div>
+                        <p className="text-sm font-semibold" style={{color:'#1E1B4B'}}>{candidateScores[expandedCandidate.email].role_signal}</p>
+                        <p className="text-xs" style={{color:'#9CA3AF'}}>Valid until {new Date(candidateScores[expandedCandidate.email].valid_until).toLocaleDateString('en-IN')}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {expandedCandidate.skills?.length > 0 && (
+                  <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                    <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{color:'#4F46E5'}}>Skills · {expandedCandidate.skills.length}</p>
+                    <div className="flex flex-wrap gap-1.5">{expandedCandidate.skills.map((s:string) => <span key={s} className="tag">{s}</span>)}</div>
+                  </div>
+                )}
+                {expandedCandidate.looking_for && (
+                  <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                    <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{color:'#4F46E5'}}>What they&apos;re looking for</p>
+                    <p className="text-sm leading-relaxed" style={{color:'#374151'}}>{expandedCandidate.looking_for}</p>
+                  </div>
+                )}
+                <div className="grid grid-cols-2 gap-3 mt-2">
+                  <button onClick={() => { handleAction('pass'); setExpandedCandidate(null) }}
+                    className="py-3 rounded-2xl text-sm font-semibold border" style={{borderColor:'#E5E7EB',color:'#6B7280'}}>Pass</button>
+                  <button onClick={() => { handleAction('pursue'); setExpandedCandidate(null) }}
+                    className="py-3 rounded-2xl text-sm font-semibold text-white" style={{background:'#15803D'}}>Pursue →</button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
