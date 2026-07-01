@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 // Shared candidate profile card — single source of truth.
 // Same shell/style as RecruiterProfileCard (centred phone-width column, rounded card, divided sections).
@@ -25,26 +25,28 @@ export default function CandidateProfileCard({
 
   const [pdfLoading, setPdfLoading] = useState(false)
   const [pdfError, setPdfError] = useState(false)
+  const cardRef = useRef<HTMLDivElement>(null)
   async function downloadPdf() {
-    if (!candidate?.email) return
+    const node = cardRef.current
+    if (!node) return
     try {
       setPdfError(false)
       setPdfLoading(true)
-      const res = await fetch('/api/candidate/pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: candidate.email }),
+      const html2canvas = (await import('html2canvas-pro')).default
+      const { jsPDF } = await import('jspdf')
+      // Capture the card exactly as rendered on screen — WYSIWYG.
+      const canvas = await html2canvas(node, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
       })
-      if (!res.ok) throw new Error('failed')
-      const blob = await res.blob()
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `${(candidate.name || 'candidate').replace(/[^a-z0-9]+/gi, '_')}_Naggare.pdf`
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      URL.revokeObjectURL(url)
+      const imgData = canvas.toDataURL('image/png')
+      const w = canvas.width / 2
+      const h = canvas.height / 2
+      const pdf = new jsPDF({ orientation: h >= w ? 'portrait' : 'landscape', unit: 'pt', format: [w, h] })
+      pdf.addImage(imgData, 'PNG', 0, 0, w, h)
+      pdf.save(`${(candidate.name || 'candidate').replace(/[^a-z0-9]+/gi, '_')}_Naggare.pdf`)
     } catch {
       setPdfError(true)
       setTimeout(() => setPdfError(false), 3000)
@@ -61,12 +63,12 @@ export default function CandidateProfileCard({
         <h2 className="text-base font-bold">Candidate Profile</h2>
       </div>
       <div style={{maxWidth:'420px',margin:'0 auto',paddingBottom:'80px',paddingTop:'16px',paddingLeft:'12px',paddingRight:'12px'}}>
-        <div className="rounded-3xl overflow-hidden shadow-xl" style={{border:'1px solid #E0E7FF'}}>
+        <div ref={cardRef} className="rounded-3xl overflow-hidden shadow-xl" style={{border:'1px solid #E0E7FF'}}>
 
           {/* Photo hero */}
           <div className="relative" style={{height:'340px'}}>
             {candidate.photo_url
-              ? <img src={candidate.photo_url} className="absolute inset-0 w-full h-full object-cover" alt={candidate.name}/>
+              ? <img src={candidate.photo_url} crossOrigin="anonymous" className="absolute inset-0 w-full h-full object-cover" alt={candidate.name}/>
               : <div className="absolute inset-0 flex items-center justify-center" style={{background:'linear-gradient(160deg,#4F46E5,#7C3AED)'}}>
                   <span className="text-white font-bold text-5xl">{initials}</span>
                 </div>}
