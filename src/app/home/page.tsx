@@ -759,8 +759,8 @@ export default function Home() {
                 <p className="text-sm font-semibold" style={{color:'#C7D2FE'}}>{viewRecruiter.title}</p>
                 <p className="text-xs mt-0.5" style={{color:'#A5B4FC'}}>{viewRecruiter.company}</p>
                 <div className="flex items-center gap-3 mt-2">
-                  {recruiter.email && <p className="text-xs" style={{color:'rgba(255,255,255,0.6)'}}>{recruiter.email}</p>}
-                  {recruiter.mobile && <p className="text-xs" style={{color:'rgba(255,255,255,0.6)'}}>· {recruiter.mobile}</p>}
+                  {viewRecruiter.email && <p className="text-xs" style={{color:'rgba(255,255,255,0.6)'}}>{viewRecruiter.email}</p>}
+                  {viewRecruiter.mobile && <p className="text-xs" style={{color:'rgba(255,255,255,0.6)'}}>· {viewRecruiter.mobile}</p>}
                 </div>
               </div>
             </div>
