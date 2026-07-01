@@ -1,8 +1,8 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase-browser'
-import CandidateProfileCard from '@/components/CandidateProfileCard'
+import CandidateProfileCard, { CandidateCardVisual, captureCardToPdf } from '@/components/CandidateProfileCard'
 
 export default function RecruiterHome() {
   const router = useRouter()
@@ -29,6 +29,9 @@ export default function RecruiterHome() {
   const [expandedJd, setExpandedJd] = useState<string|null>(null)
   const [expandedCandidate, setExpandedCandidate] = useState<any|null>(null)
   const [candidateScores, setCandidateScores] = useState<Record<string,any>>({})
+  const [dlCandidate, setDlCandidate] = useState<any|null>(null)
+  const [dlBusy, setDlBusy] = useState<string|null>(null)
+  const dlRef = useRef<HTMLDivElement>(null)
   const [jdStats, setJdStats] = useState<any>(null)
   const [closingJd, setClosingJd] = useState<any|null>(null)
   const [toast, setToast] = useState('')
@@ -137,6 +140,23 @@ export default function RecruiterHome() {
     setToast(msg)
     setToastType(type)
     setTimeout(() => setToast(''), 2500)
+  }
+
+  async function downloadProfile(candidate: any) {
+    try {
+      setDlBusy(candidate.email)
+      setDlCandidate(candidate)
+      // Let the hidden card render, then capture it as a WYSIWYG PDF.
+      await new Promise(r => setTimeout(r, 350))
+      if (!dlRef.current) throw new Error('render failed')
+      await captureCardToPdf(dlRef.current, `${(candidate.name || 'candidate').replace(/[^a-z0-9]+/gi, '_')}_Naggare.pdf`)
+    } catch {
+      setToast('Could not generate PDF')
+      setTimeout(() => setToast(''), 2500)
+    } finally {
+      setDlBusy(null)
+      setDlCandidate(null)
+    }
   }
 
   async function takeAction(action: 'pass'|'pursue'|'golden_buzzer') {
@@ -792,12 +812,12 @@ export default function RecruiterHome() {
                   </div>
                 )}
 
-                {/* View full profile */}
+                {/* Download profile */}
                 <div className="px-5 py-3 border-b border-gray-100">
-                  <button onClick={() => setExpandedCandidate(candidate)}
-                    className="w-full py-2 rounded-xl text-xs font-semibold"
+                  <button onClick={() => downloadProfile(candidate)} disabled={dlBusy === candidate.email}
+                    className="w-full py-2 rounded-xl text-xs font-semibold disabled:opacity-60"
                     style={{background:'#EEF2FF', color:'#4F46E5'}}>
-                    View full profile →
+                    {dlBusy === candidate.email ? 'Generating…' : '⬇ Download profile'}
                   </button>
                 </div>
 
@@ -868,6 +888,13 @@ export default function RecruiterHome() {
             onPass={() => { takeAction('pass'); setExpandedCandidate(null) }}
             onPursue={() => { takeAction('pursue'); setExpandedCandidate(null) }}
           />
+        )}
+
+        {/* Hidden card rendered off-screen only to capture a WYSIWYG PDF for download */}
+        {dlCandidate && (
+          <div aria-hidden style={{position:'fixed', left:'-10000px', top:0, width:'396px', pointerEvents:'none'}}>
+            <CandidateCardVisual candidate={dlCandidate} score={candidateScores[dlCandidate.email]} innerRef={dlRef} />
+          </div>
         )}
 
         {/* MY JDS VIEW */}
